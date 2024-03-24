@@ -7,11 +7,33 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// InitDB initializes the database connection pool
-func InitDB(ctx context.Context, dsn string) *pgxpool.Pool {
-	dbpool, err := pgxpool.New(ctx, dsn)
+// DB represents the database connection.
+type DB struct {
+	conn *pgxpool.Pool
+}
+
+// NewDB creates a new DB instance and connects to the database.
+func NewDB() (*DB, error) {
+	conn, err := pgxpool.New(context.Background(), "postgresql://user:pass@localhost:5432/db")
 	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
+		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
-	return dbpool
+
+	return &DB{conn: conn}, nil
+}
+
+// Close closes the database connection.
+func (db *DB) Close() error {
+	db.conn.Close()
+	return nil
+}
+
+// ExecuteQuery executes the given SQL query on the database.
+func (db *DB) ExecuteQuery(query string) error {
+	_, err := db.conn.Exec(context.Background(), query)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
