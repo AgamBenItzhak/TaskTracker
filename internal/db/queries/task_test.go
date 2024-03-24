@@ -9,9 +9,9 @@ import (
 )
 
 func TestInsertTaskGroup(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	projectID := 1
 	name := "name"
@@ -30,9 +30,9 @@ func TestInsertTaskGroup(t *testing.T) {
 }
 
 func TestGetTaskGroup(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	taskGroupID := 1
 	projectID := 1
@@ -61,9 +61,9 @@ func TestGetTaskGroup(t *testing.T) {
 }
 
 func TestUpdateTaskGroup(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	taskGroupID := 1
 	name := "name"
@@ -81,9 +81,9 @@ func TestUpdateTaskGroup(t *testing.T) {
 }
 
 func TestDeleteTaskGroup(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	taskGroupID := 1
 
@@ -99,9 +99,9 @@ func TestDeleteTaskGroup(t *testing.T) {
 }
 
 func TestInsertTask(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	taskGroupID := 1
 	name := "name"
@@ -124,9 +124,9 @@ func TestInsertTask(t *testing.T) {
 }
 
 func TestGetTask(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	taskID := 1
 	taskGroupID := 1
@@ -162,9 +162,9 @@ func TestGetTask(t *testing.T) {
 }
 
 func TestUpdateTask(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	taskID := 1
 	name := "name"
@@ -186,9 +186,9 @@ func TestUpdateTask(t *testing.T) {
 }
 
 func TestDeleteTask(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	taskID := 1
 

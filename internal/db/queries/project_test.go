@@ -9,9 +9,9 @@ import (
 )
 
 func TestInsertProject(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	name := "name"
 	description := "description"
@@ -32,9 +32,9 @@ func TestInsertProject(t *testing.T) {
 }
 
 func TestGetProject(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	projectID := 1
 	name := "name"
@@ -63,9 +63,9 @@ func TestGetProject(t *testing.T) {
 }
 
 func TestUpdateProject(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	projectID := 1
 	name := "name"
@@ -86,9 +86,9 @@ func TestUpdateProject(t *testing.T) {
 }
 
 func TestDeleteProject(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	projectID := 1
 

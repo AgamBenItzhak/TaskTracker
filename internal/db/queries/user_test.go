@@ -9,9 +9,9 @@ import (
 )
 
 func TestInsertUser(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	email := "test@example.com"
 	passwordHash := "passwordHash"
@@ -31,9 +31,9 @@ func TestInsertUser(t *testing.T) {
 }
 
 func TestGetUsers(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	mockRows := pgxmock.NewRows([]string{"user_id"}).
 		AddRow(1).
@@ -54,9 +54,9 @@ func TestGetUsers(t *testing.T) {
 }
 
 func TestGetUserByID(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 	mockRows := pgxmock.NewRows([]string{"email", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at"}).
@@ -82,9 +82,9 @@ func TestGetUserByID(t *testing.T) {
 
 func TestGetUserByEmail(t *testing.T) {
 	// Create a mock connection
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	email := "test@example.com"
 	mockRows := pgxmock.NewRows([]string{"user_id", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at"}).
@@ -113,9 +113,9 @@ func TestGetUserByEmail(t *testing.T) {
 }
 
 func TestUpdateUser(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 	email := "test@example.com"
@@ -136,9 +136,9 @@ func TestUpdateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 
@@ -154,9 +154,9 @@ func TestDeleteUser(t *testing.T) {
 }
 
 func TestInsertProjectUser(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 	projectID := 1
@@ -174,9 +174,9 @@ func TestInsertProjectUser(t *testing.T) {
 }
 
 func TestGetProjectUser(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 	projectID := 1
@@ -200,9 +200,9 @@ func TestGetProjectUser(t *testing.T) {
 }
 
 func TestUpdateProjectUser(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 	projectID := 1
@@ -220,9 +220,9 @@ func TestUpdateProjectUser(t *testing.T) {
 }
 
 func TestDeleteProjectUser(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 	projectID := 1
@@ -239,9 +239,9 @@ func TestDeleteProjectUser(t *testing.T) {
 }
 
 func TestGetProjectsByUserID(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 	projectID := 1
@@ -264,9 +264,9 @@ func TestGetProjectsByUserID(t *testing.T) {
 }
 
 func TestGetUsersByProjectID(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 	projectID := 1
@@ -289,9 +289,9 @@ func TestGetUsersByProjectID(t *testing.T) {
 }
 
 func TestDeleteProjectUsers(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	projectID := 1
 
@@ -307,9 +307,9 @@ func TestDeleteProjectUsers(t *testing.T) {
 }
 
 func TestDeleteUserProjects(t *testing.T) {
-	mock, err := pgxmock.NewConn()
+	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close(context.Background())
+	defer mock.Close()
 
 	userID := 1
 
