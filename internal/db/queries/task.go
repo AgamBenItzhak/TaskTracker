@@ -131,6 +131,38 @@ func GetTask(ctx context.Context, dbpool PgxIface, taskID int) (int, string, str
 	return TasksGroupID, name, description, status, priority, startDate, endDate, updatedAt, err
 }
 
+// GetAllTasksByTasksGroupID retrieves all tasks from the database
+func GetAllTasksByTasksGroupID(ctx context.Context, dbpool PgxIface, TasksGroupID int) ([]int, []string, []string, []string, []string, []string, []string, error) {
+	rows, err := dbpool.Query(ctx, `
+		SELECT task_id, name, description, status, priority, start_date, end_date
+		FROM tasks
+		WHERE task_group_id = $1
+	`, TasksGroupID)
+	if err != nil {
+		return nil, nil, nil, nil, nil, nil, nil, err
+	}
+	defer rows.Close()
+
+	var taskIDs []int
+	var names, descriptions, statuses, priorities, startDates, endDates []string
+	for rows.Next() {
+		var taskID int
+		var name, description, status, priority, startDate, endDate string
+		err = rows.Scan(&taskID, &name, &description, &status, &priority, &startDate, &endDate)
+		if err != nil {
+			return nil, nil, nil, nil, nil, nil, nil, err
+		}
+		taskIDs = append(taskIDs, taskID)
+		names = append(names, name)
+		descriptions = append(descriptions, description)
+		statuses = append(statuses, status)
+		priorities = append(priorities, priority)
+		startDates = append(startDates, startDate)
+		endDates = append(endDates, endDate)
+	}
+	return taskIDs, names, descriptions, statuses, priorities, startDates, endDates, nil
+}
+
 // UpdateTask updates a task in the database
 func UpdateTask(ctx context.Context, dbpool PgxIface, taskID int, name string, description string, status string, priority string, startDate string, endDate string) error {
 	_, err := dbpool.Exec(ctx, `
