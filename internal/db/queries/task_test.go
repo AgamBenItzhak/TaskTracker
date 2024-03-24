@@ -146,7 +146,7 @@ func TestGetTask(t *testing.T) {
 		WithArgs(taskID).
 		WillReturnRows(mockRows)
 
-	tGID, n, d, s, p, sD, eD, uA, err := GetTask(context.Background(), mock, taskID)
+	tGID, n, d, s, p, sD, eD, uA, err := GetTaskByID(context.Background(), mock, taskID)
 	require.NoError(t, err)
 	require.Equal(t, TasksGroupID, tGID)
 	require.Equal(t, name, n)

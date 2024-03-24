@@ -120,7 +120,7 @@ func InsertTask(ctx context.Context, dbpool PgxIface, TasksGroupID int, name str
 }
 
 // GetTask retrieves a task from the database
-func GetTask(ctx context.Context, dbpool PgxIface, taskID int) (int, string, string, string, string, string, string, string, error) {
+func GetTaskByID(ctx context.Context, dbpool PgxIface, taskID int) (int, string, string, string, string, string, string, string, error) {
 	var TasksGroupID int
 	var name, description, status, priority, startDate, endDate, createdAt, updatedAt string
 	err := dbpool.QueryRow(ctx, `
