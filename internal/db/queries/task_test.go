@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestInsertTaskGroup(t *testing.T) {
+func TestInsertTasksGroup(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
@@ -21,20 +21,20 @@ func TestInsertTaskGroup(t *testing.T) {
 		WithArgs(projectID, name, description).
 		WillReturnRows(pgxmock.NewRows([]string{"task_group_id"}).AddRow(1))
 
-	taskGroupID, err := InsertTaskGroup(context.Background(), mock, projectID, name, description)
+	TasksGroupID, err := InsertTasksGroup(context.Background(), mock, projectID, name, description)
 	require.NoError(t, err)
-	require.Equal(t, 1, taskGroupID)
+	require.Equal(t, 1, TasksGroupID)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
 }
 
-func TestGetTaskGroup(t *testing.T) {
+func TestGetTasksGroup(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	taskGroupID := 1
+	TasksGroupID := 1
 	projectID := 1
 	name := "name"
 	description := "description"
@@ -45,10 +45,10 @@ func TestGetTaskGroup(t *testing.T) {
 		AddRow(projectID, name, description, createdAt, updatedAt)
 
 	mock.ExpectQuery("SELECT").
-		WithArgs(taskGroupID).
+		WithArgs(TasksGroupID).
 		WillReturnRows(mockRows)
 
-	pID, n, d, cA, uA, err := GetTaskGroup(context.Background(), mock, taskGroupID)
+	pID, n, d, cA, uA, err := GetTasksGroup(context.Background(), mock, TasksGroupID)
 	require.NoError(t, err)
 	require.Equal(t, projectID, pID)
 	require.Equal(t, name, n)
@@ -60,38 +60,38 @@ func TestGetTaskGroup(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestUpdateTaskGroup(t *testing.T) {
+func TestUpdateTasksGroup(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	taskGroupID := 1
+	TasksGroupID := 1
 	name := "name"
 	description := "description"
 
 	mock.ExpectExec("UPDATE tasks_groups").
-		WithArgs(taskGroupID, name, description).
+		WithArgs(TasksGroupID, name, description).
 		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
-	err = UpdateTaskGroup(context.Background(), mock, taskGroupID, name, description)
+	err = UpdateTasksGroup(context.Background(), mock, TasksGroupID, name, description)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
 }
 
-func TestDeleteTaskGroup(t *testing.T) {
+func TestDeleteTasksGroup(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	taskGroupID := 1
+	TasksGroupID := 1
 
 	mock.ExpectExec("DELETE FROM tasks_groups").
-		WithArgs(taskGroupID).
+		WithArgs(TasksGroupID).
 		WillReturnResult(pgxmock.NewResult("DELETE", 1))
 
-	err = DeleteTaskGroup(context.Background(), mock, taskGroupID)
+	err = DeleteTasksGroup(context.Background(), mock, TasksGroupID)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -103,7 +103,7 @@ func TestInsertTask(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	taskGroupID := 1
+	TasksGroupID := 1
 	name := "name"
 	description := "description"
 	status := "status"
@@ -112,10 +112,10 @@ func TestInsertTask(t *testing.T) {
 	endDate := "2021-01-01T00:00:00Z"
 
 	mock.ExpectQuery("INSERT INTO tasks").
-		WithArgs(taskGroupID, name, description, status, priority, startDate, endDate).
+		WithArgs(TasksGroupID, name, description, status, priority, startDate, endDate).
 		WillReturnRows(pgxmock.NewRows([]string{"task_id"}).AddRow(1))
 
-	taskID, err := InsertTask(context.Background(), mock, taskGroupID, name, description, status, priority, startDate, endDate)
+	taskID, err := InsertTask(context.Background(), mock, TasksGroupID, name, description, status, priority, startDate, endDate)
 	require.NoError(t, err)
 	require.Equal(t, 1, taskID)
 
@@ -129,7 +129,7 @@ func TestGetTask(t *testing.T) {
 	defer mock.Close()
 
 	taskID := 1
-	taskGroupID := 1
+	TasksGroupID := 1
 	name := "name"
 	description := "description"
 	status := "status"
@@ -140,7 +140,7 @@ func TestGetTask(t *testing.T) {
 	updatedAt := "2021-01-01T00:00:00Z"
 
 	mockRows := pgxmock.NewRows([]string{"task_group_id", "name", "description", "status", "priority", "start_date", "end_date", "created_at", "updated_at"}).
-		AddRow(taskGroupID, name, description, status, priority, startDate, endDate, createdAt, updatedAt)
+		AddRow(TasksGroupID, name, description, status, priority, startDate, endDate, createdAt, updatedAt)
 
 	mock.ExpectQuery("SELECT").
 		WithArgs(taskID).
@@ -148,7 +148,7 @@ func TestGetTask(t *testing.T) {
 
 	tGID, n, d, s, p, sD, eD, uA, err := GetTask(context.Background(), mock, taskID)
 	require.NoError(t, err)
-	require.Equal(t, taskGroupID, tGID)
+	require.Equal(t, TasksGroupID, tGID)
 	require.Equal(t, name, n)
 	require.Equal(t, description, d)
 	require.Equal(t, status, s)
