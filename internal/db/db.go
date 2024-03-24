@@ -9,7 +9,7 @@ import (
 
 // DB represents the database connection.
 type DB struct {
-	conn *pgxpool.Pool
+	Conn *pgxpool.Pool
 }
 
 // NewDB creates a new DB instance and connects to the database.
@@ -19,18 +19,18 @@ func NewDB() (*DB, error) {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
 
-	return &DB{conn: conn}, nil
+	return &DB{Conn: conn}, nil
 }
 
 // Close closes the database connection.
 func (db *DB) Close() error {
-	db.conn.Close()
+	db.Conn.Close()
 	return nil
 }
 
 // ExecuteQuery executes the given SQL query on the database.
 func (db *DB) ExecuteQuery(query string) error {
-	_, err := db.conn.Exec(context.Background(), query)
+	_, err := db.Conn.Exec(context.Background(), query)
 	if err != nil {
 		return err
 	}
