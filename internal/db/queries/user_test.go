@@ -23,8 +23,9 @@ func TestInsertUser(t *testing.T) {
 		WithArgs(email, passwordHash, passwordSalt, firstName, lastName).
 		WillReturnResult(pgxmock.NewResult("INSERT", 1))
 
-	err = InsertUser(context.Background(), mock, email, passwordHash, passwordSalt, firstName, lastName)
+	userID, err := InsertUser(context.Background(), mock, email, passwordHash, passwordSalt, firstName, lastName)
 	require.NoError(t, err)
+	require.Equal(t, 1, userID)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)

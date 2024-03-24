@@ -5,12 +5,14 @@ import (
 )
 
 // InsertUser inserts a new user into the database
-func InsertUser(ctx context.Context, dbpool PgxIface, email, passwordHash, passwordSalt, firstName, lastName string) error {
-	_, err := dbpool.Exec(ctx, `
+func InsertUser(ctx context.Context, dbpool PgxIface, email, passwordHash, passwordSalt, firstName, lastName string) (int, error) {
+	var userID int
+	err := dbpool.QueryRow(ctx, `
 		INSERT INTO users (email, password_hash, password_salt, first_name, last_name)
 		VALUES ($1, $2, $3, $4, $5)
-	`, email, passwordHash, passwordSalt, firstName, lastName)
-	return err
+		RETURNING user_id
+	`, email, passwordHash, passwordSalt, firstName, lastName).Scan(&userID)
+	return userID, err
 }
 
 // GetUsers retrieves all users from the database
