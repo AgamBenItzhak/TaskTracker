@@ -178,7 +178,7 @@ func TestUpdateTask(t *testing.T) {
 		WithArgs(taskID, name, description, status, priority, startDate, endDate).
 		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
-	err = UpdateTask(context.Background(), mock, taskID, name, description, status, priority, startDate, endDate)
+	err = UpdateTaskByID(context.Background(), mock, taskID, name, description, status, priority, startDate, endDate)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -196,7 +196,7 @@ func TestDeleteTask(t *testing.T) {
 		WithArgs(taskID).
 		WillReturnResult(pgxmock.NewResult("DELETE", 1))
 
-	err = DeleteTask(context.Background(), mock, taskID)
+	err = DeleteTaskByID(context.Background(), mock, taskID)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()

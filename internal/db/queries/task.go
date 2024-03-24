@@ -163,8 +163,8 @@ func GetAllTasksByTasksGroupID(ctx context.Context, dbpool PgxIface, TasksGroupI
 	return taskIDs, names, descriptions, statuses, priorities, startDates, endDates, nil
 }
 
-// UpdateTask updates a task in the database
-func UpdateTask(ctx context.Context, dbpool PgxIface, taskID int, name string, description string, status string, priority string, startDate string, endDate string) error {
+// UpdateTaskByID updates a task in the database
+func UpdateTaskByID(ctx context.Context, dbpool PgxIface, taskID int, name string, description string, status string, priority string, startDate string, endDate string) error {
 	_, err := dbpool.Exec(ctx, `
 		UPDATE tasks
 		SET name = $2, description = $3, status = $4, priority = $5, start_date = $6, end_date = $7, updated_at = CURRENT_TIMESTAMP
@@ -174,7 +174,7 @@ func UpdateTask(ctx context.Context, dbpool PgxIface, taskID int, name string, d
 }
 
 // DeleteTask deletes a task from the database
-func DeleteTask(ctx context.Context, dbpool PgxIface, taskID int) error {
+func DeleteTaskByID(ctx context.Context, dbpool PgxIface, taskID int) error {
 	_, err := dbpool.Exec(ctx, `
 		DELETE FROM tasks
 		WHERE task_id = $1
