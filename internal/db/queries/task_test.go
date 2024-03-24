@@ -48,7 +48,7 @@ func TestGetTasksGroupsByProjectID(t *testing.T) {
 		WithArgs(TasksGroupID).
 		WillReturnRows(mockRows)
 
-	pID, n, d, cA, uA, err := GetTasksGroupsByProjectID(context.Background(), mock, TasksGroupID)
+	pID, n, d, cA, uA, err := GetTasksGroupsByID(context.Background(), mock, TasksGroupID)
 	require.NoError(t, err)
 	require.Equal(t, projectID, pID)
 	require.Equal(t, name, n)

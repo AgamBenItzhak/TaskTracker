@@ -15,8 +15,38 @@ func InsertTasksGroup(ctx context.Context, dbpool PgxIface, projectID int, name 
 	return TasksGroupID, err
 }
 
-// GetTasksGroupsByProjectID retrieves a task group from the database
-func GetTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, TasksGroupID int) (int, string, string, string, string, error) {
+// GetAllTasksGroupsByProjectID retrieves all task groups from the database
+func GetAllTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, projectID int) ([]int, []string, []string, []string, []string, error) {
+	rows, err := dbpool.Query(ctx, `
+		SELECT task_group_id, name, description, created_at, updated_at
+		FROM tasks_groups
+		WHERE project_id = $1
+	`, projectID)
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+	defer rows.Close()
+
+	var TasksGroupIDs []int
+	var names, descriptions, createdAts, updatedAts []string
+	for rows.Next() {
+		var TasksGroupID int
+		var name, description, createdAt, updatedAt string
+		err = rows.Scan(&TasksGroupID, &name, &description, &createdAt, &updatedAt)
+		if err != nil {
+			return nil, nil, nil, nil, nil, err
+		}
+		TasksGroupIDs = append(TasksGroupIDs, TasksGroupID)
+		names = append(names, name)
+		descriptions = append(descriptions, description)
+		createdAts = append(createdAts, createdAt)
+		updatedAts = append(updatedAts, updatedAt)
+	}
+	return TasksGroupIDs, names, descriptions, createdAts, updatedAts, nil
+}
+
+// GetTasksGroupsByID retrieves a task group from the database
+func GetTasksGroupsByID(ctx context.Context, dbpool PgxIface, TasksGroupID int) (int, string, string, string, string, error) {
 	var projectID int
 	var groupName, description, createdAt, updatedAt string
 	err := dbpool.QueryRow(ctx, `
