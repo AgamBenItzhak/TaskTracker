@@ -1,6 +1,6 @@
 package models
 
-type TaskGroups struct {
+type TasksGroups struct {
 	TaskGroupID int    `json:"task_group_id"`
 	ProjectID   int    `json:"project_id"`
 	GroupName   string `json:"group_name"`
