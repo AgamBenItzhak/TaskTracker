@@ -4,69 +4,69 @@ import (
 	"context"
 )
 
-// InsertTaskGroup inserts a new task group into the database
-func InsertTaskGroup(ctx context.Context, dbpool PgxIface, projectID int, name string, description string) (int, error) {
-	var taskGroupID int
+// InsertTasksGroup inserts a new task group into the database
+func InsertTasksGroup(ctx context.Context, dbpool PgxIface, projectID int, name string, description string) (int, error) {
+	var TasksGroupID int
 	err := dbpool.QueryRow(ctx, `
 		INSERT INTO tasks_groups (project_id, name, description, created_at, updated_at)
 		VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 		RETURNING task_group_id
-	`, projectID, name, description).Scan(&taskGroupID)
-	return taskGroupID, err
+	`, projectID, name, description).Scan(&TasksGroupID)
+	return TasksGroupID, err
 }
 
-// GetTaskGroup retrieves a task group from the database
-func GetTaskGroup(ctx context.Context, dbpool PgxIface, taskGroupID int) (int, string, string, string, string, error) {
+// GetTasksGroup retrieves a task group from the database
+func GetTasksGroup(ctx context.Context, dbpool PgxIface, TasksGroupID int) (int, string, string, string, string, error) {
 	var projectID int
 	var name, description, createdAt, updatedAt string
 	err := dbpool.QueryRow(ctx, `
 		SELECT project_id, name, description, created_at, updated_at
 		FROM tasks_groups
 		WHERE task_group_id = $1
-	`, taskGroupID).Scan(&projectID, &name, &description, &createdAt, &updatedAt)
+	`, TasksGroupID).Scan(&projectID, &name, &description, &createdAt, &updatedAt)
 	return projectID, name, description, createdAt, updatedAt, err
 }
 
-// UpdateTaskGroup updates a task group in the database
-func UpdateTaskGroup(ctx context.Context, dbpool PgxIface, taskGroupID int, name string, description string) error {
+// UpdateTasksGroup updates a task group in the database
+func UpdateTasksGroup(ctx context.Context, dbpool PgxIface, TasksGroupID int, name string, description string) error {
 	_, err := dbpool.Exec(ctx, `
 		UPDATE tasks_groups
 		SET name = $2, description = $3, updated_at = CURRENT_TIMESTAMP
 		WHERE task_group_id = $1
-	`, taskGroupID, name, description)
+	`, TasksGroupID, name, description)
 	return err
 }
 
-// DeleteTaskGroup deletes a task group from the database
-func DeleteTaskGroup(ctx context.Context, dbpool PgxIface, taskGroupID int) error {
+// DeleteTasksGroup deletes a task group from the database
+func DeleteTasksGroup(ctx context.Context, dbpool PgxIface, TasksGroupID int) error {
 	_, err := dbpool.Exec(ctx, `
 		DELETE FROM tasks_groups
 		WHERE task_group_id = $1
-	`, taskGroupID)
+	`, TasksGroupID)
 	return err
 }
 
 // InsertTask inserts a new task into the database
-func InsertTask(ctx context.Context, dbpool PgxIface, taskGroupID int, name string, description string, status string, priority string, startDate string, endDate string) (int, error) {
+func InsertTask(ctx context.Context, dbpool PgxIface, TasksGroupID int, name string, description string, status string, priority string, startDate string, endDate string) (int, error) {
 	var taskID int
 	err := dbpool.QueryRow(ctx, `
 		INSERT INTO tasks (task_group_id, name, description, status, priority, start_date, end_date, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 		RETURNING task_id
-	`, taskGroupID, name, description, status, priority, startDate, endDate).Scan(&taskID)
+	`, TasksGroupID, name, description, status, priority, startDate, endDate).Scan(&taskID)
 	return taskID, err
 }
 
 // GetTask retrieves a task from the database
 func GetTask(ctx context.Context, dbpool PgxIface, taskID int) (int, string, string, string, string, string, string, string, error) {
-	var taskGroupID int
+	var TasksGroupID int
 	var name, description, status, priority, startDate, endDate, createdAt, updatedAt string
 	err := dbpool.QueryRow(ctx, `
 		SELECT task_group_id, name, description, status, priority, start_date, end_date, created_at, updated_at
 		FROM tasks
 		WHERE task_id = $1
-	`, taskID).Scan(&taskGroupID, &name, &description, &status, &priority, &startDate, &endDate, &createdAt, &updatedAt)
-	return taskGroupID, name, description, status, priority, startDate, endDate, updatedAt, err
+	`, taskID).Scan(&TasksGroupID, &name, &description, &status, &priority, &startDate, &endDate, &createdAt, &updatedAt)
+	return TasksGroupID, name, description, status, priority, startDate, endDate, updatedAt, err
 }
 
 // UpdateTask updates a task in the database
