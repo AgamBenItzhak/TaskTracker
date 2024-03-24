@@ -8,7 +8,7 @@ import (
 func InsertTaskGroup(ctx context.Context, dbpool PgxIface, projectID int, name string, description string) (int, error) {
 	var taskGroupID int
 	err := dbpool.QueryRow(ctx, `
-		INSERT INTO task_groups (project_id, name, description, created_at, updated_at)
+		INSERT INTO tasks_groups (project_id, name, description, created_at, updated_at)
 		VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 		RETURNING task_group_id
 	`, projectID, name, description).Scan(&taskGroupID)
@@ -21,7 +21,7 @@ func GetTaskGroup(ctx context.Context, dbpool PgxIface, taskGroupID int) (int, s
 	var name, description, createdAt, updatedAt string
 	err := dbpool.QueryRow(ctx, `
 		SELECT project_id, name, description, created_at, updated_at
-		FROM task_groups
+		FROM tasks_groups
 		WHERE task_group_id = $1
 	`, taskGroupID).Scan(&projectID, &name, &description, &createdAt, &updatedAt)
 	return projectID, name, description, createdAt, updatedAt, err
@@ -30,7 +30,7 @@ func GetTaskGroup(ctx context.Context, dbpool PgxIface, taskGroupID int) (int, s
 // UpdateTaskGroup updates a task group in the database
 func UpdateTaskGroup(ctx context.Context, dbpool PgxIface, taskGroupID int, name string, description string) error {
 	_, err := dbpool.Exec(ctx, `
-		UPDATE task_groups
+		UPDATE tasks_groups
 		SET name = $2, description = $3, updated_at = CURRENT_TIMESTAMP
 		WHERE task_group_id = $1
 	`, taskGroupID, name, description)
@@ -40,7 +40,7 @@ func UpdateTaskGroup(ctx context.Context, dbpool PgxIface, taskGroupID int, name
 // DeleteTaskGroup deletes a task group from the database
 func DeleteTaskGroup(ctx context.Context, dbpool PgxIface, taskGroupID int) error {
 	_, err := dbpool.Exec(ctx, `
-		DELETE FROM task_groups
+		DELETE FROM tasks_groups
 		WHERE task_group_id = $1
 	`, taskGroupID)
 	return err

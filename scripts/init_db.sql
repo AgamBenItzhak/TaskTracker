@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS project_users (
     PRIMARY KEY (user_id, project_id)
 )
 
-CREATE TABLE IF NOT EXISTS task_groups (
+CREATE TABLE IF NOT EXISTS tasks_groups (
     task_group_id SERIAL PRIMARY KEY,
     project_id INT NOT NULL,
     group_name TEXT NOT NULL,

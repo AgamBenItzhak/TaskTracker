@@ -17,7 +17,7 @@ func TestInsertTaskGroup(t *testing.T) {
 	name := "name"
 	description := "description"
 
-	mock.ExpectQuery("INSERT INTO task_groups").
+	mock.ExpectQuery("INSERT INTO tasks_groups").
 		WithArgs(projectID, name, description).
 		WillReturnRows(pgxmock.NewRows([]string{"task_group_id"}).AddRow(1))
 
@@ -69,7 +69,7 @@ func TestUpdateTaskGroup(t *testing.T) {
 	name := "name"
 	description := "description"
 
-	mock.ExpectExec("UPDATE task_groups").
+	mock.ExpectExec("UPDATE tasks_groups").
 		WithArgs(taskGroupID, name, description).
 		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
@@ -87,7 +87,7 @@ func TestDeleteTaskGroup(t *testing.T) {
 
 	taskGroupID := 1
 
-	mock.ExpectExec("DELETE FROM task_groups").
+	mock.ExpectExec("DELETE FROM tasks_groups").
 		WithArgs(taskGroupID).
 		WillReturnResult(pgxmock.NewResult("DELETE", 1))
 
