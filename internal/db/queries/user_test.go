@@ -19,9 +19,9 @@ func TestInsertUser(t *testing.T) {
 	firstName := "firstName"
 	lastName := "lastName"
 
-	mock.ExpectExec("INSERT INTO users").
+	mock.ExpectQuery("INSERT INTO users").
 		WithArgs(email, passwordHash, passwordSalt, firstName, lastName).
-		WillReturnResult(pgxmock.NewResult("INSERT", 1))
+		WillReturnRows(pgxmock.NewRows([]string{"user_id"}).AddRow(1))
 
 	userID, err := InsertUser(context.Background(), mock, email, passwordHash, passwordSalt, firstName, lastName)
 	require.NoError(t, err)
@@ -43,7 +43,7 @@ func TestGetUsers(t *testing.T) {
 	mock.ExpectQuery("SELECT").
 		WillReturnRows(mockRows)
 
-	userIDs, err := GetUsers(context.Background(), mock)
+	userIDs, err := GetUsersIDs(context.Background(), mock)
 	require.NoError(t, err)
 
 	require.Len(t, userIDs, 2)

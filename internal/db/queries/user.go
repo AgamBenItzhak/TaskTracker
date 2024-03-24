@@ -16,7 +16,7 @@ func InsertUser(ctx context.Context, dbpool PgxIface, email, passwordHash, passw
 }
 
 // GetUsers retrieves all users from the database
-func GetUsers(ctx context.Context, dbpool PgxIface) ([]int, error) {
+func GetUsersIDs(ctx context.Context, dbpool PgxIface) ([]int, error) {
 	rows, err := dbpool.Query(ctx, `
 		SELECT user_id
 		FROM users
