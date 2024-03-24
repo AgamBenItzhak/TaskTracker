@@ -29,7 +29,7 @@ func TestInsertTasksGroup(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestGetTasksGroup(t *testing.T) {
+func TestGetTasksGroupsByProjectID(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
@@ -48,7 +48,7 @@ func TestGetTasksGroup(t *testing.T) {
 		WithArgs(TasksGroupID).
 		WillReturnRows(mockRows)
 
-	pID, n, d, cA, uA, err := GetTasksGroup(context.Background(), mock, TasksGroupID)
+	pID, n, d, cA, uA, err := GetTasksGroupsByProjectID(context.Background(), mock, TasksGroupID)
 	require.NoError(t, err)
 	require.Equal(t, projectID, pID)
 	require.Equal(t, name, n)

@@ -15,8 +15,8 @@ func InsertTasksGroup(ctx context.Context, dbpool PgxIface, projectID int, name 
 	return TasksGroupID, err
 }
 
-// GetTasksGroup retrieves a task group from the database
-func GetTasksGroup(ctx context.Context, dbpool PgxIface, TasksGroupID int) (int, string, string, string, string, error) {
+// GetTasksGroupsByProjectID retrieves a task group from the database
+func GetTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, TasksGroupID int) (int, string, string, string, string, error) {
 	var projectID int
 	var name, description, createdAt, updatedAt string
 	err := dbpool.QueryRow(ctx, `
