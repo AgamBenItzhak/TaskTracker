@@ -100,6 +100,14 @@ func DeleteTasksGroup(ctx context.Context, dbpool PgxIface, TasksGroupID int) er
 	return err
 }
 
+func DeleteAllTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, projectID int) error {
+	_, err := dbpool.Exec(ctx, `
+		DELETE FROM tasks_groups
+		WHERE project_id = $1
+	`, projectID)
+	return err
+}
+
 // InsertTask inserts a new task into the database
 func InsertTask(ctx context.Context, dbpool PgxIface, TasksGroupID int, name string, description string, status string, priority string, startDate string, endDate string) (int, error) {
 	var taskID int
