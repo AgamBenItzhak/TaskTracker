@@ -15,6 +15,30 @@ func InsertTasksGroup(ctx context.Context, dbpool PgxIface, projectID int, name 
 	return TasksGroupID, err
 }
 
+// GetAllTasksGroupsIDsByProjectID retrieves all task groups IDs from the database
+func GetAllTasksGroupsIDsByProjectID(ctx context.Context, dbpool PgxIface, projectID int) ([]int, error) {
+	rows, err := dbpool.Query(ctx, `
+		SELECT task_group_id
+		FROM tasks_groups
+		WHERE project_id = $1
+	`, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var TasksGroupIDs []int
+	for rows.Next() {
+		var TasksGroupID int
+		err = rows.Scan(&TasksGroupID)
+		if err != nil {
+			return nil, err
+		}
+		TasksGroupIDs = append(TasksGroupIDs, TasksGroupID)
+	}
+	return TasksGroupIDs, nil
+}
+
 // GetAllTasksGroupsByProjectID retrieves all task groups from the database
 func GetAllTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, projectID int) ([]int, []string, []string, []string, []string, error) {
 	rows, err := dbpool.Query(ctx, `
