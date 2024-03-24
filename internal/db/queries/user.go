@@ -13,6 +13,40 @@ func InsertUser(ctx context.Context, dbpool PgxIface, email, passwordHash, passw
 	return err
 }
 
+// GetUsers retrieves all users from the database
+func GetUsers(ctx context.Context, dbpool PgxIface) ([]int, error) {
+	rows, err := dbpool.Query(ctx, `
+		SELECT user_id
+		FROM users
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var userIDs []int
+	for rows.Next() {
+		var userID int
+		err := rows.Scan(&userID)
+		if err != nil {
+			return nil, err
+		}
+		userIDs = append(userIDs, userID)
+	}
+	return userIDs, nil
+}
+
+// GetUser retrieves a user from the database
+func GetUserByID(ctx context.Context, dbpool PgxIface, userID int) (string, string, string, string, string, string, error) {
+	var email, passwordHash, passwordSalt, firstName, lastName, createdAt, updatedAt string
+	err := dbpool.QueryRow(ctx, `
+		SELECT email, password_hash, password_salt, first_name, last_name, created_at, updated_at
+		FROM users
+		WHERE user_id = $1
+	`, userID).Scan(&email, &passwordHash, &passwordSalt, &firstName, &lastName, &createdAt, &updatedAt)
+	return email, passwordHash, passwordSalt, firstName, lastName, updatedAt, err
+}
+
 // GetUserByEmail retrieves a user from the database by email
 func GetUserByEmail(ctx context.Context, dbpool PgxIface, email string) (int, string, string, string, string, string, error) {
 	var userID int

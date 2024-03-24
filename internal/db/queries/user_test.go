@@ -30,6 +30,56 @@ func TestInsertUser(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestGetUsers(t *testing.T) {
+	mock, err := pgxmock.NewConn()
+	require.NoError(t, err)
+	defer mock.Close(context.Background())
+
+	mockRows := pgxmock.NewRows([]string{"user_id"}).
+		AddRow(1).
+		AddRow(2)
+
+	mock.ExpectQuery("SELECT").
+		WillReturnRows(mockRows)
+
+	userIDs, err := GetUsers(context.Background(), mock)
+	require.NoError(t, err)
+
+	require.Len(t, userIDs, 2)
+	require.Equal(t, 1, userIDs[0])
+	require.Equal(t, 2, userIDs[1])
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
+func TestGetUserByID(t *testing.T) {
+	mock, err := pgxmock.NewConn()
+	require.NoError(t, err)
+	defer mock.Close(context.Background())
+
+	userID := 1
+	mockRows := pgxmock.NewRows([]string{"email", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at"}).
+		AddRow("test@example.com", "passwordHash", "passwordSalt", "firstName", "lastName", "2021-01-01T00:00:00Z", "2021-01-01T00:00:00Z")
+
+	mock.ExpectQuery("SELECT").
+		WithArgs(userID).
+		WillReturnRows(mockRows)
+
+	email, passwordHash, passwordSalt, firstName, lastName, updatedAt, err := GetUserByID(context.Background(), mock, userID)
+	require.NoError(t, err)
+
+	require.Equal(t, "test@example.com", email)
+	require.Equal(t, "passwordHash", passwordHash)
+	require.Equal(t, "passwordSalt", passwordSalt)
+	require.Equal(t, "firstName", firstName)
+	require.Equal(t, "lastName", lastName)
+	require.Equal(t, "2021-01-01T00:00:00Z", updatedAt)
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
 func TestGetUserByEmail(t *testing.T) {
 	// Create a mock connection
 	mock, err := pgxmock.NewConn()
