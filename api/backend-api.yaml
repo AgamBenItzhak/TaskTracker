@@ -6,560 +6,781 @@ info:
 servers:
   - url: http://localhost:8080/api
 paths:
-  /users:
-    get:
-      summary: Get all users
-      tags:
-        - Users
-      operationId: getUsers
-      responses:
-        '200':
-          description: A list of users
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+  /users/register:
     post:
-      summary: Create a new user
+      summary: Register a new user
+      description: Register a new user with the system.
       tags:
-        - Users
-      operationId: createUser
+        - users
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUser'
+              $ref: '#/components/schemas/user'
       responses:
         '201':
-          description: The newly created user
+          description: User created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-                
-  /users/{userId}:
-    get:
-      summary: Get a user by ID
+                $ref: '#/components/schemas/user'
+        '400':
+          description: Invalid input
+  /users/login:
+    post:
+      summary: Login a user
+      description: Login a user to the system.
       tags:
-        - Users
-      operationId: getUserById
+        - users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '400':
+          description: Invalid input
+  /users/logout:
+    post:
+      summary: Logout a user
+      description: Logout a user from the system.
+      tags:
+        - users
+      responses:
+        '204':
+          description: User logged out
+  /users/{user_id}:
+    get:
+      summary: Get user by ID
+      description: Get a user by their ID.
+      tags:
+        - users
       parameters:
-        - name: userId
+        - name: user_id
           in: path
           required: true
           description: ID of the user to get
           schema:
             type: integer
+            format: int64
       responses:
         '200':
-          description: The user with the specified ID
+          description: User found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/user'
         '404':
           description: User not found
-
-  /projects:
-    get:
-      summary: Get all projects
+    put:
+      summary: Update user by ID
+      description: Update a user by their ID.
       tags:
-        - Projects
-      operationId: getProjects
-      responses:
-        '200':
-          description: A list of projects
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Project'
-    post:
-      summary: Create a new project
-      tags:
-        - Projects
-      operationId: createProject
+        - users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user to update
+          schema:
+            type: integer
+            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewProject'
+              $ref: '#/components/schemas/user'
       responses:
-        '201':
-          description: The newly created project
+        '200':
+          description: User updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
-
-  /projects/{projectId}:
-    get:
-      summary: Get a project by ID
+                $ref: '#/components/schemas/user'
+        '404':
+          description: User not found
+    delete:
+      summary: Delete user by ID
+      description: Delete a user by their ID.
       tags:
-        - Projects
-      operationId: getProjectById
+        - users
       parameters:
-        - name: projectId
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          description: User not found
+  /projects:
+    get:
+      summary: Get all projects
+      description: Get all projects in the system.
+      tags:
+        - projects
+      responses:
+        '200':
+          description: Projects found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/project'
+        '404':
+          description: Projects not found
+    post:
+      summary: Create a new project
+      description: Create a new project in the system.
+      tags:
+        - projects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/project'
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project'
+        '400':
+          description: Invalid input
+  /projects/{project_id}:
+    get:
+      summary: Get project by ID
+      description: Get a project by its ID.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
           in: path
           required: true
           description: ID of the project to get
           schema:
             type: integer
+            format: int64
       responses:
         '200':
-          description: The project with the specified ID
+          description: Project found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
+                $ref: '#/components/schemas/project'
         '404':
           description: Project not found
-
-  /projects/{projectId}/taskgroups:
-    get:
-      summary: Get all task groups for a project
+    put:
+      summary: Update project by ID
+      description: Update a project by its ID.
       tags:
-        - Task Groups
-      operationId: getTaskGroupsForProject
+        - projects
       parameters:
-        - name: projectId
+        - name: project_id
           in: path
           required: true
-          description: ID of the project to get task groups for
+          description: ID of the project to update
           schema:
             type: integer
-      responses:
-        '200':
-          description: A list of task groups for the project
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TaskGroup'
-        '404':
-          description: Project not found
-
-    post:
-      summary: Create a new task group for a project
-      tags:
-        - Task Groups
-      operationId: createTaskGroupForProject
-      parameters:
-        - name: projectId
-          in: path
-          required: true
-          description: ID of the project to create a task group for
-          schema:
-            type: integer
+            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewTaskGroup'
+              $ref: '#/components/schemas/project'
       responses:
-        '201':
-          description: The newly created task group
+        '200':
+          description: Project updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskGroup'
-
-  /taskgroups/{taskGroupId}:
-    get:
-      summary: Get a task group by ID
+                $ref: '#/components/schemas/project'
+        '404':
+          description: Project not found
+    delete:
+      summary: Delete project by ID
+      description: Delete a project by its ID.
       tags:
-        - Task Groups
-      operationId: getTaskGroupById
+        - projects
       parameters:
-        - name: taskGroupId
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Project deleted
+        '404':
+          description: Project not found
+  /projects/{project_id}/users:
+    get:
+      summary: Get all users in project
+      description: Get all users in a project.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to get users from
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Users found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        '404':
+          description: Users not found
+    post:
+      summary: Add user to project
+      description: Add a user to a project.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to add user to
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/project_user'
+      responses:
+        '201':
+          description: User added to project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project_user'
+        '400':
+          description: Invalid input
+  /projects/{project_id}/users/{user_id}:
+    put:
+      summary: Update user role in project
+      description: Update a user's role in a project.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to update user role in
+          schema:
+            type: integer
+            format: int64
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user to update role for
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/project_user'
+      responses:
+        '200':
+          description: User role updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project_user'
+        '404':
+          description: User or project not found
+    delete:
+      summary: Remove user from project
+      description: Remove a user from a project.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to remove user from
+          schema:
+            type: integer
+            format: int64
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user to remove from project
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: User removed from project
+        '404':
+          description: User or project not found
+  /projects/{project_id}/task-groups:
+    get:
+      summary: Get all task groups in project
+      description: Get all task groups in a project.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to get task groups from
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Task groups found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/task_group'
+        '404':
+          description: Task groups not found
+    post:
+      summary: Create a new task group in project
+      description: Create a new task group in a project.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to create task group in
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/task_group'
+      responses:
+        '201':
+          description: Task group created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/task_group'
+        '400':
+          description: Invalid input
+  /projects/{project_id}/task-groups/{task_group_id}:
+    get:
+      summary: Get task group by ID
+      description: Get a task group by its ID.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to get task group from
+          schema:
+            type: integer
+            format: int64
+        - name: task_group_id
           in: path
           required: true
           description: ID of the task group to get
           schema:
             type: integer
+            format: int64
       responses:
         '200':
-          description: The task group with the specified ID
+          description: Task group found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskGroup'
+                $ref: '#/components/schemas/task_group'
         '404':
           description: Task group not found
-
-  /taskgroups/{taskGroupId}/tasks:
-    get:
-      summary: Get all tasks for a task group
+    put:
+      summary: Update task group by ID
+      description: Update a task group by its ID.
       tags:
-        - Tasks
-      operationId: getTasksForTaskGroup
+        - projects
       parameters:
-        - name: taskGroupId
+        - name: project_id
           in: path
           required: true
-          description: ID of the task group to get tasks for
+          description: ID of the project to update task group in
           schema:
             type: integer
-      responses:
-        '200':
-          description: A list of tasks for the task group
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '404':
-          description: Task group not found
-
-    post:
-      summary: Create a new task for a task group
-      tags:
-        - Tasks
-      operationId: createTaskForTaskGroup
-      parameters:
-        - name: taskGroupId
+            format: int64
+        - name: task_group_id
           in: path
           required: true
-          description: ID of the task group to create a task for
+          description: ID of the task group to update
           schema:
             type: integer
+            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewTask'
+              $ref: '#/components/schemas/task_group'
       responses:
-        '201':
-          description: The newly created task
+        '200':
+          description: Task group updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
-
-  /tasks/{taskId}:
-    get:
-      summary: Get a task by ID
+                $ref: '#/components/schemas/task_group'
+        '404':
+          description: Task group not found
+    delete:
+      summary: Delete task group by ID
+      description: Delete a task group by its ID.
       tags:
-        - Tasks
-      operationId: getTaskById
+        - projects
       parameters:
-        - name: taskId
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to delete task group from
+          schema:
+            type: integer
+            format: int64
+        - name: task_group_id
+          in: path
+          required: true
+          description: ID of the task group to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Task group deleted
+  /projects/{project_id}/task-groups/{task_group_id}/tasks:
+    get:
+      summary: Get all tasks in task group
+      description: Get all tasks in a task group.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to get tasks from
+          schema:
+            type: integer
+            format: int64
+        - name: task_group_id
+          in: path
+          required: true
+          description: ID of the task group to get tasks from
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Tasks found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/task'
+        '404':
+          description: Tasks not found
+    post:
+      summary: Create a new task in task group
+      description: Create a new task in a task group.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to create task in
+          schema:
+            type: integer
+            format: int64
+        - name: task_group_id
+          in: path
+          required: true
+          description: ID of the task group to create task in
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/task'
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/task'
+        '400':
+          description: Invalid input
+  /projects/{project_id}/task-groups/{task_group_id}/tasks/{task_id}:
+    get:
+      summary: Get task by ID
+      description: Get a task by its ID.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to get task from
+          schema:
+            type: integer
+            format: int64
+        - name: task_group_id
+          in: path
+          required: true
+          description: ID of the task group to get task from
+          schema:
+            type: integer
+            format: int64
+        - name: task_id
           in: path
           required: true
           description: ID of the task to get
           schema:
             type: integer
+            format: int64
       responses:
         '200':
-          description: The task with the specified ID
+          description: Task found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
+                $ref: '#/components/schemas/task'
         '404':
           description: Task not found
-
-  /users/{userId}/projects:
-    get:
-      summary: Get all projects for a user
+    put:
+      summary: Update task by ID
+      description: Update a task by its ID.
       tags:
-        - Users
-      operationId: getProjectsForUser
+        - projects
       parameters:
-        - name: userId
+        - name: project_id
           in: path
           required: true
-          description: ID of the user to get projects for
+          description: ID of the project to update task in
           schema:
             type: integer
-      responses:
-        '200':
-          description: A list of projects for the user
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Project'
-        '404':
-          description: User not found
-
-    post:
-      summary: Add a user to a project
-      tags:
-        - Users
-      operationId: addUserToProject
-      parameters:
-        - name: userId
+            format: int64
+        - name: task_group_id
           in: path
           required: true
-          description: ID of the user to add to the project
+          description: ID of the task group to update task in
           schema:
             type: integer
+            format: int64
+        - name: task_id
+          in: path
+          required: true
+          description: ID of the task to update
+          schema:
+            type: integer
+            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUserProject'
+              $ref: '#/components/schemas/task'
       responses:
-        '201':
-          description: The newly created user project
+        '200':
+          description: Task updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/userProjects'
+                $ref: '#/components/schemas/task'
+        '404':
+          description: Task not found
+    delete:
+      summary: Delete task by ID
+      description: Delete a task by its ID.
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project to delete task from
+          schema:
+            type: integer
+            format: int64
+        - name: task_group_id
+          in: path
+          required: true
+          description: ID of the task group to delete task from
+          schema:
+            type: integer
+            format: int64
+        - name: task_id
+          in: path
+          required: true
+          description: ID of the task to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Task deleted
+
 
 components:
   schemas:
-    User:
+    user:
       type: object
       properties:
-        userId:
+        user_id:
           type: integer
+          format: int64
         email:
           type: string
           format: email
-        firstName:
+        first_name:
           type: string
-        lastName:
+        last_name:
           type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
+        created_at:
           type: string
           format: date-time
-        lastLogin:
+        updated_at:
           type: string
           format: date-time
-      required:
-        - userId
-        - email
-        - firstName
-        - lastName
-        - createdAt
-        - updatedAt
-        - lastLogin
-
-    NewUser:
+        last_seen:
+          type: string
+          format: date-time
+    project:
       type: object
       properties:
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-      required:
-        - email
-        - password
-        - firstName
-        - lastName
-
-    Project:
-      type: object
-      properties:
-        projectId:
+        project_id:
           type: integer
-        name:
+          format: int64
+        project_name:
           type: string
         description:
           type: string
-        ownerId:
-          type: integer
         status:
           type: string
-        startDate:
+        start_date:
           type: string
           format: date
-        endDate:
+        end_date:
           type: string
           format: date
-        createdAt:
+        created_at:
           type: string
           format: date-time
-        updatedAt:
+        updated_at:
           type: string
           format: date-time
-      required:
-        - projectId
-        - name
-        - ownerId
-        - status
-        - createdAt
-        - updatedAt
-
-    NewProject:
+    project_user:
       type: object
       properties:
-        name:
+        user_id:
+          type: integer
+          format: int64
+        project_id:
+          type: integer
+          format: int64
+        role:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    task_group:
+      type: object
+      properties:
+        task_group_id:
+          type: integer
+          format: int64
+        project_id:
+          type: integer
+          format: int64
+        group_name:
           type: string
         description:
           type: string
-        ownerId:
-          type: integer
-        status:
-          type: string
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-      required:
-        - name
-        - ownerId
-        - status
-
-    TaskGroup:
-      type: object
-      properties:
-        taskGroupId:
-          type: integer
-        projectId:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
-        createdAt:
+        created_at:
           type: string
           format: date-time
-        updatedAt:
+        updated_at:
           type: string
           format: date-time
-      required:
-        - taskGroupId
-        - projectId
-        - name
-        - createdAt
-        - updatedAt
-
-    NewTaskGroup:
+    task:
       type: object
       properties:
-        projectId:
+        task_id:
           type: integer
-        name:
+          format: int64
+        task_group_id:
+          type: integer
+          format: int64
+        task_name:
           type: string
         description:
           type: string
-      required:
-        - projectId
-        - name
-
-    Task:
-      type: object
-      properties:
-        taskId:
-          type: integer
-        taskGroupId:
-          type: integer
-        title:
-          type: string
-        description:
-          type: string
-        assigneeId:
-          type: integer
         status:
           type: string
         priority:
           type: string
-        startDate:
+        start_date:
           type: string
           format: date
-        endDate:
+        end_date:
           type: string
           format: date
-        createdAt:
+        created_at:
           type: string
           format: date-time
-        updatedAt:
+        updated_at:
           type: string
           format: date-time
-      required:
-        - taskId
-        - taskGroupId
-        - title
-        - assigneeId
-        - status
-        - priority
-        - createdAt
-        - updatedAt
-
-    NewTask:
-      type: object
-      properties:
-        taskGroupId:
-          type: integer
-        title:
-          type: string
-        description:
-          type: string
-        assigneeId:
-          type: integer
-        status:
-          type: string
-        priority:
-          type: string
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-      required:
-        - taskGroupId
-        - title
-        - assigneeId
-        - status
-        - priority
-        
-    userProjects:
-      type: object
-      properties:
-        userId:
-          type: integer
-        projectId:
-          type: integer
-        role:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      required:
-        - userId
-        - projectId
-        - role
-        - createdAt
-        - updatedAt
-
-    NewUserProject:
-      type: object
-      properties:
-        userId:
-          type: integer
-        projectId:
-          type: integer
-        role:
-          type: string
-      required:
-        - userId
-        - projectId
-        - role
