@@ -4,33 +4,24 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/AgamBenItzhak/TaskTracker/logger"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-type Config struct {
-	Database Database
-	Server   Server
-}
-
-type Database struct {
-	HOST     string
-	PORT     string
-	USER     string
-	PASSWORD string
-	DBNAME   string
-}
-
-type Server struct {
-	PORT string
-}
-
 var CfgFile string
 
-var Cfg Config
+func initLogger() {
+	err := logger.InitLogger()
+	if err != nil {
+		fmt.Println("Failed to initialize logger due to error: ", err)
+		os.Exit(1)
+	}
+}
 
 // InitConfig reads in config file and ENV variables if set.
 func InitConfig() {
+	initLogger()
 	if CfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(CfgFile)
@@ -49,6 +40,6 @@ func InitConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		logger.LogService.Info("Using config file: ", viper.ConfigFileUsed())
 	}
 }
