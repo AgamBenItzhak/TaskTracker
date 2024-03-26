@@ -10,7 +10,7 @@ import (
 
 // DB provides functions for the database
 type DB struct {
-	pool *pgxpool.Pool
+	Pool *pgxpool.Pool
 }
 
 func NewDB() (*DB, error) {
@@ -28,5 +28,5 @@ func NewDB() (*DB, error) {
 		return nil, err
 	}
 
-	return &DB{pool: pool}, nil
+	return &DB{Pool: pool}, nil
 }

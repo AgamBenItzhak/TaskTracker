@@ -9,9 +9,9 @@ import (
 
 // Server provides functions for the server
 type Server struct {
-	Router   *gin.Engine
-	DB       *db.DB
-	Services *services.Services
+	router   *gin.Engine
+	db       *db.DB
+	services *services.Services
 }
 
 // NewServer creates a new Server instance
@@ -25,14 +25,14 @@ func NewServer() (*Server, error) {
 	services := services.NewServices(db)
 
 	return &Server{
-		Router:   router,
-		DB:       db,
-		Services: services,
+		router:   router,
+		db:       db,
+		services: services,
 	}, nil
 }
 
 // Run runs the server
 func (s *Server) Run() {
 	addr := viper.GetString("server.host") + ":" + viper.GetString("server.port")
-	s.Router.Run(addr)
+	s.router.Run(addr)
 }
