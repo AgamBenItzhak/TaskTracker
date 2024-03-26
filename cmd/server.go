@@ -22,7 +22,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		server, err := server.NewServer()
 		if err != nil {
-			logger.Error(err)
+			logger.LogService.Error(err)
 		}
 		server.Run()
 	},
