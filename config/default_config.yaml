@@ -1,0 +1,20 @@
+# Server Configuration
+
+server:
+  port: 8080
+  host: localhost
+
+database:
+  host: localhost
+  port: 5432
+  username: myuser
+  password: mypassword
+  database: mydatabase
+
+auth:
+  token_secret: mysecret
+  expiration: 3600
+
+logging:
+  level: info
+  file: /var/log/server.log

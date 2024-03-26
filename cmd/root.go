@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/AgamBenItzhak/TaskTracker/config"
-	"github.com/AgamBenItzhak/TaskTracker/logger"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -37,7 +36,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(config.InitConfig, logger.InitLogger)
+	cobra.OnInitialize(config.InitConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
