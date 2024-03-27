@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
 	"github.com/pashagolub/pgxmock/v3"
 	"github.com/stretchr/testify/require"
 )
@@ -13,48 +14,84 @@ func TestInsertTasksGroup(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	projectID := 1
-	name := "name"
-	description := "description"
+	newTasksGroup := models.NewMockTasksGroups()
 
 	mock.ExpectQuery("INSERT INTO tasks_groups").
-		WithArgs(projectID, name, description).
-		WillReturnRows(pgxmock.NewRows([]string{"task_group_id"}).AddRow(1))
+		WithArgs(newTasksGroup.ProjectID, newTasksGroup.GroupName, newTasksGroup.Description).
+		WillReturnRows(pgxmock.NewRows([]string{"tasks_group_id"}).AddRow(1))
 
-	TasksGroupID, err := InsertTasksGroup(context.Background(), mock, projectID, name, description)
+	tasksGroupID, err := InsertTasksGroup(context.Background(), mock, newTasksGroup)
 	require.NoError(t, err)
-	require.Equal(t, 1, TasksGroupID)
+	require.Equal(t, 1, tasksGroupID)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
 }
 
-func TestGetTasksGroupsByProjectID(t *testing.T) {
+func TestGetAllTasksGroupsIDsByProjectID(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	TasksGroupID := 1
-	projectID := 1
-	name := "name"
-	description := "description"
-	createdAt := "2021-01-01T00:00:00Z"
-	updatedAt := "2021-01-01T00:00:00Z"
+	newTasksGroup := models.NewMockTasksGroups()
 
-	mockRows := pgxmock.NewRows([]string{"project_id", "name", "description", "created_at", "updated_at"}).
-		AddRow(projectID, name, description, createdAt, updatedAt)
+	mockRows := pgxmock.NewRows([]string{"tasks_group_id"}).
+		AddRow(newTasksGroup.TaskGroupID)
 
 	mock.ExpectQuery("SELECT").
-		WithArgs(TasksGroupID).
+		WithArgs(newTasksGroup.ProjectID).
 		WillReturnRows(mockRows)
 
-	pID, n, d, cA, uA, err := GetTasksGroupsByID(context.Background(), mock, TasksGroupID)
+	tasksGroupIDs, err := GetAllTasksGroupsIDsByProjectID(context.Background(), mock, newTasksGroup.ProjectID)
 	require.NoError(t, err)
-	require.Equal(t, projectID, pID)
-	require.Equal(t, name, n)
-	require.Equal(t, description, d)
-	require.Equal(t, createdAt, cA)
-	require.Equal(t, updatedAt, uA)
+
+	require.Equal(t, newTasksGroup.TaskGroupID, tasksGroupIDs[0])
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
+func TestGetAllTasksGroupsByProjectID(t *testing.T) {
+	mock, err := pgxmock.NewPool()
+	require.NoError(t, err)
+	defer mock.Close()
+
+	newTasksGroup := models.NewMockTasksGroups()
+
+	mockRows := pgxmock.NewRows([]string{"task_group_id", "project_id", "group_name", "description", "created_at", "updated_at"}).
+		AddRow(newTasksGroup.TaskGroupID, newTasksGroup.ProjectID, newTasksGroup.GroupName, newTasksGroup.Description, newTasksGroup.CreatedAt, newTasksGroup.UpdatedAt)
+
+	mock.ExpectQuery("SELECT").
+		WithArgs(newTasksGroup.ProjectID).
+		WillReturnRows(mockRows)
+
+	tasksGroups, err := GetAllTasksGroupsByProjectID(context.Background(), mock, newTasksGroup.ProjectID)
+	require.NoError(t, err)
+
+	require.Equal(t, newTasksGroup, tasksGroups[0])
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
+func TestGetTasksGroupsByID(t *testing.T) {
+	mock, err := pgxmock.NewPool()
+	require.NoError(t, err)
+	defer mock.Close()
+
+	newTasksGroup := models.NewMockTasksGroups()
+
+	mockRows := pgxmock.NewRows([]string{"task_group_id", "project_id", "group_name", "description", "created_at", "updated_at"}).
+		AddRow(newTasksGroup.TaskGroupID, newTasksGroup.ProjectID, newTasksGroup.GroupName, newTasksGroup.Description, newTasksGroup.CreatedAt, newTasksGroup.UpdatedAt)
+
+	mock.ExpectQuery("SELECT").
+		WithArgs(newTasksGroup.TaskGroupID).
+		WillReturnRows(mockRows)
+
+	tasksGroup, err := GetTasksGroupsByID(context.Background(), mock, newTasksGroup.TaskGroupID)
+	require.NoError(t, err)
+
+	require.Equal(t, newTasksGroup, tasksGroup)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
@@ -65,15 +102,13 @@ func TestUpdateTasksGroup(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	TasksGroupID := 1
-	name := "name"
-	description := "description"
+	newTasksGroup := models.NewMockTasksGroups()
 
 	mock.ExpectExec("UPDATE tasks_groups").
-		WithArgs(TasksGroupID, name, description).
+		WithArgs(newTasksGroup.TaskGroupID, newTasksGroup.ProjectID, newTasksGroup.GroupName, newTasksGroup.Description).
 		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
-	err = UpdateTasksGroup(context.Background(), mock, TasksGroupID, name, description)
+	err = UpdateTasksGroup(context.Background(), mock, newTasksGroup)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -98,24 +133,36 @@ func TestDeleteTasksGroup(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestDeleteAllTasksGroupsByProjectID(t *testing.T) {
+	mock, err := pgxmock.NewPool()
+	require.NoError(t, err)
+	defer mock.Close()
+
+	projectID := 1
+
+	mock.ExpectExec("DELETE FROM tasks_groups").
+		WithArgs(projectID).
+		WillReturnResult(pgxmock.NewResult("DELETE", 1))
+
+	err = DeleteAllTasksGroupsByProjectID(context.Background(), mock, projectID)
+	require.NoError(t, err)
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
 func TestInsertTask(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	TasksGroupID := 1
-	name := "name"
-	description := "description"
-	status := "status"
-	priority := "priority"
-	startDate := "2021-01-01T00:00:00Z"
-	endDate := "2021-01-01T00:00:00Z"
+	newTask := models.NewMockTasks()
 
 	mock.ExpectQuery("INSERT INTO tasks").
-		WithArgs(TasksGroupID, name, description, status, priority, startDate, endDate).
+		WithArgs(newTask.TaskGroupID, newTask.TaskName, newTask.Description, newTask.Status, newTask.Priority, newTask.StartDate, newTask.EndDate).
 		WillReturnRows(pgxmock.NewRows([]string{"task_id"}).AddRow(1))
 
-	taskID, err := InsertTask(context.Background(), mock, TasksGroupID, name, description, status, priority, startDate, endDate)
+	taskID, err := InsertTask(context.Background(), mock, newTask)
 	require.NoError(t, err)
 	require.Equal(t, 1, taskID)
 
@@ -123,69 +170,71 @@ func TestInsertTask(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestGetTask(t *testing.T) {
+func TestGetTaskByID(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	taskID := 1
-	TasksGroupID := 1
-	name := "name"
-	description := "description"
-	status := "status"
-	priority := "priority"
-	startDate := "2021-01-01T00:00:00Z"
-	endDate := "2021-01-01T00:00:00Z"
-	createdAt := "2021-01-01T00:00:00Z"
-	updatedAt := "2021-01-01T00:00:00Z"
+	newTask := models.NewMockTasks()
 
-	mockRows := pgxmock.NewRows([]string{"task_group_id", "name", "description", "status", "priority", "start_date", "end_date", "created_at", "updated_at"}).
-		AddRow(TasksGroupID, name, description, status, priority, startDate, endDate, createdAt, updatedAt)
+	mockRows := pgxmock.NewRows([]string{"task_id", "tasks_group_id", "task_name", "description", "status", "priority", "start_date", "end_date", "created_at", "updated_at"}).
+		AddRow(newTask.TaskID, newTask.TaskGroupID, newTask.TaskName, newTask.Description, newTask.Status, newTask.Priority, newTask.StartDate, newTask.EndDate, newTask.CreatedAt, newTask.UpdatedAt)
 
 	mock.ExpectQuery("SELECT").
-		WithArgs(taskID).
+		WithArgs(newTask.TaskID).
 		WillReturnRows(mockRows)
 
-	tGID, n, d, s, p, sD, eD, uA, err := GetTaskByID(context.Background(), mock, taskID)
+	task, err := GetTaskByID(context.Background(), mock, newTask.TaskID)
 	require.NoError(t, err)
-	require.Equal(t, TasksGroupID, tGID)
-	require.Equal(t, name, n)
-	require.Equal(t, description, d)
-	require.Equal(t, status, s)
-	require.Equal(t, priority, p)
-	require.Equal(t, startDate, sD)
-	require.Equal(t, endDate, eD)
-	require.Equal(t, updatedAt, uA)
+
+	require.Equal(t, newTask, task)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
 }
 
-func TestUpdateTask(t *testing.T) {
+func TestGetAllTasksByTasksGroupID(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	taskID := 1
-	name := "name"
-	description := "description"
-	status := "status"
-	priority := "priority"
-	startDate := "2021-01-01T00:00:00Z"
-	endDate := "2021-01-01T00:00:00Z"
+	newTask := models.NewMockTasks()
+
+	mockRows := pgxmock.NewRows([]string{"task_id", "task_group_id", "task_name", "description", "status", "priority", "start_date", "end_date", "created_at", "updated_at"}).
+		AddRow(newTask.TaskID, newTask.TaskGroupID, newTask.TaskName, newTask.Description, newTask.Status, newTask.Priority, newTask.StartDate, newTask.EndDate, newTask.CreatedAt, newTask.UpdatedAt)
+
+	mock.ExpectQuery("SELECT").
+		WithArgs(newTask.TaskGroupID).
+		WillReturnRows(mockRows)
+
+	tasks, err := GetAllTasksByTasksGroupID(context.Background(), mock, newTask.TaskGroupID)
+	require.NoError(t, err)
+
+	require.Equal(t, newTask, tasks[0])
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
+func TestUpdateTaskByID(t *testing.T) {
+	mock, err := pgxmock.NewPool()
+	require.NoError(t, err)
+	defer mock.Close()
+
+	newTask := models.NewMockTasks()
 
 	mock.ExpectExec("UPDATE tasks").
-		WithArgs(taskID, name, description, status, priority, startDate, endDate).
+		WithArgs(newTask.TaskID, newTask.TaskGroupID, newTask.TaskName, newTask.Description, newTask.Status, newTask.Priority, newTask.StartDate, newTask.EndDate).
 		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
-	err = UpdateTaskByID(context.Background(), mock, taskID, name, description, status, priority, startDate, endDate)
+	err = UpdateTaskByID(context.Background(), mock, newTask)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
 }
 
-func TestDeleteTask(t *testing.T) {
+func TestDeleteTaskByID(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()

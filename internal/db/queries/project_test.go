@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
+
 	"github.com/pashagolub/pgxmock/v3"
 	"github.com/stretchr/testify/require"
 )
@@ -13,50 +15,57 @@ func TestInsertProject(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	name := "name"
-	description := "description"
-	status := "status"
-	startDate := "2021-01-01T00:00:00Z"
-	endDate := "2021-01-01T00:00:00Z"
+	newProject := models.NewMockProject()
 
 	mock.ExpectQuery("INSERT INTO projects").
-		WithArgs(name, description, status, startDate, endDate).
-		WillReturnRows(pgxmock.NewRows([]string{"project_id"}).AddRow(1))
+		WithArgs(newProject.ProjectName, newProject.Description, newProject.Status, newProject.StartDate, newProject.EndDate).
+		WillReturnRows(pgxmock.NewRows([]string{"project_id"}).AddRow(newProject.ProjectID))
 
-	projectID, err := InsertProject(context.Background(), mock, name, description, status, startDate, endDate)
+	projectID, err := InsertProject(context.Background(), mock, newProject)
 	require.NoError(t, err)
-	require.Equal(t, 1, projectID)
+	require.Equal(t, newProject.ProjectID, projectID)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
 }
 
-func TestGetProject(t *testing.T) {
+func TestGetProjectsIDs(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	projectID := 1
-	name := "name"
-	description := "description"
-	status := "status"
-	createdAt := "2021-01-01T00:00:00Z"
-	updatedAt := "2021-01-01T00:00:00Z"
-
-	mockRows := pgxmock.NewRows([]string{"name", "description", "status", "created_at", "updated_at"}).
-		AddRow(name, description, status, createdAt, updatedAt)
+	mockRows := pgxmock.NewRows([]string{"project_id"}).
+		AddRow(1).
+		AddRow(2)
 
 	mock.ExpectQuery("SELECT").
-		WithArgs(projectID).
 		WillReturnRows(mockRows)
 
-	n, d, s, cA, uA, err := GetProject(context.Background(), mock, projectID)
+	projectIDs, err := GetProjectsIDs(context.Background(), mock)
 	require.NoError(t, err)
-	require.Equal(t, name, n)
-	require.Equal(t, description, d)
-	require.Equal(t, status, s)
-	require.Equal(t, createdAt, cA)
-	require.Equal(t, updatedAt, uA)
+	require.Equal(t, []int{1, 2}, projectIDs)
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
+func TestGetProjectByID(t *testing.T) {
+	mock, err := pgxmock.NewPool()
+	require.NoError(t, err)
+	defer mock.Close()
+
+	newProject := models.NewMockProject()
+
+	mockRows := pgxmock.NewRows([]string{"project_id", "project_name", "description", "status", "start_date", "end_date", "created_at", "updated_at"}).
+		AddRow(newProject.ProjectID, newProject.ProjectName, newProject.Description, newProject.Status, newProject.StartDate, newProject.EndDate, newProject.CreatedAt, newProject.UpdatedAt)
+
+	mock.ExpectQuery("SELECT").
+		WithArgs(newProject.ProjectID).
+		WillReturnRows(mockRows)
+
+	project, err := GetProjectByID(context.Background(), mock, newProject.ProjectID)
+	require.NoError(t, err)
+	require.Equal(t, newProject, project)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
@@ -67,18 +76,13 @@ func TestUpdateProject(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	projectID := 1
-	name := "name"
-	description := "description"
-	status := "status"
-	startDate := "2021-01-01T00:00:00Z"
-	endDate := "2021-01-01T00:00:00Z"
+	newProject := models.NewMockProject()
 
 	mock.ExpectExec("UPDATE projects").
-		WithArgs(projectID, name, description, status, startDate, endDate).
+		WithArgs(newProject.ProjectName, newProject.Description, newProject.Status, newProject.StartDate, newProject.EndDate, newProject.ProjectID).
 		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
-	err = UpdateProject(context.Background(), mock, projectID, name, description, status, startDate, endDate)
+	err = UpdateProject(context.Background(), mock, newProject)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()

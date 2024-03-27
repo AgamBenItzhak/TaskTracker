@@ -2,17 +2,19 @@ package queries
 
 import (
 	"context"
+
+	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
 )
 
 // InsertTasksGroup inserts a new task group into the database
-func InsertTasksGroup(ctx context.Context, dbpool PgxIface, projectID int, name string, description string) (int, error) {
-	var TasksGroupID int
+func InsertTasksGroup(ctx context.Context, dbpool PgxIface, tasksGroup *models.TasksGroups) (int, error) {
+	var tasksGroupID int
 	err := dbpool.QueryRow(ctx, `
-		INSERT INTO tasks_groups (project_id, name, description, created_at, updated_at)
+		INSERT INTO tasks_groups (project_id, group_name, description, created_at, updated_at)
 		VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 		RETURNING task_group_id
-	`, projectID, name, description).Scan(&TasksGroupID)
-	return TasksGroupID, err
+	`, tasksGroup.ProjectID, tasksGroup.GroupName, tasksGroup.Description).Scan(&tasksGroupID)
+	return tasksGroupID, err
 }
 
 // GetAllTasksGroupsIDsByProjectID retrieves all task groups IDs from the database
@@ -40,54 +42,53 @@ func GetAllTasksGroupsIDsByProjectID(ctx context.Context, dbpool PgxIface, proje
 }
 
 // GetAllTasksGroupsByProjectID retrieves all task groups from the database
-func GetAllTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, projectID int) ([]int, []string, []string, []string, []string, error) {
+func GetAllTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, projectID int) ([]*models.TasksGroups, error) {
 	rows, err := dbpool.Query(ctx, `
-		SELECT task_group_id, name, description, created_at, updated_at
+		SELECT task_group_id, project_id, group_name, description, created_at, updated_at
 		FROM tasks_groups
 		WHERE project_id = $1
 	`, projectID)
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, err
 	}
 	defer rows.Close()
 
-	var TasksGroupIDs []int
-	var names, descriptions, createdAts, updatedAts []string
+	var tasksGroups []*models.TasksGroups
 	for rows.Next() {
-		var TasksGroupID int
-		var name, description, createdAt, updatedAt string
-		err = rows.Scan(&TasksGroupID, &name, &description, &createdAt, &updatedAt)
+		var taskGroupID, projectID int
+		var groupName, description, createdAt, updatedAt string
+		err = rows.Scan(&taskGroupID, &projectID, &groupName, &description, &createdAt, &updatedAt)
 		if err != nil {
-			return nil, nil, nil, nil, nil, err
+			return nil, err
 		}
-		TasksGroupIDs = append(TasksGroupIDs, TasksGroupID)
-		names = append(names, name)
-		descriptions = append(descriptions, description)
-		createdAts = append(createdAts, createdAt)
-		updatedAts = append(updatedAts, updatedAt)
+
+		tasksGroups = append(tasksGroups, models.NewTasksGroups(taskGroupID, projectID, groupName, description, createdAt, updatedAt))
 	}
-	return TasksGroupIDs, names, descriptions, createdAts, updatedAts, nil
+	return tasksGroups, nil
 }
 
 // GetTasksGroupsByID retrieves a task group from the database
-func GetTasksGroupsByID(ctx context.Context, dbpool PgxIface, TasksGroupID int) (int, string, string, string, string, error) {
-	var projectID int
+func GetTasksGroupsByID(ctx context.Context, dbpool PgxIface, TasksGroupID int) (*models.TasksGroups, error) {
+	var taskGroupID, projectID int
 	var groupName, description, createdAt, updatedAt string
 	err := dbpool.QueryRow(ctx, `
-		SELECT project_id, name, description, created_at, updated_at
+		SELECT task_group_id, project_id, group_name, description, created_at, updated_at
 		FROM tasks_groups
 		WHERE task_group_id = $1
-	`, TasksGroupID).Scan(&projectID, &groupName, &description, &createdAt, &updatedAt)
-	return projectID, groupName, description, createdAt, updatedAt, err
+	`, TasksGroupID).Scan(&taskGroupID, &projectID, &groupName, &description, &createdAt, &updatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return models.NewTasksGroups(taskGroupID, projectID, groupName, description, createdAt, updatedAt), nil
 }
 
 // UpdateTasksGroup updates a task group in the database
-func UpdateTasksGroup(ctx context.Context, dbpool PgxIface, TasksGroupID int, name string, description string) error {
+func UpdateTasksGroup(ctx context.Context, dbpool PgxIface, tasksGroup *models.TasksGroups) error {
 	_, err := dbpool.Exec(ctx, `
 		UPDATE tasks_groups
-		SET name = $2, description = $3, updated_at = CURRENT_TIMESTAMP
+		SET project_id = $2, group_name = $3, description = $4, updated_at = CURRENT_TIMESTAMP
 		WHERE task_group_id = $1
-	`, TasksGroupID, name, description)
+	`, tasksGroup.TaskGroupID, tasksGroup.ProjectID, tasksGroup.GroupName, tasksGroup.Description)
 	return err
 }
 
@@ -109,67 +110,64 @@ func DeleteAllTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, proje
 }
 
 // InsertTask inserts a new task into the database
-func InsertTask(ctx context.Context, dbpool PgxIface, TasksGroupID int, name string, description string, status string, priority string, startDate string, endDate string) (int, error) {
+func InsertTask(ctx context.Context, dbpool PgxIface, task *models.Tasks) (int, error) {
 	var taskID int
 	err := dbpool.QueryRow(ctx, `
-		INSERT INTO tasks (task_group_id, name, description, status, priority, start_date, end_date, created_at, updated_at)
+		INSERT INTO tasks (task_group_id, task_name, description, status, priority, start_date, end_date, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 		RETURNING task_id
-	`, TasksGroupID, name, description, status, priority, startDate, endDate).Scan(&taskID)
+	`, task.TaskGroupID, task.TaskName, task.Description, task.Status, task.Priority, task.StartDate, task.EndDate).Scan(&taskID)
 	return taskID, err
 }
 
 // GetTask retrieves a task from the database
-func GetTaskByID(ctx context.Context, dbpool PgxIface, taskID int) (int, string, string, string, string, string, string, string, error) {
-	var TasksGroupID int
-	var name, description, status, priority, startDate, endDate, createdAt, updatedAt string
+func GetTaskByID(ctx context.Context, dbpool PgxIface, taskID int) (*models.Tasks, error) {
+	var taskGroupID int
+	var taskName, description, status, priority, startDate, endDate, createdAt, updatedAt string
 	err := dbpool.QueryRow(ctx, `
-		SELECT task_group_id, name, description, status, priority, start_date, end_date, created_at, updated_at
+		SELECT task_id, task_group_id, task_name, description, status, priority, start_date, end_date, created_at, updated_at
 		FROM tasks
 		WHERE task_id = $1
-	`, taskID).Scan(&TasksGroupID, &name, &description, &status, &priority, &startDate, &endDate, &createdAt, &updatedAt)
-	return TasksGroupID, name, description, status, priority, startDate, endDate, updatedAt, err
+	`, taskID).Scan(&taskID, &taskGroupID, &taskName, &description, &status, &priority, &startDate, &endDate, &createdAt, &updatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return models.NewTasks(taskID, taskGroupID, taskName, description, status, priority, startDate, endDate, createdAt, updatedAt), nil
 }
 
 // GetAllTasksByTasksGroupID retrieves all tasks from the database
-func GetAllTasksByTasksGroupID(ctx context.Context, dbpool PgxIface, TasksGroupID int) ([]int, []string, []string, []string, []string, []string, []string, error) {
+func GetAllTasksByTasksGroupID(ctx context.Context, dbpool PgxIface, TasksGroupID int) ([]*models.Tasks, error) {
 	rows, err := dbpool.Query(ctx, `
-		SELECT task_id, name, description, status, priority, start_date, end_date
+		SELECT task_id, task_group_id, task_name, description, status, priority, start_date, end_date, created_at, updated_at
 		FROM tasks
 		WHERE task_group_id = $1
 	`, TasksGroupID)
 	if err != nil {
-		return nil, nil, nil, nil, nil, nil, nil, err
+		return nil, err
 	}
 	defer rows.Close()
 
-	var taskIDs []int
-	var names, descriptions, statuses, priorities, startDates, endDates []string
+	var tasks []*models.Tasks
 	for rows.Next() {
-		var taskID int
-		var name, description, status, priority, startDate, endDate string
-		err = rows.Scan(&taskID, &name, &description, &status, &priority, &startDate, &endDate)
+		var taskID, taskGroupID int
+		var taskName, description, status, priority, startDate, endDate, createdAt, updatedAt string
+		err = rows.Scan(&taskID, &taskGroupID, &taskName, &description, &status, &priority, &startDate, &endDate, &createdAt, &updatedAt)
 		if err != nil {
-			return nil, nil, nil, nil, nil, nil, nil, err
+			return nil, err
 		}
-		taskIDs = append(taskIDs, taskID)
-		names = append(names, name)
-		descriptions = append(descriptions, description)
-		statuses = append(statuses, status)
-		priorities = append(priorities, priority)
-		startDates = append(startDates, startDate)
-		endDates = append(endDates, endDate)
+
+		tasks = append(tasks, models.NewTasks(taskID, taskGroupID, taskName, description, status, priority, startDate, endDate, createdAt, updatedAt))
 	}
-	return taskIDs, names, descriptions, statuses, priorities, startDates, endDates, nil
+	return tasks, nil
 }
 
 // UpdateTaskByID updates a task in the database
-func UpdateTaskByID(ctx context.Context, dbpool PgxIface, taskID int, name string, description string, status string, priority string, startDate string, endDate string) error {
+func UpdateTaskByID(ctx context.Context, dbpool PgxIface, task *models.Tasks) error {
 	_, err := dbpool.Exec(ctx, `
 		UPDATE tasks
-		SET name = $2, description = $3, status = $4, priority = $5, start_date = $6, end_date = $7, updated_at = CURRENT_TIMESTAMP
+		SET task_group_id = $2, task_name = $3, description = $4, status = $5, priority = $6, start_date = $7, end_date = $8, updated_at = CURRENT_TIMESTAMP
 		WHERE task_id = $1
-	`, taskID, name, description, status, priority, startDate, endDate)
+	`, task.TaskID, task.TaskGroupID, task.TaskName, task.Description, task.Status, task.Priority, task.StartDate, task.EndDate)
 	return err
 }
 

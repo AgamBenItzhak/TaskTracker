@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
+
 	"github.com/pashagolub/pgxmock/v3"
 	"github.com/stretchr/testify/require"
 )
@@ -13,25 +15,24 @@ func TestInsertUser(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	email := "test@example.com"
-	passwordHash := "passwordHash"
-	passwordSalt := "passwordSalt"
-	firstName := "firstName"
-	lastName := "lastName"
+	newUser := models.NewMockUser()
+
+	mockRows := pgxmock.NewRows([]string{"user_id"}).AddRow(newUser.UserID)
 
 	mock.ExpectQuery("INSERT INTO users").
-		WithArgs(email, passwordHash, passwordSalt, firstName, lastName).
-		WillReturnRows(pgxmock.NewRows([]string{"user_id"}).AddRow(1))
+		WithArgs(newUser.Email, newUser.PasswordHash, newUser.PasswordSalt, newUser.FirstName, newUser.LastName).
+		WillReturnRows(mockRows)
 
-	userID, err := InsertUser(context.Background(), mock, email, passwordHash, passwordSalt, firstName, lastName)
+	userID, err := InsertUser(context.Background(), mock, newUser)
 	require.NoError(t, err)
-	require.Equal(t, 1, userID)
+
+	require.Equal(t, newUser.UserID, userID)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
 }
 
-func TestGetUsers(t *testing.T) {
+func TestGetUsersIDs(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
@@ -59,23 +60,19 @@ func TestGetUserByID(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
-	mockRows := pgxmock.NewRows([]string{"email", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at"}).
-		AddRow("test@example.com", "passwordHash", "passwordSalt", "firstName", "lastName", "2021-01-01T00:00:00Z", "2021-01-01T00:00:00Z")
+	newUser := models.NewMockUser()
+
+	mockRows := pgxmock.NewRows([]string{"user_id", "email", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at", "last_seen"}).
+		AddRow(newUser.UserID, newUser.Email, newUser.PasswordHash, newUser.PasswordSalt, newUser.FirstName, newUser.LastName, newUser.CreatedAt, newUser.UpdatedAt, newUser.LastSeen)
 
 	mock.ExpectQuery("SELECT").
-		WithArgs(userID).
+		WithArgs(newUser.UserID).
 		WillReturnRows(mockRows)
 
-	email, passwordHash, passwordSalt, firstName, lastName, updatedAt, err := GetUserByID(context.Background(), mock, userID)
+	user, err := GetUserByID(context.Background(), mock, newUser.UserID)
 	require.NoError(t, err)
 
-	require.Equal(t, "test@example.com", email)
-	require.Equal(t, "passwordHash", passwordHash)
-	require.Equal(t, "passwordSalt", passwordSalt)
-	require.Equal(t, "firstName", firstName)
-	require.Equal(t, "lastName", lastName)
-	require.Equal(t, "2021-01-01T00:00:00Z", updatedAt)
+	require.Equal(t, newUser, user)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
@@ -87,28 +84,25 @@ func TestGetUserByEmail(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	email := "test@example.com"
-	mockRows := pgxmock.NewRows([]string{"user_id", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at"}).
-		AddRow(1, "passwordHash", "passwordSalt", "firstName", "lastName", "2021-01-01T00:00:00Z", "2021-01-01T00:00:00Z")
+	newUser := models.NewMockUser()
 
-	// Expect a SELECT query with the given email argument and return the mock rows
+	// Create a mock row
+	mockRows := pgxmock.NewRows([]string{"user_id", "email", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at", "last_seen"}).
+		AddRow(newUser.UserID, newUser.Email, newUser.PasswordHash, newUser.PasswordSalt, newUser.FirstName, newUser.LastName, newUser.CreatedAt, newUser.UpdatedAt, newUser.LastSeen)
+
+	// Expect a query to be executed
 	mock.ExpectQuery("SELECT").
-		WithArgs(email).
+		WithArgs(newUser.Email).
 		WillReturnRows(mockRows)
 
-	// Call the GetUserByEmail function and retrieve the returned values
-	userID, passwordHash, passwordSalt, firstName, lastName, updatedAt, err := GetUserByEmail(context.Background(), mock, email)
+	// Call the function we are testing
+	user, err := GetUserByEmail(context.Background(), mock, newUser.Email)
 	require.NoError(t, err)
 
-	// Assert the expected values
-	require.Equal(t, 1, userID)
-	require.Equal(t, "passwordHash", passwordHash)
-	require.Equal(t, "passwordSalt", passwordSalt)
-	require.Equal(t, "firstName", firstName)
-	require.Equal(t, "lastName", lastName)
-	require.Equal(t, "2021-01-01T00:00:00Z", updatedAt)
+	// Check if the returned user is the same as the one we created
+	require.Equal(t, newUser, user)
 
-	// Verify that all expectations were met
+	// Check if all expectations were met
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
 }
@@ -118,18 +112,13 @@ func TestUpdateUser(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
-	email := "test@example.com"
-	passwordHash := "passwordHash"
-	passwordSalt := "passwordSalt"
-	firstName := "firstName"
-	lastName := "lastName"
+	newUser := models.NewMockUser()
 
 	mock.ExpectExec("UPDATE users").
-		WithArgs(userID, email, passwordHash, passwordSalt, firstName, lastName).
+		WithArgs(newUser.UserID, newUser.Email, newUser.PasswordHash, newUser.PasswordSalt, newUser.FirstName, newUser.LastName).
 		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
-	err = UpdateUser(context.Background(), mock, userID, email, passwordHash, passwordSalt, firstName, lastName)
+	err = UpdateUser(context.Background(), mock, newUser)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -141,13 +130,13 @@ func TestDeleteUser(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
+	user := models.NewMockUser()
 
 	mock.ExpectExec("DELETE FROM users").
-		WithArgs(userID).
+		WithArgs(user.UserID).
 		WillReturnResult(pgxmock.NewResult("DELETE", 1))
 
-	err = DeleteUser(context.Background(), mock, userID)
+	err = DeleteUser(context.Background(), mock, user.UserID)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -159,15 +148,13 @@ func TestInsertProjectUser(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
-	projectID := 1
-	role := "admin"
+	projectUser := models.NewMockProjectUsers()
 
 	mock.ExpectExec("INSERT INTO project_users").
-		WithArgs(userID, projectID, role).
+		WithArgs(projectUser.UserID, projectUser.ProjectID, projectUser.Role).
 		WillReturnResult(pgxmock.NewResult("INSERT", 1))
 
-	err = InsertProjectUser(context.Background(), mock, userID, projectID, role)
+	err = InsertProjectUser(context.Background(), mock, projectUser.UserID, projectUser.ProjectID, projectUser.Role)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -179,22 +166,19 @@ func TestGetProjectUser(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
-	projectID := 1
-	role := "admin"
+	newProjectUser := models.NewMockProjectUsers()
 
-	mockRows := pgxmock.NewRows([]string{"role", "created_at", "updated_at"}).
-		AddRow(role, "2021-01-01T00:00:00Z", "2021-01-01T00:00:00Z")
+	mockRows := pgxmock.NewRows([]string{"user_id", "project_id", "role", "created_at", "updated_at"}).
+		AddRow(newProjectUser.UserID, newProjectUser.ProjectID, newProjectUser.Role, newProjectUser.CreatedAt, newProjectUser.UpdatedAt)
 
 	mock.ExpectQuery("SELECT").
-		WithArgs(userID, projectID).
+		WithArgs(newProjectUser.UserID, newProjectUser.ProjectID).
 		WillReturnRows(mockRows)
 
-	retrievedRole, updatedAt, err := GetProjectUser(context.Background(), mock, userID, projectID)
+	projectUser, err := GetProjectUser(context.Background(), mock, newProjectUser.UserID, newProjectUser.ProjectID)
 	require.NoError(t, err)
 
-	require.Equal(t, role, retrievedRole)
-	require.Equal(t, "2021-01-01T00:00:00Z", updatedAt)
+	require.Equal(t, newProjectUser, projectUser)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
@@ -205,15 +189,13 @@ func TestUpdateProjectUser(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
-	projectID := 1
-	role := "admin"
+	projectUser := models.NewMockProjectUsers()
 
 	mock.ExpectExec("UPDATE project_users").
-		WithArgs(userID, projectID, role).
+		WithArgs(projectUser.UserID, projectUser.ProjectID, projectUser.Role).
 		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
-	err = UpdateProjectUser(context.Background(), mock, userID, projectID, role)
+	err = UpdateProjectUser(context.Background(), mock, projectUser.UserID, projectUser.ProjectID, projectUser.Role)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -225,14 +207,13 @@ func TestDeleteProjectUser(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
-	projectID := 1
+	projectUser := models.NewMockProjectUsers()
 
 	mock.ExpectExec("DELETE FROM project_users").
-		WithArgs(userID, projectID).
+		WithArgs(projectUser.UserID, projectUser.ProjectID).
 		WillReturnResult(pgxmock.NewResult("DELETE", 1))
 
-	err = DeleteProjectUser(context.Background(), mock, userID, projectID)
+	err = DeleteProjectUser(context.Background(), mock, projectUser.UserID, projectUser.ProjectID)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -244,21 +225,21 @@ func TestGetProjectsByUserID(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
-	projectID := 1
+	user := models.NewMockUser()
+	project := models.NewMockProject()
 
 	mockRows := pgxmock.NewRows([]string{"project_id"}).
-		AddRow(projectID)
+		AddRow(project.ProjectID)
 
 	mock.ExpectQuery("SELECT").
-		WithArgs(userID).
+		WithArgs(user.UserID).
 		WillReturnRows(mockRows)
 
-	projectIDs, err := GetProjectsByUserID(context.Background(), mock, userID)
+	projectIDs, err := GetProjectsByUserID(context.Background(), mock, user.UserID)
 	require.NoError(t, err)
 
 	require.Len(t, projectIDs, 1)
-	require.Equal(t, projectID, projectIDs[0])
+	require.Equal(t, project.ProjectID, projectIDs[0])
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
@@ -269,21 +250,21 @@ func TestGetUsersByProjectID(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
-	projectID := 1
+	user := models.NewMockUser()
+	project := models.NewMockProject()
 
 	mockRows := pgxmock.NewRows([]string{"user_id"}).
-		AddRow(userID)
+		AddRow(user.UserID)
 
 	mock.ExpectQuery("SELECT").
-		WithArgs(projectID).
+		WithArgs(project.ProjectID).
 		WillReturnRows(mockRows)
 
-	userIDs, err := GetUsersByProjectID(context.Background(), mock, projectID)
+	userIDs, err := GetUsersByProjectID(context.Background(), mock, project.ProjectID)
 	require.NoError(t, err)
 
 	require.Len(t, userIDs, 1)
-	require.Equal(t, userID, userIDs[0])
+	require.Equal(t, user.UserID, userIDs[0])
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
@@ -294,13 +275,13 @@ func TestDeleteProjectUsers(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	projectID := 1
+	projectUser := models.NewMockProjectUsers()
 
 	mock.ExpectExec("DELETE FROM project_users").
-		WithArgs(projectID).
+		WithArgs(projectUser.ProjectID).
 		WillReturnResult(pgxmock.NewResult("DELETE", 1))
 
-	err = DeleteProjectUsers(context.Background(), mock, projectID)
+	err = DeleteProjectUsers(context.Background(), mock, projectUser.ProjectID)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -312,13 +293,13 @@ func TestDeleteUserProjects(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	userID := 1
+	projectUser := models.NewMockProjectUsers()
 
 	mock.ExpectExec("DELETE FROM project_users").
-		WithArgs(userID).
+		WithArgs(projectUser.UserID).
 		WillReturnResult(pgxmock.NewResult("DELETE", 1))
 
-	err = DeleteUserProjects(context.Background(), mock, userID)
+	err = DeleteUserProjects(context.Background(), mock, projectUser.UserID)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()

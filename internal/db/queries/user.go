@@ -2,16 +2,18 @@ package queries
 
 import (
 	"context"
+
+	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
 )
 
 // InsertUser inserts a new user into the database
-func InsertUser(ctx context.Context, dbpool PgxIface, email, passwordHash, passwordSalt, firstName, lastName string) (int, error) {
+func InsertUser(ctx context.Context, dbpool PgxIface, user *models.User) (int, error) {
 	var userID int
 	err := dbpool.QueryRow(ctx, `
-		INSERT INTO users (email, password_hash, password_salt, first_name, last_name)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO users (email, password_hash, password_salt, first_name, last_name, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 		RETURNING user_id
-	`, email, passwordHash, passwordSalt, firstName, lastName).Scan(&userID)
+	`, user.Email, user.PasswordHash, user.PasswordSalt, user.FirstName, user.LastName).Scan(&userID)
 	return userID, err
 }
 
@@ -39,35 +41,42 @@ func GetUsersIDs(ctx context.Context, dbpool PgxIface) ([]int, error) {
 }
 
 // GetUser retrieves a user from the database
-func GetUserByID(ctx context.Context, dbpool PgxIface, userID int) (string, string, string, string, string, string, error) {
-	var email, passwordHash, passwordSalt, firstName, lastName, createdAt, updatedAt string
+func GetUserByID(ctx context.Context, dbpool PgxIface, userID int) (*models.User, error) {
+	var user models.User
 	err := dbpool.QueryRow(ctx, `
-		SELECT email, password_hash, password_salt, first_name, last_name, created_at, updated_at
+		SELECT user_id, email, password_hash, password_salt, first_name, last_name, created_at, updated_at, last_seen
 		FROM users
 		WHERE user_id = $1
-	`, userID).Scan(&email, &passwordHash, &passwordSalt, &firstName, &lastName, &createdAt, &updatedAt)
-	return email, passwordHash, passwordSalt, firstName, lastName, updatedAt, err
+	`, userID).Scan(&user.UserID, &user.Email, &user.PasswordHash, &user.PasswordSalt, &user.FirstName, &user.LastName, &user.CreatedAt, &user.UpdatedAt, &user.LastSeen)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 // GetUserByEmail retrieves a user from the database by email
-func GetUserByEmail(ctx context.Context, dbpool PgxIface, email string) (int, string, string, string, string, string, error) {
-	var userID int
-	var passwordHash, passwordSalt, firstName, lastName, createdAt, updatedAt string
+func GetUserByEmail(ctx context.Context, dbpool PgxIface, email string) (*models.User, error) {
+	var user models.User
 	err := dbpool.QueryRow(ctx, `
-		SELECT user_id, password_hash, password_salt, first_name, last_name, created_at, updated_at
+		SELECT user_id, email, password_hash, password_salt, first_name, last_name, created_at, updated_at, last_seen
 		FROM users
 		WHERE email = $1
-	`, email).Scan(&userID, &passwordHash, &passwordSalt, &firstName, &lastName, &createdAt, &updatedAt)
-	return userID, passwordHash, passwordSalt, firstName, lastName, updatedAt, err
+	`, email).Scan(&user.UserID, &user.Email, &user.PasswordHash, &user.PasswordSalt, &user.FirstName, &user.LastName, &user.CreatedAt, &user.UpdatedAt, &user.LastSeen)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 // UpdateUser updates a user in the database
-func UpdateUser(ctx context.Context, dbpool PgxIface, userID int, email, passwordHash, passwordSalt, firstName, lastName string) error {
+func UpdateUser(ctx context.Context, dbpool PgxIface, user *models.User) error {
 	_, err := dbpool.Exec(ctx, `
 		UPDATE users
 		SET email = $2, password_hash = $3, password_salt = $4, first_name = $5, last_name = $6, updated_at = CURRENT_TIMESTAMP
 		WHERE user_id = $1
-	`, userID, email, passwordHash, passwordSalt, firstName, lastName)
+	`, user.UserID, user.Email, user.PasswordHash, user.PasswordSalt, user.FirstName, user.LastName)
 	return err
 }
 
@@ -90,14 +99,18 @@ func InsertProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID i
 }
 
 // GetProjectUser retrieves a project user from the database
-func GetProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID int) (string, string, error) {
-	var role, createdAt, updatedAt string
+func GetProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID int) (*models.ProjectUsers, error) {
+	var projectUser models.ProjectUsers
 	err := dbpool.QueryRow(ctx, `
-		SELECT role, created_at, updated_at
+		SELECT user_id, project_id, role, created_at, updated_at
 		FROM project_users
 		WHERE user_id = $1 AND project_id = $2
-	`, userID, projectID).Scan(&role, &createdAt, &updatedAt)
-	return role, updatedAt, err
+	`, userID, projectID).Scan(&projectUser.UserID, &projectUser.ProjectID, &projectUser.Role, &projectUser.CreatedAt, &projectUser.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &projectUser, nil
 }
 
 // UpdateProjectUser updates a project user in the database
