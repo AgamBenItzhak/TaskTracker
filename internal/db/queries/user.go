@@ -52,6 +52,11 @@ func GetUserByID(ctx context.Context, dbpool PgxIface, userID int) (*models.User
 		return nil, err
 	}
 
+	err = user.Validate()
+	if err != nil {
+		return nil, err
+	}
+
 	return &user, nil
 }
 
@@ -63,6 +68,11 @@ func GetUserByEmail(ctx context.Context, dbpool PgxIface, email string) (*models
 		FROM users
 		WHERE email = $1
 	`, email).Scan(&user.UserID, &user.Email, &user.PasswordHash, &user.PasswordSalt, &user.FirstName, &user.LastName, &user.CreatedAt, &user.UpdatedAt, &user.LastSeen)
+	if err != nil {
+		return nil, err
+	}
+
+	err = user.Validate()
 	if err != nil {
 		return nil, err
 	}

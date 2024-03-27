@@ -51,6 +51,11 @@ func GetProjectByID(ctx context.Context, dbpool PgxIface, projectID int) (*model
 		return nil, err
 	}
 
+	err = project.Validate()
+	if err != nil {
+		return nil, err
+	}
+
 	return &project, nil
 }
 

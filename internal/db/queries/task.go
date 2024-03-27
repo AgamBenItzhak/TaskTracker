@@ -62,7 +62,14 @@ func GetAllTasksGroupsByProjectID(ctx context.Context, dbpool PgxIface, projectI
 			return nil, err
 		}
 
-		tasksGroups = append(tasksGroups, models.NewTasksGroups(taskGroupID, projectID, groupName, description, createdAt, updatedAt))
+		tasksGroup := models.NewTasksGroups(taskGroupID, projectID, groupName, description, createdAt, updatedAt)
+
+		err = tasksGroup.Validate()
+		if err != nil {
+			return nil, err
+		}
+
+		tasksGroups = append(tasksGroups, tasksGroup)
 	}
 	return tasksGroups, nil
 }
@@ -79,7 +86,15 @@ func GetTasksGroupsByID(ctx context.Context, dbpool PgxIface, TasksGroupID int) 
 	if err != nil {
 		return nil, err
 	}
-	return models.NewTasksGroups(taskGroupID, projectID, groupName, description, createdAt, updatedAt), nil
+
+	tasksGroup := models.NewTasksGroups(taskGroupID, projectID, groupName, description, createdAt, updatedAt)
+
+	err = tasksGroup.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	return tasksGroup, nil
 }
 
 // UpdateTasksGroup updates a task group in the database
@@ -132,7 +147,15 @@ func GetTaskByID(ctx context.Context, dbpool PgxIface, taskID int) (*models.Task
 	if err != nil {
 		return nil, err
 	}
-	return models.NewTasks(taskID, taskGroupID, taskName, description, status, priority, startDate, endDate, createdAt, updatedAt), nil
+
+	task := models.NewTasks(taskID, taskGroupID, taskName, description, status, priority, startDate, endDate, createdAt, updatedAt)
+
+	err = task.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
 }
 
 // GetAllTasksByTasksGroupID retrieves all tasks from the database
@@ -156,7 +179,14 @@ func GetAllTasksByTasksGroupID(ctx context.Context, dbpool PgxIface, TasksGroupI
 			return nil, err
 		}
 
-		tasks = append(tasks, models.NewTasks(taskID, taskGroupID, taskName, description, status, priority, startDate, endDate, createdAt, updatedAt))
+		task := models.NewTasks(taskID, taskGroupID, taskName, description, status, priority, startDate, endDate, createdAt, updatedAt)
+
+		err = task.Validate()
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, task)
 	}
 	return tasks, nil
 }
