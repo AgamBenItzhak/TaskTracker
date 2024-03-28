@@ -9,150 +9,66 @@ import (
 
 // TODO: Add tests for all functions
 
-func (s *UserService) CreateUser(email, passwordHash, passwordSalt, firstName, lastName string) (models.User, error) {
+func (s *UserService) CreateUser(email, password, firstName, lastName string) (*models.User, error) {
 	ctx := context.Background()
-	UserID, err := queries.InsertUser(ctx, s.db.Pool, email, passwordHash, passwordSalt, firstName, lastName)
+	userData := models.NewUser(0, email, password, firstName, lastName, "", "", "", "")
+	userID, err := queries.InsertUser(ctx, s.dbpool, userData)
 	if err != nil {
-		return models.User{}, err
+		return nil, err
 	}
-	return s.GetUserByID(UserID)
+
+	user, err := s.GetUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (s *UserService) GetUsersIDs() ([]int, error) {
 	ctx := context.Background()
-	return queries.GetUsersIDs(ctx, s.db.Pool)
+	return queries.GetUsersIDs(ctx, s.dbpool)
 }
 
-func (s *UserService) GetUsers() ([]models.User, error) {
+func (s *UserService) GetUsers() ([]*models.User, error) {
 	ctx := context.Background()
-	users, err := s.GetUsersIDs()
+	users, err := queries.GetUsers(ctx, s.dbpool)
 	if err != nil {
 		return nil, err
 	}
-	var usersList []models.User
-	for _, userID := range users {
-		email, passwordHash, passwordSalt, firstName, lastName, updatedAt, err := queries.GetUserByID(ctx, s.db.Pool, userID)
-		if err != nil {
-			return nil, err
-		}
-		usersList = append(usersList, models.User{
-			UserID:       userID,
-			Email:        email,
-			PasswordHash: passwordHash,
-			PasswordSalt: passwordSalt,
-			FirstName:    firstName,
-			LastName:     lastName,
-			UpdatedAt:    updatedAt,
-		})
-	}
-	return usersList, nil
+
+	return users, nil
 }
 
-func (s *UserService) GetUserByID(userID int) (models.User, error) {
+func (s *UserService) GetUserByID(userID int) (*models.User, error) {
 	ctx := context.Background()
-	email, passwordHash, passwordSalt, firstName, lastName, updatedAt, err := queries.GetUserByID(ctx, s.db.Pool, userID)
+	user, err := queries.GetUserByID(ctx, s.dbpool, userID)
 	if err != nil {
-		return models.User{}, err
+		return nil, err
 	}
-	return models.User{
-		Email:        email,
-		PasswordHash: passwordHash,
-		PasswordSalt: passwordSalt,
-		FirstName:    firstName,
-		LastName:     lastName,
-		UpdatedAt:    updatedAt,
-	}, nil
+
+	return user, nil
 }
 
-func (s *UserService) GetUserByEmail(email string) (models.User, error) {
+func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
 	ctx := context.Background()
-	userID, passwordHash, passwordSalt, firstName, lastName, updatedAt, err := queries.GetUserByEmail(ctx, s.db.Pool, email)
+	user, err := queries.GetUserByEmail(ctx, s.dbpool, email)
 	if err != nil {
-		return models.User{}, err
+		return nil, err
 	}
-	return models.User{
-		UserID:       userID,
-		Email:        email,
-		PasswordHash: passwordHash,
-		PasswordSalt: passwordSalt,
-		FirstName:    firstName,
-		LastName:     lastName,
-		UpdatedAt:    updatedAt,
-	}, nil
+
+	return user, nil
 }
 
-func (s *UserService) updateUser(userID int, email, passwordHash, passwordSalt, firstName, lastName string) error {
+func (s *UserService) UpdateUser(user *models.User) error {
 	ctx := context.Background()
-	return queries.UpdateUser(ctx, s.db.Pool, userID, email, passwordHash, passwordSalt, firstName, lastName)
-}
-
-func (s *UserService) UpdateUserByID(userID int, email, passwordHash, passwordSalt, firstName, lastName string) error {
-	user, err := s.GetUserByID(userID)
-	if err != nil {
-		return err
-	}
-
-	if email == "" {
-		email = user.Email
-	}
-
-	if passwordHash == "" {
-		passwordHash = user.PasswordHash
-	}
-
-	if passwordSalt == "" {
-		passwordSalt = user.PasswordSalt
-	}
-
-	if firstName == "" {
-		firstName = user.FirstName
-	}
-
-	if lastName == "" {
-		lastName = user.LastName
-	}
-
-	return s.updateUser(userID, email, passwordHash, passwordSalt, firstName, lastName)
-}
-
-func (s *UserService) UpdateUserByEmail(email, passwordHash, passwordSalt, firstName, lastName string) error {
-	user, err := s.GetUserByEmail(email)
-	if err != nil {
-		return err
-	}
-
-	if passwordHash == "" {
-		passwordHash = user.PasswordHash
-	}
-
-	if passwordSalt == "" {
-		passwordSalt = user.PasswordSalt
-	}
-
-	if firstName == "" {
-		firstName = user.FirstName
-	}
-
-	if lastName == "" {
-		lastName = user.LastName
-	}
-
-	return s.updateUser(user.UserID, email, passwordHash, passwordSalt, firstName, lastName)
-}
-
-func (s *UserService) deleteUser(userID int) error {
-	ctx := context.Background()
-	return queries.DeleteUser(ctx, s.db.Pool, userID)
+	return queries.UpdateUser(ctx, s.dbpool, user)
 }
 
 func (s *UserService) DeleteUserByID(userID int) error {
-	return s.deleteUser(userID)
+	return queries.DeleteUserByID(context.Background(), s.dbpool, userID)
 }
 
 func (s *UserService) DeleteUserByEmail(email string) error {
-	user, err := s.GetUserByEmail(email)
-	if err != nil {
-		return err
-	}
-	return s.deleteUser(user.UserID)
+	return queries.DeleteUserByEmail(context.Background(), s.dbpool, email)
 }

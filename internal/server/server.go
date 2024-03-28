@@ -7,11 +7,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+var ServerInstance *Server
+
 // Server provides functions for the server
 type Server struct {
-	router   *gin.Engine
-	db       *db.DB
-	services *services.Services
+	Router   *gin.Engine
+	DB       db.PgxIface
+	Services *services.Services
 }
 
 // NewServer creates a new Server instance
@@ -22,17 +24,25 @@ func NewServer() (*Server, error) {
 	}
 
 	router := gin.Default()
-	services := services.NewServices(db)
+	services := services.NewServices(db.Pool)
 
 	return &Server{
-		router:   router,
-		db:       db,
-		services: services,
+		Router:   router,
+		DB:       db.Pool,
+		Services: services,
 	}, nil
+}
+
+func init() {
+	server, err := NewServer()
+	if err != nil {
+		panic(err)
+	}
+	ServerInstance = server
 }
 
 // Run runs the server
 func (s *Server) Run() {
 	addr := viper.GetString("server.host") + ":" + viper.GetString("server.port")
-	s.router.Run(addr)
+	s.Router.Run(addr)
 }

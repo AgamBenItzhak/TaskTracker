@@ -10,18 +10,18 @@ import (
 
 // Services provides functions for the server
 type Services struct {
-	user    *user.UserService
-	project *project.ProjectService
-	task    *task.TaskService
-	auth    *auth.AuthService
+	User    *user.UserService
+	Project *project.ProjectService
+	Task    *task.TaskService
+	Auth    *auth.AuthService
 }
 
 // NewServices creates a new Services instance
-func NewServices(db *db.DB) *Services {
+func NewServices(db db.PgxIface) *Services {
 	return &Services{
-		user:    user.NewUserService(db),
-		project: project.NewProjectService(db),
-		task:    task.NewTaskService(db),
-		auth:    auth.NewAuthService(db),
+		User:    user.NewUserService(db),
+		Project: project.NewProjectService(db),
+		Task:    task.NewTaskService(db),
+		Auth:    auth.NewAuthService(db),
 	}
 }
