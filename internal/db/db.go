@@ -34,7 +34,7 @@ type DB struct {
 	Pool *pgxpool.Pool
 }
 
-func NewDB() (*DB, error) {
+func NewDB() (DB, error) {
 	dbHost := config.GetString("db.host")
 	dbPort := config.GetString("db.port")
 	dbUser := config.GetString("db.username")
@@ -46,8 +46,7 @@ func NewDB() (*DB, error) {
 	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
 	}
 
-	return &DB{Pool: pool}, nil
+	return DB{Pool: pool}, nil
 }
