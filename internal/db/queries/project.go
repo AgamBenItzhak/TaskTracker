@@ -3,11 +3,12 @@ package queries
 import (
 	"context"
 
+	"github.com/AgamBenItzhak/TaskTracker/internal/db"
 	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
 )
 
 // InsertProject inserts a new project into the database
-func InsertProject(ctx context.Context, dbpool PgxIface, project *models.Project) (int, error) {
+func InsertProject(ctx context.Context, dbpool db.PgxIface, project *models.Project) (int, error) {
 	var projectID int
 	err := dbpool.QueryRow(ctx, `
 		INSERT INTO projects (project_name, description, status, start_date, end_date, created_at, updated_at)
@@ -18,7 +19,7 @@ func InsertProject(ctx context.Context, dbpool PgxIface, project *models.Project
 }
 
 // GetProjects retrieves all projects from the database
-func GetProjectsIDs(ctx context.Context, dbpool PgxIface) ([]int, error) {
+func GetProjectsIDs(ctx context.Context, dbpool db.PgxIface) ([]int, error) {
 	var projectIDs []int
 	rows, err := dbpool.Query(ctx, `
 		SELECT project_id
@@ -40,7 +41,7 @@ func GetProjectsIDs(ctx context.Context, dbpool PgxIface) ([]int, error) {
 }
 
 // GetProject retrieves a project from the database
-func GetProjectByID(ctx context.Context, dbpool PgxIface, projectID int) (*models.Project, error) {
+func GetProjectByID(ctx context.Context, dbpool db.PgxIface, projectID int) (*models.Project, error) {
 	var project models.Project
 	err := dbpool.QueryRow(ctx, `
 		SELECT project_id, project_name, description, status, start_date, end_date, created_at, updated_at
@@ -60,7 +61,7 @@ func GetProjectByID(ctx context.Context, dbpool PgxIface, projectID int) (*model
 }
 
 // UpdateProject updates a project in the database
-func UpdateProject(ctx context.Context, dbpool PgxIface, project *models.Project) error {
+func UpdateProject(ctx context.Context, dbpool db.PgxIface, project *models.Project) error {
 	_, err := dbpool.Exec(ctx, `
 		UPDATE projects
 		SET project_name = $1, description = $2, status = $3, start_date = $4, end_date = $5, updated_at = CURRENT_TIMESTAMP
@@ -70,7 +71,7 @@ func UpdateProject(ctx context.Context, dbpool PgxIface, project *models.Project
 }
 
 // DeleteProject deletes a project from the database
-func DeleteProject(ctx context.Context, dbpool PgxIface, projectID int) error {
+func DeleteProject(ctx context.Context, dbpool db.PgxIface, projectID int) error {
 	_, err := dbpool.Exec(ctx, `
 		DELETE FROM projects
 		WHERE project_id = $1

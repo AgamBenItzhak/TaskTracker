@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
+	"github.com/AgamBenItzhak/TaskTracker/internal/db/queries/testmockdb"
 
 	"github.com/pashagolub/pgxmock/v3"
 	"github.com/stretchr/testify/require"
@@ -17,11 +18,8 @@ func TestInsertUser(t *testing.T) {
 
 	newUser := models.NewMockUser()
 
-	mockRows := pgxmock.NewRows([]string{"user_id"}).AddRow(newUser.UserID)
-
-	mock.ExpectQuery("INSERT INTO users").
-		WithArgs(newUser.Email, newUser.PasswordHash, newUser.PasswordSalt, newUser.FirstName, newUser.LastName).
-		WillReturnRows(mockRows)
+	mock, err = testmockdb.DBMockInsertUser(mock, newUser)
+	require.NoError(t, err)
 
 	userID, err := InsertUser(context.Background(), mock, newUser)
 	require.NoError(t, err)
@@ -32,24 +30,44 @@ func TestInsertUser(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestGetUsers(t *testing.T) {
+	mock, err := pgxmock.NewPool()
+	require.NoError(t, err)
+	defer mock.Close()
+
+	newUser := models.NewMockUser()
+
+	mock, err = testmockdb.DBMockGetUsers(mock, newUser)
+	require.NoError(t, err)
+
+	users, err := GetUsers(context.Background(), mock)
+	require.NoError(t, err)
+
+	require.Len(t, users, 1)
+	require.Equal(t, newUser, users[0])
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
 func TestGetUsersIDs(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
-	mockRows := pgxmock.NewRows([]string{"user_id"}).
-		AddRow(1).
-		AddRow(2)
+	var users []*models.User
+	users = append(users, models.NewMockUser())
+	users = append(users, models.NewMockUser())
 
-	mock.ExpectQuery("SELECT").
-		WillReturnRows(mockRows)
+	mock, err = testmockdb.DBMockGetUsersIDs(mock, users)
+	require.NoError(t, err)
 
 	userIDs, err := GetUsersIDs(context.Background(), mock)
 	require.NoError(t, err)
 
 	require.Len(t, userIDs, 2)
 	require.Equal(t, 1, userIDs[0])
-	require.Equal(t, 2, userIDs[1])
+	require.Equal(t, 1, userIDs[1])
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
@@ -62,12 +80,8 @@ func TestGetUserByID(t *testing.T) {
 
 	newUser := models.NewMockUser()
 
-	mockRows := pgxmock.NewRows([]string{"user_id", "email", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at", "last_seen"}).
-		AddRow(newUser.UserID, newUser.Email, newUser.PasswordHash, newUser.PasswordSalt, newUser.FirstName, newUser.LastName, newUser.CreatedAt, newUser.UpdatedAt, newUser.LastSeen)
-
-	mock.ExpectQuery("SELECT").
-		WithArgs(newUser.UserID).
-		WillReturnRows(mockRows)
+	mock, err = testmockdb.DBMockGetUserByID(mock, newUser)
+	require.NoError(t, err)
 
 	user, err := GetUserByID(context.Background(), mock, newUser.UserID)
 	require.NoError(t, err)
@@ -86,14 +100,8 @@ func TestGetUserByEmail(t *testing.T) {
 
 	newUser := models.NewMockUser()
 
-	// Create a mock row
-	mockRows := pgxmock.NewRows([]string{"user_id", "email", "password_hash", "password_salt", "first_name", "last_name", "created_at", "updated_at", "last_seen"}).
-		AddRow(newUser.UserID, newUser.Email, newUser.PasswordHash, newUser.PasswordSalt, newUser.FirstName, newUser.LastName, newUser.CreatedAt, newUser.UpdatedAt, newUser.LastSeen)
-
-	// Expect a query to be executed
-	mock.ExpectQuery("SELECT").
-		WithArgs(newUser.Email).
-		WillReturnRows(mockRows)
+	mock, err = testmockdb.DBMockGetUserByEmail(mock, newUser)
+	require.NoError(t, err)
 
 	// Call the function we are testing
 	user, err := GetUserByEmail(context.Background(), mock, newUser.Email)
@@ -114,9 +122,8 @@ func TestUpdateUser(t *testing.T) {
 
 	newUser := models.NewMockUser()
 
-	mock.ExpectExec("UPDATE users").
-		WithArgs(newUser.UserID, newUser.Email, newUser.PasswordHash, newUser.PasswordSalt, newUser.FirstName, newUser.LastName).
-		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
+	mock, err = testmockdb.DBMockUpdateUser(mock, newUser)
+	require.NoError(t, err)
 
 	err = UpdateUser(context.Background(), mock, newUser)
 	require.NoError(t, err)
@@ -125,18 +132,34 @@ func TestUpdateUser(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestDeleteUser(t *testing.T) {
+func TestDeleteUserByID(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
 	defer mock.Close()
 
 	user := models.NewMockUser()
 
-	mock.ExpectExec("DELETE FROM users").
-		WithArgs(user.UserID).
-		WillReturnResult(pgxmock.NewResult("DELETE", 1))
+	mock, err = testmockdb.DBMockDeleteUserByID(mock, user)
+	require.NoError(t, err)
 
-	err = DeleteUser(context.Background(), mock, user.UserID)
+	err = DeleteUserByID(context.Background(), mock, user.UserID)
+	require.NoError(t, err)
+
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
+}
+
+func TestDeleteUserByEmail(t *testing.T) {
+	mock, err := pgxmock.NewPool()
+	require.NoError(t, err)
+	defer mock.Close()
+
+	user := models.NewMockUser()
+
+	mock, err = testmockdb.DBMockDeleteUserByEmail(mock, user)
+	require.NoError(t, err)
+
+	err = DeleteUserByEmail(context.Background(), mock, user.Email)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()
@@ -150,9 +173,8 @@ func TestInsertProjectUser(t *testing.T) {
 
 	projectUser := models.NewMockProjectUsers()
 
-	mock.ExpectExec("INSERT INTO project_users").
-		WithArgs(projectUser.UserID, projectUser.ProjectID, projectUser.Role).
-		WillReturnResult(pgxmock.NewResult("INSERT", 1))
+	mock, err = testmockdb.DBMockInsertProjectUser(mock, projectUser)
+	require.NoError(t, err)
 
 	err = InsertProjectUser(context.Background(), mock, projectUser.UserID, projectUser.ProjectID, projectUser.Role)
 	require.NoError(t, err)
@@ -168,12 +190,8 @@ func TestGetProjectUser(t *testing.T) {
 
 	newProjectUser := models.NewMockProjectUsers()
 
-	mockRows := pgxmock.NewRows([]string{"user_id", "project_id", "role", "created_at", "updated_at"}).
-		AddRow(newProjectUser.UserID, newProjectUser.ProjectID, newProjectUser.Role, newProjectUser.CreatedAt, newProjectUser.UpdatedAt)
-
-	mock.ExpectQuery("SELECT").
-		WithArgs(newProjectUser.UserID, newProjectUser.ProjectID).
-		WillReturnRows(mockRows)
+	mock, err = testmockdb.DBMockGetProjectUser(mock, newProjectUser)
+	require.NoError(t, err)
 
 	projectUser, err := GetProjectUser(context.Background(), mock, newProjectUser.UserID, newProjectUser.ProjectID)
 	require.NoError(t, err)
@@ -191,9 +209,8 @@ func TestUpdateProjectUser(t *testing.T) {
 
 	projectUser := models.NewMockProjectUsers()
 
-	mock.ExpectExec("UPDATE project_users").
-		WithArgs(projectUser.UserID, projectUser.ProjectID, projectUser.Role).
-		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
+	mock, err = testmockdb.DBMockUpdateProjectUser(mock, projectUser)
+	require.NoError(t, err)
 
 	err = UpdateProjectUser(context.Background(), mock, projectUser.UserID, projectUser.ProjectID, projectUser.Role)
 	require.NoError(t, err)
@@ -209,9 +226,8 @@ func TestDeleteProjectUser(t *testing.T) {
 
 	projectUser := models.NewMockProjectUsers()
 
-	mock.ExpectExec("DELETE FROM project_users").
-		WithArgs(projectUser.UserID, projectUser.ProjectID).
-		WillReturnResult(pgxmock.NewResult("DELETE", 1))
+	mock, err = testmockdb.DBMockDeleteProjectUser(mock, projectUser)
+	require.NoError(t, err)
 
 	err = DeleteProjectUser(context.Background(), mock, projectUser.UserID, projectUser.ProjectID)
 	require.NoError(t, err)
@@ -228,12 +244,8 @@ func TestGetProjectsByUserID(t *testing.T) {
 	user := models.NewMockUser()
 	project := models.NewMockProject()
 
-	mockRows := pgxmock.NewRows([]string{"project_id"}).
-		AddRow(project.ProjectID)
-
-	mock.ExpectQuery("SELECT").
-		WithArgs(user.UserID).
-		WillReturnRows(mockRows)
+	mock, err = testmockdb.DBMockGetProjectsByUserID(mock, user, project)
+	require.NoError(t, err)
 
 	projectIDs, err := GetProjectsByUserID(context.Background(), mock, user.UserID)
 	require.NoError(t, err)
@@ -253,12 +265,8 @@ func TestGetUsersByProjectID(t *testing.T) {
 	user := models.NewMockUser()
 	project := models.NewMockProject()
 
-	mockRows := pgxmock.NewRows([]string{"user_id"}).
-		AddRow(user.UserID)
-
-	mock.ExpectQuery("SELECT").
-		WithArgs(project.ProjectID).
-		WillReturnRows(mockRows)
+	mock, err = testmockdb.DBMockGetUsersByProjectID(mock, project, user)
+	require.NoError(t, err)
 
 	userIDs, err := GetUsersByProjectID(context.Background(), mock, project.ProjectID)
 	require.NoError(t, err)
@@ -277,9 +285,8 @@ func TestDeleteProjectUsers(t *testing.T) {
 
 	projectUser := models.NewMockProjectUsers()
 
-	mock.ExpectExec("DELETE FROM project_users").
-		WithArgs(projectUser.ProjectID).
-		WillReturnResult(pgxmock.NewResult("DELETE", 1))
+	mock, err = testmockdb.DBMockDeleteProjectUsers(mock, projectUser)
+	require.NoError(t, err)
 
 	err = DeleteProjectUsers(context.Background(), mock, projectUser.ProjectID)
 	require.NoError(t, err)
@@ -295,9 +302,8 @@ func TestDeleteUserProjects(t *testing.T) {
 
 	projectUser := models.NewMockProjectUsers()
 
-	mock.ExpectExec("DELETE FROM project_users").
-		WithArgs(projectUser.UserID).
-		WillReturnResult(pgxmock.NewResult("DELETE", 1))
+	mock, err = testmockdb.DBMockDeleteUserProjects(mock, projectUser)
+	require.NoError(t, err)
 
 	err = DeleteUserProjects(context.Background(), mock, projectUser.UserID)
 	require.NoError(t, err)

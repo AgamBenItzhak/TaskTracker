@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
+	"github.com/AgamBenItzhak/TaskTracker/internal/db/queries/testmockdb"
 
 	"github.com/pashagolub/pgxmock/v3"
 	"github.com/stretchr/testify/require"
@@ -13,13 +14,10 @@ import (
 func TestInsertProject(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
-
 	newProject := models.NewMockProject()
 
-	mock.ExpectQuery("INSERT INTO projects").
-		WithArgs(newProject.ProjectName, newProject.Description, newProject.Status, newProject.StartDate, newProject.EndDate).
-		WillReturnRows(pgxmock.NewRows([]string{"project_id"}).AddRow(newProject.ProjectID))
+	mock, err = testmockdb.DBMockInsertProject(mock, newProject)
+	require.NoError(t, err)
 
 	projectID, err := InsertProject(context.Background(), mock, newProject)
 	require.NoError(t, err)
@@ -34,16 +32,14 @@ func TestGetProjectsIDs(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	mockRows := pgxmock.NewRows([]string{"project_id"}).
-		AddRow(1).
-		AddRow(2)
+	projectsIDs := []int{1, 2}
 
-	mock.ExpectQuery("SELECT").
-		WillReturnRows(mockRows)
-
-	projectIDs, err := GetProjectsIDs(context.Background(), mock)
+	mock, err = testmockdb.DBMockGetProjectsIDs(mock, projectsIDs)
 	require.NoError(t, err)
-	require.Equal(t, []int{1, 2}, projectIDs)
+
+	projects, err := GetProjectsIDs(context.Background(), mock)
+	require.NoError(t, err)
+	require.Equal(t, projectsIDs, projects)
 
 	err = mock.ExpectationsWereMet()
 	require.NoError(t, err)
@@ -56,12 +52,8 @@ func TestGetProjectByID(t *testing.T) {
 
 	newProject := models.NewMockProject()
 
-	mockRows := pgxmock.NewRows([]string{"project_id", "project_name", "description", "status", "start_date", "end_date", "created_at", "updated_at"}).
-		AddRow(newProject.ProjectID, newProject.ProjectName, newProject.Description, newProject.Status, newProject.StartDate, newProject.EndDate, newProject.CreatedAt, newProject.UpdatedAt)
-
-	mock.ExpectQuery("SELECT").
-		WithArgs(newProject.ProjectID).
-		WillReturnRows(mockRows)
+	mock, err = testmockdb.DBMockGetProjectByID(mock, newProject)
+	require.NoError(t, err)
 
 	project, err := GetProjectByID(context.Background(), mock, newProject.ProjectID)
 	require.NoError(t, err)
@@ -78,9 +70,8 @@ func TestUpdateProject(t *testing.T) {
 
 	newProject := models.NewMockProject()
 
-	mock.ExpectExec("UPDATE projects").
-		WithArgs(newProject.ProjectName, newProject.Description, newProject.Status, newProject.StartDate, newProject.EndDate, newProject.ProjectID).
-		WillReturnResult(pgxmock.NewResult("UPDATE", 1))
+	mock, err = testmockdb.DBMockUpdateProject(mock, newProject)
+	require.NoError(t, err)
 
 	err = UpdateProject(context.Background(), mock, newProject)
 	require.NoError(t, err)
@@ -94,13 +85,12 @@ func TestDeleteProject(t *testing.T) {
 	require.NoError(t, err)
 	defer mock.Close()
 
-	projectID := 1
+	project := models.NewMockProject()
 
-	mock.ExpectExec("DELETE FROM projects").
-		WithArgs(projectID).
-		WillReturnResult(pgxmock.NewResult("DELETE", 1))
+	mock, err = testmockdb.DBMockDeleteProject(mock, project)
+	require.NoError(t, err)
 
-	err = DeleteProject(context.Background(), mock, projectID)
+	err = DeleteProject(context.Background(), mock, project.ProjectID)
 	require.NoError(t, err)
 
 	err = mock.ExpectationsWereMet()

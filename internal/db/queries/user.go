@@ -3,11 +3,12 @@ package queries
 import (
 	"context"
 
+	"github.com/AgamBenItzhak/TaskTracker/internal/db"
 	"github.com/AgamBenItzhak/TaskTracker/internal/db/models"
 )
 
 // InsertUser inserts a new user into the database
-func InsertUser(ctx context.Context, dbpool PgxIface, user *models.User) (int, error) {
+func InsertUser(ctx context.Context, dbpool db.PgxIface, user *models.User) (int, error) {
 	var userID int
 	err := dbpool.QueryRow(ctx, `
 		INSERT INTO users (email, password_hash, password_salt, first_name, last_name, created_at, updated_at)
@@ -18,7 +19,36 @@ func InsertUser(ctx context.Context, dbpool PgxIface, user *models.User) (int, e
 }
 
 // GetUsers retrieves all users from the database
-func GetUsersIDs(ctx context.Context, dbpool PgxIface) ([]int, error) {
+func GetUsers(ctx context.Context, dbpool db.PgxIface) ([]*models.User, error) {
+	rows, err := dbpool.Query(ctx, `
+		SELECT user_id, email, password_hash, password_salt, first_name, last_name, created_at, updated_at, last_seen
+		FROM users
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*models.User
+	for rows.Next() {
+		var user models.User
+		err := rows.Scan(&user.UserID, &user.Email, &user.PasswordHash, &user.PasswordSalt, &user.FirstName, &user.LastName, &user.CreatedAt, &user.UpdatedAt, &user.LastSeen)
+		if err != nil {
+			return nil, err
+		}
+
+		err = user.Validate()
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, &user)
+	}
+	return users, nil
+}
+
+// GetUsers retrieves all users from the database
+func GetUsersIDs(ctx context.Context, dbpool db.PgxIface) ([]int, error) {
 	rows, err := dbpool.Query(ctx, `
 		SELECT user_id
 		FROM users
@@ -41,7 +71,7 @@ func GetUsersIDs(ctx context.Context, dbpool PgxIface) ([]int, error) {
 }
 
 // GetUser retrieves a user from the database
-func GetUserByID(ctx context.Context, dbpool PgxIface, userID int) (*models.User, error) {
+func GetUserByID(ctx context.Context, dbpool db.PgxIface, userID int) (*models.User, error) {
 	var user models.User
 	err := dbpool.QueryRow(ctx, `
 		SELECT user_id, email, password_hash, password_salt, first_name, last_name, created_at, updated_at, last_seen
@@ -61,7 +91,7 @@ func GetUserByID(ctx context.Context, dbpool PgxIface, userID int) (*models.User
 }
 
 // GetUserByEmail retrieves a user from the database by email
-func GetUserByEmail(ctx context.Context, dbpool PgxIface, email string) (*models.User, error) {
+func GetUserByEmail(ctx context.Context, dbpool db.PgxIface, email string) (*models.User, error) {
 	var user models.User
 	err := dbpool.QueryRow(ctx, `
 		SELECT user_id, email, password_hash, password_salt, first_name, last_name, created_at, updated_at, last_seen
@@ -81,7 +111,7 @@ func GetUserByEmail(ctx context.Context, dbpool PgxIface, email string) (*models
 }
 
 // UpdateUser updates a user in the database
-func UpdateUser(ctx context.Context, dbpool PgxIface, user *models.User) error {
+func UpdateUser(ctx context.Context, dbpool db.PgxIface, user *models.User) error {
 	_, err := dbpool.Exec(ctx, `
 		UPDATE users
 		SET email = $2, password_hash = $3, password_salt = $4, first_name = $5, last_name = $6, updated_at = CURRENT_TIMESTAMP
@@ -90,8 +120,8 @@ func UpdateUser(ctx context.Context, dbpool PgxIface, user *models.User) error {
 	return err
 }
 
-// DeleteUser deletes a user from the database
-func DeleteUser(ctx context.Context, dbpool PgxIface, userID int) error {
+// DeleteUserByID deletes a user from the database by ID
+func DeleteUserByID(ctx context.Context, dbpool db.PgxIface, userID int) error {
 	_, err := dbpool.Exec(ctx, `
 		DELETE FROM users
 		WHERE user_id = $1
@@ -99,8 +129,17 @@ func DeleteUser(ctx context.Context, dbpool PgxIface, userID int) error {
 	return err
 }
 
+// DeleteUserByEmail deletes a user from the database by email
+func DeleteUserByEmail(ctx context.Context, dbpool db.PgxIface, email string) error {
+	_, err := dbpool.Exec(ctx, `
+		DELETE FROM users
+		WHERE email = $1
+	`, email)
+	return err
+}
+
 // InsertProjectUser inserts a new project user into the database
-func InsertProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID int, role string) error {
+func InsertProjectUser(ctx context.Context, dbpool db.PgxIface, userID, projectID int, role string) error {
 	_, err := dbpool.Exec(ctx, `
 		INSERT INTO project_users (user_id, project_id, role)
 		VALUES ($1, $2, $3)
@@ -109,7 +148,7 @@ func InsertProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID i
 }
 
 // GetProjectUser retrieves a project user from the database
-func GetProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID int) (*models.ProjectUsers, error) {
+func GetProjectUser(ctx context.Context, dbpool db.PgxIface, userID, projectID int) (*models.ProjectUsers, error) {
 	var projectUser models.ProjectUsers
 	err := dbpool.QueryRow(ctx, `
 		SELECT user_id, project_id, role, created_at, updated_at
@@ -124,7 +163,7 @@ func GetProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID int)
 }
 
 // UpdateProjectUser updates a project user in the database
-func UpdateProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID int, role string) error {
+func UpdateProjectUser(ctx context.Context, dbpool db.PgxIface, userID, projectID int, role string) error {
 	_, err := dbpool.Exec(ctx, `
 		UPDATE project_users
 		SET role = $3, updated_at = CURRENT_TIMESTAMP
@@ -134,7 +173,7 @@ func UpdateProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID i
 }
 
 // DeleteProjectUser deletes a project user from the database
-func DeleteProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID int) error {
+func DeleteProjectUser(ctx context.Context, dbpool db.PgxIface, userID, projectID int) error {
 	_, err := dbpool.Exec(ctx, `
 		DELETE FROM project_users
 		WHERE user_id = $1 AND project_id = $2
@@ -143,7 +182,7 @@ func DeleteProjectUser(ctx context.Context, dbpool PgxIface, userID, projectID i
 }
 
 // GetProjectsByUserID retrieves all projects for a user from the database
-func GetProjectsByUserID(ctx context.Context, dbpool PgxIface, userID int) ([]int, error) {
+func GetProjectsByUserID(ctx context.Context, dbpool db.PgxIface, userID int) ([]int, error) {
 	rows, err := dbpool.Query(ctx, `
 		SELECT project_id
 		FROM project_users
@@ -167,7 +206,7 @@ func GetProjectsByUserID(ctx context.Context, dbpool PgxIface, userID int) ([]in
 }
 
 // GetUsersByProjectID retrieves all users for a project from the database
-func GetUsersByProjectID(ctx context.Context, dbpool PgxIface, projectID int) ([]int, error) {
+func GetUsersByProjectID(ctx context.Context, dbpool db.PgxIface, projectID int) ([]int, error) {
 	rows, err := dbpool.Query(ctx, `
 		SELECT user_id
 		FROM project_users
@@ -191,7 +230,7 @@ func GetUsersByProjectID(ctx context.Context, dbpool PgxIface, projectID int) ([
 }
 
 // DeleteProjectUsers deletes all project users from the database for a project
-func DeleteProjectUsers(ctx context.Context, dbpool PgxIface, projectID int) error {
+func DeleteProjectUsers(ctx context.Context, dbpool db.PgxIface, projectID int) error {
 	_, err := dbpool.Exec(ctx, `
 		DELETE FROM project_users
 		WHERE project_id = $1
@@ -200,7 +239,7 @@ func DeleteProjectUsers(ctx context.Context, dbpool PgxIface, projectID int) err
 }
 
 // DeleteUserProjects deletes all project users from the database for a user
-func DeleteUserProjects(ctx context.Context, dbpool PgxIface, userID int) error {
+func DeleteUserProjects(ctx context.Context, dbpool db.PgxIface, userID int) error {
 	_, err := dbpool.Exec(ctx, `
 		DELETE FROM project_users
 		WHERE user_id = $1
