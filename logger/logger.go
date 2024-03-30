@@ -11,6 +11,22 @@ type LoggerService struct {
 
 var LogService *LoggerService
 
+func init() {
+	logger, loggerLevel, err := NewLogger()
+	if err != nil {
+		panic(err)
+	}
+
+	LogService = &LoggerService{
+		logger:      logger,
+		loggerLevel: loggerLevel,
+	}
+}
+
+func NewLogger() (*zap.Logger, *zap.AtomicLevel, error) {
+	return NewLoggerWithConfig(zap.NewProductionConfig())
+}
+
 func NewLoggerWithConfig(config zap.Config) (*zap.Logger, *zap.AtomicLevel, error) {
 	logger, err := config.Build()
 	if err != nil {
@@ -18,28 +34,6 @@ func NewLoggerWithConfig(config zap.Config) (*zap.Logger, *zap.AtomicLevel, erro
 	}
 
 	return logger, &config.Level, nil
-}
-
-func NewLogger() (*zap.Logger, *zap.AtomicLevel, error) {
-	return NewLoggerWithConfig(zap.NewProductionConfig())
-}
-
-func InitLoggerWithConfig(config zap.Config) error {
-	logger, loggerLevel, err := NewLoggerWithConfig(config)
-	if err != nil {
-		return err
-	}
-
-	LogService = &LoggerService{
-		logger:      logger,
-		loggerLevel: loggerLevel,
-	}
-
-	return nil
-}
-
-func InitLogger() error {
-	return InitLoggerWithConfig(zap.NewProductionConfig())
 }
 
 func (l *LoggerService) Info(args ...interface{}) {
