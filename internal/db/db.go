@@ -2,10 +2,14 @@ package db
 
 import (
 	"context"
-	"log"
+	"database/sql"
+	"fmt"
 
 	"github.com/AgamBenItzhak/TaskTracker/config"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -35,18 +39,64 @@ type DB struct {
 }
 
 func NewDB() (DB, error) {
-	dbHost := config.GetString("db.host")
-	dbPort := config.GetString("db.port")
-	dbUser := config.GetString("db.username")
-	dbPassword := config.GetString("db.password")
-	dbName := config.GetString("db.database")
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+		config.ServerConfig.DB.User,
+		config.ServerConfig.DB.Password,
+		config.ServerConfig.DB.Host,
+		config.ServerConfig.DB.Port,
+		config.ServerConfig.DB.DBName)
 
-	dsn := "postgres://" + dbUser + ":" + dbPassword + "@" + dbHost + ":" + dbPort + "/" + dbName
+	if config.ServerConfig.DB.SSLMode != "" {
+		dsn += fmt.Sprintf("?sslmode=%s", config.ServerConfig.DB.SSLMode)
+	}
+
+	if err := initializeDB(dsn); err != nil {
+		return DB{}, err
+	}
 
 	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {
-		log.Fatal(err)
+		return DB{}, err
 	}
 
 	return DB{Pool: pool}, nil
+}
+
+func initializeDB(dsn string) error {
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		return err
+	}
+
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		return err
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://db/migrations",
+		"postgres", driver)
+	if err != nil {
+		return err
+	}
+
+	// Check if the database is up to date and not dirty
+	currentVersion, dirty, err := m.Version()
+	if err != nil && err != migrate.ErrNilVersion {
+		return err
+	}
+
+	if dirty {
+		return fmt.Errorf("database is dirty, manual intervention required. current version: %d", currentVersion)
+	}
+
+	// if currentVersion == 0 || err == migrate.ErrNilVersion {
+	// 	return fmt.Errorf("database is not initialized, applying migrations")
+	// }
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return err
+	}
+
+	return nil
 }
