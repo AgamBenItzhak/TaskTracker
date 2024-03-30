@@ -31,7 +31,7 @@ type Claims struct {
 func NewAuthService(dbpool db.PgxIface) *AuthService {
 	return &AuthService{
 		dbpool:      dbpool,
-		tokenSecret: config.GetString("auth.tokenSecret"),
+		tokenSecret: config.ServerConfig.JWT.Secret,
 	}
 }
 
