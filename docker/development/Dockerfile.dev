@@ -1,0 +1,32 @@
+# Start by building the application in a builder container
+FROM golang:1.22.1 AS builder
+
+# Set the Current Working Directory inside the container
+WORKDIR /app
+
+# Copy go.mod and go.sum to download dependencies
+COPY go.mod go.sum ./
+
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+RUN go mod download
+
+# Install development tools
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
+
+# Add tools to the PATH
+# ENV PATH="$PATH:/go/bin"
+
+# Copy the source code into the container
+# COPY . .
+
+# Build the Go app (replace main.go with the path to your project's main file)
+# RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /myapp main.go
+
+# Setup debug environment
+EXPOSE 2345
+
+# Start the application in debug mode
+# CMD ["dlv", "exec", "/myapp", "--headless", "--listen=:2345", "--api-version=2", "--log", "--", "server"]
+
+# "--output=/myapp",
+CMD ["dlv", "debug", "main.go", "--headless", "--listen=:2345", "--api-version=2", "--log", "--output=/myapp", "--build-flags='-buildvcs=false'", "--", "server"]

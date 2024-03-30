@@ -1,0 +1,45 @@
+services:
+  tasktracker:
+    container_name: tasktracker
+    # image: tasktracker
+    build:
+      context: ../../.
+      dockerfile: docker/development/Dockerfile.dev
+      
+    depends_on:
+      - db
+    environment:
+      - TASKTRACKER_SERVER_HOST=localhost
+      - TASKTRACKER_SERVER_PORT=8080
+      - TASKTRACKER_DB_HOST=db
+      - TASKTRACKER_DB_PORT=5432
+      - TASKTRACKER_DB_USER=myuser
+      - TASKTRACKER_DB_PASSWORD=mypassword
+      - TASKTRACKER_DB_DBNAME=mydb
+      - TASKTRACKER_DB_SSLMODE=disable
+      - TASKTRACKER_LOG_LEVEL=debug
+      - TASKTRACKER_JWT_SECRET=secret
+      - TASKTRACKER_JWT_EXPIRATION=3600
+    ports:
+      - "2345:2345"
+      - "8080:8080"
+    volumes:
+      - ../../:/app
+    restart: always
+  db:
+    container_name: mydb
+    image: postgres
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
+#     volumes:
+#       - db_data:/var/lib/postgresql/data
+    restart: always
+    # remove when d
+
+
+# volumes:
+#   db_data:
