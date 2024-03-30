@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS users;
+
+DROP TABLE IF EXISTS projects;
+
+DROP TABLE IF EXISTS project_users;
+
+DROP TABLE IF EXISTS tasks_groups;
+
+DROP TABLE IF EXISTS tasks;
