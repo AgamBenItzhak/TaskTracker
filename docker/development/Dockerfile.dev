@@ -37,4 +37,4 @@ EXPOSE 2345
 # CMD ["dlv", "debug", "main.go", "--headless", "--listen=:2345", "--api-version=2", "--log", "--output=/myapp", "--build-flags='-buildvcs=false'", "--", "server"]
 
 # Start the application in debug mode with air
-CMD ["air", "dlv", "debug", "main.go", "--headless", "--listen=:2345", "--api-version=2", "--log", "--output=/myapp", "--build-flags='-buildvcs=false'", "--", "server"]
+CMD ["air", "-c", ".air.toml"]
