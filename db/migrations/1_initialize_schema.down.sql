@@ -9,3 +9,7 @@ DROP TABLE IF EXISTS project_user;
 DROP TABLE IF EXISTS tasks_group;
 
 DROP TABLE IF EXISTS task;
+
+DROP TABLE IF EXISTS tasks_group_user;
+
+DROP TABLE IF EXISTS task_user;
