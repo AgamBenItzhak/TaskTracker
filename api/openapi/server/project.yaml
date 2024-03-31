@@ -6,132 +6,6 @@ info:
 servers:
   - url: http://localhost:8080/api
 paths:
-  /users/register:
-    post:
-      summary: Register a new user
-      description: Register a new user with the system.
-      tags:
-        - users
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/user'
-      responses:
-        '201':
-          description: User created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user'
-        '400':
-          description: Invalid input
-  /users/login:
-    post:
-      summary: Login a user
-      description: Login a user to the system.
-      tags:
-        - users
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-      responses:
-        '200':
-          description: User logged in
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user'
-        '400':
-          description: Invalid input
-  /users/logout:
-    post:
-      summary: Logout a user
-      description: Logout a user from the system.
-      tags:
-        - users
-      responses:
-        '204':
-          description: User logged out
-  /users/{user_id}:
-    get:
-      summary: Get user by ID
-      description: Get a user by their ID.
-      tags:
-        - users
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: ID of the user to get
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: User found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user'
-        '404':
-          description: User not found
-    put:
-      summary: Update user by ID
-      description: Update a user by their ID.
-      tags:
-        - users
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: ID of the user to update
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/user'
-      responses:
-        '200':
-          description: User updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user'
-        '404':
-          description: User not found
-    delete:
-      summary: Delete user by ID
-      description: Delete a user by their ID.
-      tags:
-        - users
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: ID of the user to delete
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: User deleted
-        '404':
-          description: User not found
   /projects:
     get:
       summary: Get all projects
@@ -146,7 +20,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/project'
+                  $ref: '../schema.yaml#/components/schemas/project'
         '404':
           description: Projects not found
     post:
@@ -159,14 +33,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/project'
+              $ref: '../schema.yaml#/components/schemas/project'
       responses:
         '201':
           description: Project created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/project'
+                $ref: '../schema.yaml#/components/schemas/project'
         '400':
           description: Invalid input
   /projects/{project_id}:
@@ -189,7 +63,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/project'
+                $ref: '../schema.yaml#/components/schemas/project'
         '404':
           description: Project not found
     put:
@@ -210,14 +84,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/project'
+              $ref: '../schema.yaml#/components/schemas/project'
       responses:
         '200':
           description: Project updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/project'
+                $ref: '../schema.yaml#/components/schemas/project'
         '404':
           description: Project not found
     delete:
@@ -260,7 +134,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '../schema.yaml#/components/schemas/user'
         '404':
           description: Users not found
     post:
@@ -281,14 +155,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/project_user'
+              $ref: '../schema.yaml#/components/schemas/project_user'
       responses:
         '201':
           description: User added to project
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/project_user'
+                $ref: '../schema.yaml#/components/schemas/project_user'
         '400':
           description: Invalid input
   /projects/{project_id}/users/{user_id}:
@@ -317,14 +191,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/project_user'
+              $ref: '../schema.yaml#/components/schemas/project_user'
       responses:
         '200':
           description: User role updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/project_user'
+                $ref: '../schema.yaml#/components/schemas/project_user'
         '404':
           description: User or project not found
     delete:
@@ -374,7 +248,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/task_group'
+                  $ref: '../schema.yaml#/components/schemas/task_group'
         '404':
           description: Task groups not found
     post:
@@ -395,14 +269,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/task_group'
+              $ref: '../schema.yaml#/components/schemas/task_group'
       responses:
         '201':
           description: Task group created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/task_group'
+                $ref: '../schema.yaml#/components/schemas/task_group'
         '400':
           description: Invalid input
   /projects/{project_id}/task-groups/{task_group_id}:
@@ -432,7 +306,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/task_group'
+                $ref: '../schema.yaml#/components/schemas/task_group'
         '404':
           description: Task group not found
     put:
@@ -460,14 +334,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/task_group'
+              $ref: '../schema.yaml#/components/schemas/task_group'
       responses:
         '200':
           description: Task group updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/task_group'
+                $ref: '../schema.yaml#/components/schemas/task_group'
         '404':
           description: Task group not found
     delete:
@@ -522,7 +396,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/task'
+                  $ref: '../schema.yaml#/components/schemas/task'
         '404':
           description: Tasks not found
     post:
@@ -550,14 +424,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/task'
+              $ref: '../schema.yaml#/components/schemas/task'
       responses:
         '201':
           description: Task created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/task'
+                $ref: '../schema.yaml#/components/schemas/task'
         '400':
           description: Invalid input
   /projects/{project_id}/task-groups/{task_group_id}/tasks/{task_id}:
@@ -594,7 +468,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/task'
+                $ref: '../schema.yaml#/components/schemas/task'
         '404':
           description: Task not found
     put:
@@ -629,14 +503,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/task'
+              $ref: '../schema.yaml#/components/schemas/task'
       responses:
         '200':
           description: Task updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/task'
+                $ref: '../schema.yaml#/components/schemas/task'
         '404':
           description: Task not found
     delete:
@@ -669,118 +543,3 @@ paths:
       responses:
         '204':
           description: Task deleted
-
-
-components:
-  schemas:
-    user:
-      type: object
-      properties:
-        user_id:
-          type: integer
-          format: int64
-        email:
-          type: string
-          format: email
-        first_name:
-          type: string
-        last_name:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-        last_seen:
-          type: string
-          format: date-time
-    project:
-      type: object
-      properties:
-        project_id:
-          type: integer
-          format: int64
-        project_name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-        start_date:
-          type: string
-          format: date
-        end_date:
-          type: string
-          format: date
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-    project_user:
-      type: object
-      properties:
-        user_id:
-          type: integer
-          format: int64
-        project_id:
-          type: integer
-          format: int64
-        role:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-    task_group:
-      type: object
-      properties:
-        task_group_id:
-          type: integer
-          format: int64
-        project_id:
-          type: integer
-          format: int64
-        group_name:
-          type: string
-        description:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-    task:
-      type: object
-      properties:
-        task_id:
-          type: integer
-          format: int64
-        task_group_id:
-          type: integer
-          format: int64
-        task_name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-        priority:
-          type: string
-        start_date:
-          type: string
-          format: date
-        end_date:
-          type: string
-          format: date
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time

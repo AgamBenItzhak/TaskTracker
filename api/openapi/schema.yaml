@@ -1,0 +1,191 @@
+openapi: 3.0.2
+info:
+  title: TaskTracker API
+  description: API for TaskTracker, a project management and task tracking system.
+  version: 0.1.0
+paths: {}
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: user_id
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            mapstructure: email
+        first_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: first_name
+        last_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: last_name
+        created_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: created_at
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: updated_at
+        last_seen:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: last_seen
+    project:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        project_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_name
+        description:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: description
+        status:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: status
+        start_date:
+          type: string
+          format: date
+          x-oapi-codegen-extra-tags:
+            mapstructure: start_date
+        end_date:
+          type: string
+          format: date
+          x-oapi-codegen-extra-tags:
+            mapstructure: end_date
+        created_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: created_at
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: updated_at
+    project_user:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: user_id
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        role:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: role
+        created_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: created_at
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: updated_at
+    task_group:
+      type: object
+      properties:
+        task_group_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: task_group_id
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        group_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: group_name
+        description:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: description
+        created_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: created_at
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: updated_at
+    task:
+      type: object
+      properties:
+        task_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: task_id
+        task_group_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: task_group_id
+        task_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: task_name
+        description:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: description
+        status:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: status
+        priority:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: priority
+        start_date:
+          type: string
+          format: date
+          x-oapi-codegen-extra-tags:
+            mapstructure: start_date
+        end_date:
+          type: string
+          format: date
+          x-oapi-codegen-extra-tags:
+            mapstructure: end_date
+        created_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: created_at
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: updated_at
