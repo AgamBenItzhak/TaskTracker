@@ -1,9 +1,11 @@
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS user;
 
-DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS user_credentials;
 
-DROP TABLE IF EXISTS project_users;
+DROP TABLE IF EXISTS project;
 
-DROP TABLE IF EXISTS tasks_groups;
+DROP TABLE IF EXISTS project_user;
 
-DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS tasks_group;
+
+DROP TABLE IF EXISTS task;
