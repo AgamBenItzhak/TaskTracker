@@ -1,0 +1,172 @@
+openapi: 3.0.2
+info:
+  title: TaskTracker API
+  description: API for TaskTracker, a project management and task tracking system.
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schema.yaml#/components/schemas/user'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/user'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+  /auth/login:
+    post:
+      summary: Log in to the system
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schema.yaml#/components/schemas/login_request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/login_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+  /auth/logout:
+    post:
+      summary: Log out of the system
+      tags:
+        - auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/logout_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+  /auth/change-password:
+    post:
+      summary: Change the user's password
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schema.yaml#/components/schemas/password_change_request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/password_change_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+  /auth/refreshtoken:
+    post:
+      summary: Refresh the user's access token
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schema.yaml#/components/schemas/refresh_token_request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/refresh_token_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '../schema.yaml#/components/schemas/error'

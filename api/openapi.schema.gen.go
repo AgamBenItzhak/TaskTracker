@@ -17,6 +17,60 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// RegisterUser defines model for RegisterUser.
+type RegisterUser struct {
+	Email     openapi_types.Email `json:"email" mapstructure:"email"`
+	FirstName string              `json:"first_name" mapstructure:"first_name"`
+	LastName  string              `json:"last_name" mapstructure:"last_name"`
+	Password  string              `json:"password" mapstructure:"password"`
+}
+
+// AuthRequest defines model for auth_request.
+type AuthRequest struct {
+	Email    *openapi_types.Email `json:"email,omitempty" mapstructure:"email"`
+	Password *string              `json:"password,omitempty" mapstructure:"password"`
+}
+
+// AuthResponse defines model for auth_response.
+type AuthResponse struct {
+	Token *string `json:"token,omitempty" mapstructure:"token"`
+}
+
+// Error defines model for error.
+type Error struct {
+	Error *string `json:"error,omitempty" mapstructure:"error"`
+}
+
+// LoginRequest defines model for login_request.
+type LoginRequest struct {
+	Email    openapi_types.Email `json:"email" mapstructure:"email"`
+	Password string              `json:"password" mapstructure:"password"`
+}
+
+// LoginResponse defines model for login_response.
+type LoginResponse struct {
+	AccessToken  string  `json:"access_token" mapstructure:"access_token"`
+	ExpiresIn    int32   `json:"expires_in" mapstructure:"expires_in"`
+	RefreshToken *string `json:"refresh_token,omitempty" mapstructure:"refresh_token"`
+	TokenType    string  `json:"token_type" mapstructure:"token_type"`
+}
+
+// LogoutResponse defines model for logout_response.
+type LogoutResponse struct {
+	Message string `json:"message" mapstructure:"message"`
+}
+
+// PasswordChangeRequest defines model for password_change_request.
+type PasswordChangeRequest struct {
+	CurrentPassword string `json:"current_password" mapstructure:"current_password"`
+	NewPassword     string `json:"new_password" mapstructure:"new_password"`
+}
+
+// PasswordChangeResponse defines model for password_change_response.
+type PasswordChangeResponse struct {
+	Message string `json:"message" mapstructure:"message"`
+}
+
 // Project defines model for project.
 type Project struct {
 	CreatedAt   *time.Time          `json:"created_at,omitempty" mapstructure:"created_at"`
@@ -36,6 +90,19 @@ type ProjectUser struct {
 	Role      *string    `json:"role,omitempty" mapstructure:"role"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty" mapstructure:"updated_at"`
 	UserId    *int64     `json:"user_id,omitempty" mapstructure:"user_id"`
+}
+
+// RefreshTokenRequest defines model for refresh_token_request.
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" mapstructure:"refresh_token"`
+}
+
+// RefreshTokenResponse defines model for refresh_token_response.
+type RefreshTokenResponse struct {
+	AccessToken  string  `json:"access_token" mapstructure:"access_token"`
+	ExpiresIn    int32   `json:"expires_in" mapstructure:"expires_in"`
+	RefreshToken *string `json:"refresh_token,omitempty" mapstructure:"refresh_token"`
+	TokenType    string  `json:"token_type" mapstructure:"token_type"`
 }
 
 // Task defines model for task.
@@ -62,6 +129,11 @@ type TaskGroup struct {
 	UpdatedAt   *time.Time `json:"updated_at,omitempty" mapstructure:"updated_at"`
 }
 
+// Token defines model for token.
+type Token struct {
+	Token *string `json:"token,omitempty" mapstructure:"token"`
+}
+
 // User defines model for user.
 type User struct {
 	CreatedAt *time.Time           `json:"created_at,omitempty" mapstructure:"created_at"`
@@ -69,6 +141,7 @@ type User struct {
 	FirstName *string              `json:"first_name,omitempty" mapstructure:"first_name"`
 	LastName  *string              `json:"last_name,omitempty" mapstructure:"last_name"`
 	LastSeen  *time.Time           `json:"last_seen,omitempty" mapstructure:"last_seen"`
+	Password  *string              `json:"password,omitempty" mapstructure:"password"`
 	UpdatedAt *time.Time           `json:"updated_at,omitempty" mapstructure:"updated_at"`
 	UserId    *int64               `json:"user_id,omitempty" mapstructure:"user_id"`
 }
@@ -76,14 +149,20 @@ type User struct {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yWO2/bMBDHvwpxsyS4D3TwljFbhuzGVTorrM0HjqciRqDvXpysWhTapZDlpG02Qo/f",
-	"nzz+7/ECdXAxePKSYPsCqX4ih8MycvhGtYzLSCyWhhc1Ewo1Oxze7QM7XUGDQqVYR1CAnCLBFpKw9S0U",
-	"8FwGjLasQ0Mt+ZKehbEUbAeew5iEu1o61p8yfN8X0FCq2UaxwevHS8g5StHkm53u+pdjLDzBhasiYxh3",
-	"tpnJWC9fPk861gu1xH8olLFzKY+OlsZqxlJ4EmRZJVwZeRSSLi3d/0hRYBebNf2a4XuVG1nh65A92bV0",
-	"ifi1s+mGbuRwXOzCgXHrOyxAb2qVEP0E/94ogunwXm6Xllsb2Mppef0bOX937VNL7VoOXVzFz3P8RXA1",
-	"qVzkGl1uAr2FRjFF8x+uAme3XOPyMtKNW9vNs+q1nfkWRhdyaI8zofOThc1jYCh/bzldZ3bOSAo+4pW4",
-	"E+iCTUR+leBP9P9k/NJH1u+D/jYrf3D3cG/2gc0jpsMjY30gLgyasSYYhx5bcuTFoG+MJq8R/cz61qRT",
-	"EnKVbtyKzsOQUczdwz0U8J04nZU21Ydqo/kWInmMFrbwqdpUH6GAiPKkR+r7HwEAAP//3XkY8bMPAAA=",
+	"H4sIAAAAAAAC/+yZz2+bShDH/xW0Z2zlJU/v4Fve4Ul5l0Ztqh6qCE1gDFub3e3s0MSK/L9XC8aAsaM0",
+	"a4jb5MYvfWb2O7MzAzyKWOdGK1RsxexR2DjDHMrDj5hKy0ifLZI7N6QNEkss72IOcukO5ppyYDHbXAkF",
+	"rwyKmbBMUqUiFA8TDUZOYp1gimqCD0wwYUhLTA7GMhUxF4Rbxnodirkky5GCHN1jPswWyYGXcCRuA3JY",
+	"A9bea0o6kmwv+qmyxaydJcLvhSRMxOzrVvOWodZy24u93bqg775hzGIdCig4ixwOLY8f4bZix1Pn0CKt",
+	"0cpif5WsF6h8Xagg++0jkd63f+rLXmKWkP12lzqV6jSi+4r74fYJZQ6lBMQxWhsdJTM6LOctPhhJaCOp",
+	"OspIxRfnjSxSMaZIv6p+w66EmRPa7DgL6cLKjHNHUcV8FAnOoVi6pfyLQKXr3juqgveC3NG040dH3gOh",
+	"1wU/EfscrYXUuzfUmJ7v9Y19ztVJG8UZqBQP7924IELF0ZB7rGfDrUTh/aBGO/yedj2Xdhx6nqYnGXnS",
+	"5WE/0oTAmETAHbkTYJywLFu8V5AbvHM3QRuTNCy1d7loo8qyp5LIed1bhm/DqbnrRsZIJru19Z+/fWtr",
+	"i902dYxBssNycMtAPIhcLfLGEBfW1/8NxQELkwyZry38/qGnlrLY+84y7m4aMRtJL72zsGSMHcNQuEgN",
+	"IlEN3p8onXHmcKcddITaaRDd27fPcPp9gH1zAyyDXbyPCb5jgtQkeeXftzec37tnu5SKUtKFGaQOd/Fb",
+	"g4OZahs5xnTWgE5hwGnU/IOrQJUtxwheizTySDb6rnr1zKyb9MjfV09h1H//GdL9GVKeWUQ1iPgN/SUf",
+	"mu9JMn5Qy5WYMRX44i/Pb+JFyc0bGBduyvkUZ5hXm+uuHJAvC86as/9qn/7/ciPC6j+iI93tDNMZs6lM",
+	"STXX1eDdaiTi8voqmGsKbsAubgjiBVIYQLCprkEOClLMUXEAKglcGQzYPSZVGtiVZcynzphk90YsWpTg",
+	"8vpKhOIHkq0snU3/mp65CqINKjBSzMTF9Gx6Xv4+4MytdL3+GQAA//96yar1IB0AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

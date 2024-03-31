@@ -20,4 +20,7 @@ oapi-codegen -config api/code-gen-configs/server/user.yaml api/openapi/server/us
 echo "Generating code for the server: Project Service..."
 oapi-codegen -config api/code-gen-configs/server/project.yaml api/openapi/server/project.yaml
 
+echo "Generating code for the server: Auth Service..."
+oapi-codegen -config api/code-gen-configs/server/auth.yaml api/openapi/server/auth.yaml
+
 echo "files generated successfully"

@@ -1,0 +1,14 @@
+# oapi-codegen -config api/code-gen-configs/server/auth.yaml api/openapi/server/auth.yaml
+package: auth
+generate:
+  chi-server: true
+  # strict-server: true
+  # client: true
+  models: true
+  embedded-spec: true
+output-options:
+  skip-prune: true
+  disable-type-aliases-for-type: []
+import-mapping:
+  ../schema.yaml: github.com/AgamBenItzhak/TaskTracker/api
+output: api/services/auth/openapi.auth.gen.go
