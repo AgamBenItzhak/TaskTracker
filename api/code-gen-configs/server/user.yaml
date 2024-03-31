@@ -1,11 +1,11 @@
 # oapi-codegen -config api/code-gen-configs/server/user.yaml api/openapi/server/user.yaml
-package: api
+package: user
 generate:
   chi-server: true
   # strict-server: true
   # client: true
-  # models: true
-  # embedded-spec: true
+  models: true
+  embedded-spec: true
 output-options:
   skip-prune: true
   disable-type-aliases-for-type: []
