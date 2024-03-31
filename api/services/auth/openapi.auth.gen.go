@@ -13,7 +13,11 @@ import (
 	"path"
 	"strings"
 
-	externalRef0 "github.com/AgamBenItzhak/TaskTracker/api"
+	externalRef0 "github.com/AgamBenItzhak/TaskTracker/api/schemas/auth"
+	externalRef1 "github.com/AgamBenItzhak/TaskTracker/api/schemas/errors"
+	externalRef2 "github.com/AgamBenItzhak/TaskTracker/api/schemas/project"
+	externalRef3 "github.com/AgamBenItzhak/TaskTracker/api/schemas/task"
+	externalRef4 "github.com/AgamBenItzhak/TaskTracker/api/schemas/user"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 )
@@ -28,7 +32,7 @@ type PostAuthLoginJSONRequestBody = externalRef0.LoginRequest
 type PostAuthRefreshtokenJSONRequestBody = externalRef0.RefreshTokenRequest
 
 // PostAuthRegisterJSONRequestBody defines body for PostAuthRegister for application/json ContentType.
-type PostAuthRegisterJSONRequestBody = externalRef0.User
+type PostAuthRegisterJSONRequestBody = externalRef4.User
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -302,22 +306,22 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yX32/bNhDH/xWCG7AX23LSbij0lgx7CFagQdc9FYFwk84SG4nkjqckXuD/fSAl25J/",
-	"pF4cBQaWN4Eiv3e8+/DIe5SpqazRqNnJ+FG6tMAKwicSGfIfloxFYoX9YZ5blLF0TErnciQfxgasGqcm",
-	"wxz1GB+YYMyQh1UVWMdUp1yTX9SILBaL0VLG/PUNU5aLkSxNrnRC+HeNjnfYr0CV/mNmqAL2YmFkdJxD",
-	"QcP7Y8G5e0NZz8Rq8DgrK5mwc79FRZjJ+OtqD6sZN09ExlmjHW6HBtIUnUvY3KI+NkM9Le8tPlhF6BKl",
-	"e5FRmt+dr8OiNGOO9F+jv9ZuAjMjdMXLbKQvFojzX0mj+SgznEFd+q1cIlBw/RhzHfGtJPdi2vOjF949",
-	"qTc1P5H7Cp2DHI+N1lJmy/flj13OLaFN0gJ0jvvPbloToeZkyDO2ZcPvROP9oEZ7+lux23Jpw6HDYnqK",
-	"me8drv15H/RAb7jb/32I02/l9H9XTmuHO542KSEwZglwLycZMI5ZVXhsZVrLBwIGfsjMFDlONFRHl4aO",
-	"khcu4YV010IrWYeoBwn+Wv05j7x7UoyfdDmXMVONz371jWRtsyEZ68gvWs4TlW2WmF/eH1tilsK7nvB+",
-	"SOmZacqBS0lZVkbLWF5cX4mZIfEF3O0XgvQWaSRAWDJ+pahAQ44VahagM8HgbgX7aUrnws0dYzXxjisu",
-	"vb2Oiri4vpIjeYfkGkvTydlk6k+6sajBKhnLd5Pp5Dw8sbkIW4qg5iJq7tdxlwhrmkvM1wbwrl9lMpbX",
-	"xvFFzcWvYcH1Gpb22rs02TxUEaMZdRAAa0uVBonomzN63WH5rx8JZzKWP0TrFixq+69o35Nqowh6GMNA",
-	"c4eFbZ1PpwO60V6WwY9+cj/97uP9/gWtd7rEvqlLyMTnZUS8zbPhbf6pPS6G1D+YeaM/v8ZGrzQjaSjF",
-	"H0h3SOK3duJIurqqgOYylg2PggsU/lT+5ES3kIXj+1V63+WNX9hQH1rJ77P+MUwbBvF+n//KYG+00m84",
-	"nwzOH00ulBZsAtFN1X8aZFPzQST7ecMi1WvR35g6KaZMzcLMDoOqbXJWDdPTaH3uzh6mVu7us1+5Zu7p",
-	"m984PxnOWxK7b4GmSRarJnkv8bly3DbF36G9nTkM6aEzPwjsswFsbuTZIYm2a+8AvZmXOyhVJpS2NZ8Y",
-	"DU2mBAiN9wGIHQT4JUHDjz7KmkoZy4LZxlFUmhTKwjiOP0w/TCPfRy1uFv8GAAD//284xxE0GgAA",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
@@ -359,7 +363,31 @@ func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
 
 	pathPrefix := path.Dir(pathToFile)
 
-	for rawPath, rawFunc := range externalRef0.PathToRawSpec(path.Join(pathPrefix, "../schema.yaml")) {
+	for rawPath, rawFunc := range externalRef0.PathToRawSpec(path.Join(pathPrefix, "../schemas/auth.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
+	for rawPath, rawFunc := range externalRef1.PathToRawSpec(path.Join(pathPrefix, "../schemas/errors.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
+	for rawPath, rawFunc := range externalRef2.PathToRawSpec(path.Join(pathPrefix, "../schemas/project.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
+	for rawPath, rawFunc := range externalRef3.PathToRawSpec(path.Join(pathPrefix, "../schemas/task.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
+	for rawPath, rawFunc := range externalRef4.PathToRawSpec(path.Join(pathPrefix, "../schemas/user.yaml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}

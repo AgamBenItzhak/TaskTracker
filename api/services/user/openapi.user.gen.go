@@ -13,47 +13,84 @@ import (
 	"path"
 	"strings"
 
-	externalRef0 "github.com/AgamBenItzhak/TaskTracker/api"
+	externalRef0 "github.com/AgamBenItzhak/TaskTracker/api/schemas/auth"
+	externalRef1 "github.com/AgamBenItzhak/TaskTracker/api/schemas/errors"
+	externalRef2 "github.com/AgamBenItzhak/TaskTracker/api/schemas/project"
+	externalRef3 "github.com/AgamBenItzhak/TaskTracker/api/schemas/task"
+	externalRef4 "github.com/AgamBenItzhak/TaskTracker/api/schemas/user"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 	"github.com/oapi-codegen/runtime"
 )
 
-// PutUsersUserIdJSONRequestBody defines body for PutUsersUserId for application/json ContentType.
-type PutUsersUserIdJSONRequestBody = externalRef0.User
+// CreateUserJSONRequestBody defines body for CreateUser for application/json ContentType.
+type CreateUserJSONRequestBody = externalRef4.User
+
+// UpdateUserCredentialsByIDJSONRequestBody defines body for UpdateUserCredentialsByID for application/json ContentType.
+type UpdateUserCredentialsByIDJSONRequestBody = externalRef4.UserCredentialsUpdateRequest
+
+// UpdateUserByIDJSONRequestBody defines body for UpdateUserByID for application/json ContentType.
+type UpdateUserByIDJSONRequestBody = externalRef4.User
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Delete user by ID
-	// (DELETE /users/{user_id})
-	DeleteUsersUserId(w http.ResponseWriter, r *http.Request, userId int64)
-	// Get user by ID
-	// (GET /users/{user_id})
-	GetUsersUserId(w http.ResponseWriter, r *http.Request, userId int64)
-	// Update user by ID
-	// (PUT /users/{user_id})
-	PutUsersUserId(w http.ResponseWriter, r *http.Request, userId int64)
+	// Get all users
+	// (GET /user)
+	GetAllUsers(w http.ResponseWriter, r *http.Request)
+	// Create a new user
+	// (POST /user)
+	CreateUser(w http.ResponseWriter, r *http.Request)
+	// Delete a user by ID
+	// (DELETE /user/{user_id})
+	DeleteUserByID(w http.ResponseWriter, r *http.Request, userId int)
+	// Get a user by ID
+	// (GET /user/{user_id})
+	GetUserByID(w http.ResponseWriter, r *http.Request, userId int)
+	// Update a user's credentials by ID
+	// (PATCH /user/{user_id})
+	UpdateUserCredentialsByID(w http.ResponseWriter, r *http.Request, userId int)
+	// Update a user by ID
+	// (PUT /user/{user_id})
+	UpdateUserByID(w http.ResponseWriter, r *http.Request, userId int)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// Delete user by ID
-// (DELETE /users/{user_id})
-func (_ Unimplemented) DeleteUsersUserId(w http.ResponseWriter, r *http.Request, userId int64) {
+// Get all users
+// (GET /user)
+func (_ Unimplemented) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Get user by ID
-// (GET /users/{user_id})
-func (_ Unimplemented) GetUsersUserId(w http.ResponseWriter, r *http.Request, userId int64) {
+// Create a new user
+// (POST /user)
+func (_ Unimplemented) CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Update user by ID
-// (PUT /users/{user_id})
-func (_ Unimplemented) PutUsersUserId(w http.ResponseWriter, r *http.Request, userId int64) {
+// Delete a user by ID
+// (DELETE /user/{user_id})
+func (_ Unimplemented) DeleteUserByID(w http.ResponseWriter, r *http.Request, userId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get a user by ID
+// (GET /user/{user_id})
+func (_ Unimplemented) GetUserByID(w http.ResponseWriter, r *http.Request, userId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update a user's credentials by ID
+// (PATCH /user/{user_id})
+func (_ Unimplemented) UpdateUserCredentialsByID(w http.ResponseWriter, r *http.Request, userId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update a user by ID
+// (PUT /user/{user_id})
+func (_ Unimplemented) UpdateUserByID(w http.ResponseWriter, r *http.Request, userId int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -66,23 +103,12 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// DeleteUsersUserId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteUsersUserId(w http.ResponseWriter, r *http.Request) {
+// GetAllUsers operation middleware
+func (siw *ServerInterfaceWrapper) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	var err error
-
-	// ------------- Path parameter "user_id" -------------
-	var userId int64
-
-	err = runtime.BindStyledParameterWithOptions("simple", "user_id", chi.URLParam(r, "user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "user_id", Err: err})
-		return
-	}
-
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteUsersUserId(w, r, userId)
+		siw.Handler.GetAllUsers(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -92,23 +118,12 @@ func (siw *ServerInterfaceWrapper) DeleteUsersUserId(w http.ResponseWriter, r *h
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// GetUsersUserId operation middleware
-func (siw *ServerInterfaceWrapper) GetUsersUserId(w http.ResponseWriter, r *http.Request) {
+// CreateUser operation middleware
+func (siw *ServerInterfaceWrapper) CreateUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	var err error
-
-	// ------------- Path parameter "user_id" -------------
-	var userId int64
-
-	err = runtime.BindStyledParameterWithOptions("simple", "user_id", chi.URLParam(r, "user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "user_id", Err: err})
-		return
-	}
-
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetUsersUserId(w, r, userId)
+		siw.Handler.CreateUser(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -118,14 +133,14 @@ func (siw *ServerInterfaceWrapper) GetUsersUserId(w http.ResponseWriter, r *http
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PutUsersUserId operation middleware
-func (siw *ServerInterfaceWrapper) PutUsersUserId(w http.ResponseWriter, r *http.Request) {
+// DeleteUserByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
 
 	// ------------- Path parameter "user_id" -------------
-	var userId int64
+	var userId int
 
 	err = runtime.BindStyledParameterWithOptions("simple", "user_id", chi.URLParam(r, "user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
@@ -134,7 +149,85 @@ func (siw *ServerInterfaceWrapper) PutUsersUserId(w http.ResponseWriter, r *http
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PutUsersUserId(w, r, userId)
+		siw.Handler.DeleteUserByID(w, r, userId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetUserByID operation middleware
+func (siw *ServerInterfaceWrapper) GetUserByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "user_id" -------------
+	var userId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", chi.URLParam(r, "user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "user_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetUserByID(w, r, userId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// UpdateUserCredentialsByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateUserCredentialsByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "user_id" -------------
+	var userId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", chi.URLParam(r, "user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "user_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateUserCredentialsByID(w, r, userId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// UpdateUserByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateUserByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "user_id" -------------
+	var userId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", chi.URLParam(r, "user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "user_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateUserByID(w, r, userId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -258,13 +351,22 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/users/{user_id}", wrapper.DeleteUsersUserId)
+		r.Get(options.BaseURL+"/user", wrapper.GetAllUsers)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/users/{user_id}", wrapper.GetUsersUserId)
+		r.Post(options.BaseURL+"/user", wrapper.CreateUser)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/users/{user_id}", wrapper.PutUsersUserId)
+		r.Delete(options.BaseURL+"/user/{user_id}", wrapper.DeleteUserByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/user/{user_id}", wrapper.GetUserByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Patch(options.BaseURL+"/user/{user_id}", wrapper.UpdateUserCredentialsByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/user/{user_id}", wrapper.UpdateUserByID)
 	})
 
 	return r
@@ -273,18 +375,20 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8SVz07kOBDGX8Wq3WO608uiFcqNVUsop+EAJ4SQSSppQ2KbcgVoobz7qJzQf6aZGaCn",
-	"Zy7gtuzfV1VfpfwChWu9s2g5QPYCoVhgq+OyC0jy35PzSGww7haEmrG80Sy/KketrKDUjBM2LUICvPQI",
-	"GQQmY2tI4HnitDeTwpVYo53gM5OesK4jr9U+MHUFdySXNvB9nwC22jRbQsPOfiIDQ/iVocA3Vrcox/Zh",
-	"bpAE3OhfxF2DVtiAaA9S/DVdtLwO4clRuSW12txVeiLD+MU2S8iYOvyY9Ioryp0vD9ljG/ioFpBuzHaa",
-	"xvJ/x2sZYxlrpI/qjOBeVEaSu73DgoctYysn10oMBRnPxlnI4PQ8V5UjdaHD/QXp4h4pUVp5cnJTtdrq",
-	"Glu0rLQtFetwr1iOGVursAyM7VQCN9yI3gZFnZ7nkMAjUhiUZtN/pjPoE3AerfYGMvh3OpsegXjPi5hS",
-	"KkmE9GXMpR/ibZBxN/J53FdayWF1u1S8QEMqn0tAMkO0HMzL1dFLYcufvIyapFtkpADZ1bfsfK5cJcAB",
-	"zk6NUUgZY//wAhIYvrhV5RMgfOgMYfnak8N8e4/XfX8t14N3Ngyj72h2vJu0hD/GUkotj797yDpWlevs",
-	"0OOha1tNy3XZXouWzyWW2FFXMZEA130CNfIu9wz5XeU+Q96r1iL+Wws9i0+Ns4w2pq29b0wRE0rvgrPr",
-	"p0pWfxNWkMFf6fotS8eHLPbv8Lm9Yclox2dck9L/xDLfvWHZZRw+73LtvNvPtWHOHdy4hw4D/+/K5QE8",
-	"2w6u/1N9Mr4Yn+uU0fEfNku8gfT4am1HDWSwYPZZmjau0M3CBc5OZiezVCZ1f91/DQAA//91rrahugkA",
-	"AA==",
+	"H4sIAAAAAAAC/+RWTW/cNhD9KwRboBftR9KgCHRzYqDYU3NwToGxYKTZFWOKZGdGcQRD/70Ycj8ky03r",
+	"Ok5R9LRaavhm3nvDoe50FdoYPHgmXd5pqhpoTXrsCFB+I4YIyBbSaoVgGOqtYfm3C9jKk64Nw4JtC7rQ",
+	"3EfQpSZG6/e60F8WwUS7qEINe/AL+MJoFmz2Ca81kRi7ijuUTSP4YSj0ziLx1psWJPYpwCMkAXbmG+Ge",
+	"gQS2i/VzqjOCT9kIcGvrSSrr+ZdX5zTWM+wBH5vnADxIFoTfO4tQ6/LD6cXEmbGaxdjBiR7Xp5rCx09Q",
+	"sT4SqBBq8GyNo22O30pKIJ53H7TGugnfvPI0WTOGcI2G6DbgVNLT4jzLLVqG37zrdcnYwePSnnD/XS/n",
+	"xkik9bsgaDVQhTayDV6X+uLdRu0CqitDN1doqhvAQhkVMchO1Rpv9tCCZ2V8rdjQjWIJs36vqCeGdil8",
+	"LDvJN0JRF+82utCfASlnWi9fLNfSIyGCN9HqUv+8XC9fajGJm8R0dRxRe0i9Ip1ipNJNrUv9K/CFc+8J",
+	"kLQwpxg85TZ6uV6nWRY8g09bTYzOVmnz6hNJBcdZKE+WoU0bf0TY6VL/sDpPzdVhZOZihpOYBtH0Wct7",
+	"GipniVXYqS7VJhHUta3BPletjHPHd4WOgR4g9zadMiGns6tA/CbU/aNo/TWbac9Iiw8zKV88Q86pYlcN",
+	"KA+3rleH4aIOkWPhsiLKSOT5fcJc3R16fcgd7YBhLullWhdJ3/Sby9RnaFpg8aH8cPdATZtLcZEbSPkU",
+	"B3XAluOTDjg3utD5mhnNzqmixUideyd9GK5ncr+an0qp+ZC6VtRVFRDtOuf6exJlhsrkcj/2anMpHfZn",
+	"p+dpUgjqc+qw/i5tl9jcWm4SN4pQ2Z2FOik3P7f3hI2Gq2Yu7ft0yYm6b89X3z8XOt+Z31rr55koX7vs",
+	"/9aw+U6u58+Wh8ZMNu9g9U+kRoRGxnf8Ndv/H17/Fw09WphCAD8fvenQ6VI3zLFcrVyojGsCcfl6/Xq9",
+	"ko+T4Xr4IwAA//9mEFlWSg0AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
@@ -326,7 +430,31 @@ func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
 
 	pathPrefix := path.Dir(pathToFile)
 
-	for rawPath, rawFunc := range externalRef0.PathToRawSpec(path.Join(pathPrefix, "../schema.yaml")) {
+	for rawPath, rawFunc := range externalRef0.PathToRawSpec(path.Join(pathPrefix, "../schemas/auth.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
+	for rawPath, rawFunc := range externalRef1.PathToRawSpec(path.Join(pathPrefix, "../schemas/errors.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
+	for rawPath, rawFunc := range externalRef2.PathToRawSpec(path.Join(pathPrefix, "../schemas/project.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
+	for rawPath, rawFunc := range externalRef3.PathToRawSpec(path.Join(pathPrefix, "../schemas/task.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
+	for rawPath, rawFunc := range externalRef4.PathToRawSpec(path.Join(pathPrefix, "../schemas/user.yaml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}

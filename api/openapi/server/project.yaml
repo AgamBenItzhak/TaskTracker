@@ -6,540 +6,265 @@ info:
 servers:
   - url: http://localhost:8080/api
 paths:
-  /projects:
+  /project:
     get:
       summary: Get all projects
-      description: Get all projects in the system.
-      tags:
-        - projects
+      operationId: getAllProjects
       responses:
         '200':
-          description: Projects found
+          description: A list of projects
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '../schema.yaml#/components/schemas/project'
-        '404':
-          description: Projects not found
+                  $ref: '../schemas/project.yaml#/components/schemas/project'
     post:
       summary: Create a new project
-      description: Create a new project in the system.
-      tags:
-        - projects
+      operationId: createProject
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schema.yaml#/components/schemas/project'
+              $ref: '../schemas/project.yaml#/components/schemas/project'
       responses:
         '201':
-          description: Project created
+          description: The newly created project
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/project'
-        '400':
-          description: Invalid input
-  /projects/{project_id}:
+                $ref: '../schemas/project.yaml#/components/schemas/project'
+  /project/{project_id}:
     get:
-      summary: Get project by ID
-      description: Get a project by its ID.
-      tags:
-        - projects
+      summary: Get a project by ID
+      operationId: getProjectByID
       parameters:
         - name: project_id
           in: path
           required: true
-          description: ID of the project to get
+          description: The ID of the project to get
           schema:
             type: integer
-            format: int64
       responses:
         '200':
-          description: Project found
+          description: The project with the specified ID
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/project'
-        '404':
-          description: Project not found
+                $ref: '../schemas/project.yaml#/components/schemas/project'
     put:
-      summary: Update project by ID
-      description: Update a project by its ID.
-      tags:
-        - projects
+      summary: Update a project by ID
+      operationId: updateProjectByID
       parameters:
         - name: project_id
           in: path
           required: true
-          description: ID of the project to update
+          description: The ID of the project to update
           schema:
             type: integer
-            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schema.yaml#/components/schemas/project'
+              $ref: '../schemas/project.yaml#/components/schemas/project'
       responses:
         '200':
-          description: Project updated
+          description: The updated project
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/project'
+                $ref: '../schemas/project.yaml#/components/schemas/project'
         '404':
-          description: Project not found
+          description: 'Project not found'
     delete:
-      summary: Delete project by ID
-      description: Delete a project by its ID.
-      tags:
-        - projects
+      summary: Delete a project by ID
+      operationId: deleteProjectByID
       parameters:
         - name: project_id
           in: path
           required: true
-          description: ID of the project to delete
+          description: The ID of the project to delete
           schema:
             type: integer
-            format: int64
       responses:
         '204':
-          description: Project deleted
+          description: 'Project deleted successfully'
         '404':
-          description: Project not found
-  /projects/{project_id}/users:
-    get:
-      summary: Get all users in project
-      description: Get all users in a project.
-      tags:
-        - projects
+          description: 'Project not found'
+    patch:
+      summary: Partially update a project by ID
+      operationId: patchProjectByID
       parameters:
         - name: project_id
           in: path
           required: true
-          description: ID of the project to get users from
+          description: The ID of the project to update
           schema:
             type: integer
-            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/project.yaml#/components/schemas/project'
       responses:
         '200':
-          description: Users found
+          description: The updated project
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/project.yaml#/components/schemas/project'
+        '404':
+          description: 'Project not found'
+  /project/{project_id}/tasks:
+    get:
+      summary: Get all tasks for a project
+      operationId: getAllTasksForProject
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to get tasks for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of tasks for the project
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '../schema.yaml#/components/schemas/user'
-        '404':
-          description: Users not found
+                  $ref: '../schemas/task.yaml#/components/schemas/task'
     post:
-      summary: Add user to project
-      description: Add a user to a project.
-      tags:
-        - projects
+      summary: Create a new task for a project
+      operationId: createTaskForProject
       parameters:
         - name: project_id
           in: path
           required: true
-          description: ID of the project to add user to
+          description: The ID of the project to create a task for
           schema:
             type: integer
-            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schema.yaml#/components/schemas/project_user'
+              $ref: '../schemas/task.yaml#/components/schemas/task'
       responses:
         '201':
-          description: User added to project
+          description: The newly created task
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/project_user'
-        '400':
-          description: Invalid input
-  /projects/{project_id}/users/{user_id}:
-    put:
-      summary: Update user role in project
-      description: Update a user's role in a project.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to update user role in
-          schema:
-            type: integer
-            format: int64
-        - name: user_id
-          in: path
-          required: true
-          description: ID of the user to update role for
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '../schema.yaml#/components/schemas/project_user'
-      responses:
-        '200':
-          description: User role updated
-          content:
-            application/json:
-              schema:
-                $ref: '../schema.yaml#/components/schemas/project_user'
-        '404':
-          description: User or project not found
-    delete:
-      summary: Remove user from project
-      description: Remove a user from a project.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to remove user from
-          schema:
-            type: integer
-            format: int64
-        - name: user_id
-          in: path
-          required: true
-          description: ID of the user to remove from project
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: User removed from project
-        '404':
-          description: User or project not found
-  /projects/{project_id}/task-groups:
+                $ref: '../schemas/task.yaml#/components/schemas/task'
+  /project/{project_id}/tasks/{task_id}:
     get:
-      summary: Get all task groups in project
-      description: Get all task groups in a project.
-      tags:
-        - projects
+      summary: Get a task by ID for a project
+      operationId: getTaskByIDForProject
       parameters:
         - name: project_id
           in: path
           required: true
-          description: ID of the project to get task groups from
+          description: The ID of the project to get the task for
           schema:
             type: integer
-            format: int64
-      responses:
-        '200':
-          description: Task groups found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '../schema.yaml#/components/schemas/task_group'
-        '404':
-          description: Task groups not found
-    post:
-      summary: Create a new task group in project
-      description: Create a new task group in a project.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to create task group in
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '../schema.yaml#/components/schemas/task_group'
-      responses:
-        '201':
-          description: Task group created
-          content:
-            application/json:
-              schema:
-                $ref: '../schema.yaml#/components/schemas/task_group'
-        '400':
-          description: Invalid input
-  /projects/{project_id}/task-groups/{task_group_id}:
-    get:
-      summary: Get task group by ID
-      description: Get a task group by its ID.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to get task group from
-          schema:
-            type: integer
-            format: int64
-        - name: task_group_id
-          in: path
-          required: true
-          description: ID of the task group to get
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Task group found
-          content:
-            application/json:
-              schema:
-                $ref: '../schema.yaml#/components/schemas/task_group'
-        '404':
-          description: Task group not found
-    put:
-      summary: Update task group by ID
-      description: Update a task group by its ID.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to update task group in
-          schema:
-            type: integer
-            format: int64
-        - name: task_group_id
-          in: path
-          required: true
-          description: ID of the task group to update
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '../schema.yaml#/components/schemas/task_group'
-      responses:
-        '200':
-          description: Task group updated
-          content:
-            application/json:
-              schema:
-                $ref: '../schema.yaml#/components/schemas/task_group'
-        '404':
-          description: Task group not found
-    delete:
-      summary: Delete task group by ID
-      description: Delete a task group by its ID.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to delete task group from
-          schema:
-            type: integer
-            format: int64
-        - name: task_group_id
-          in: path
-          required: true
-          description: ID of the task group to delete
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: Task group deleted
-  /projects/{project_id}/task-groups/{task_group_id}/tasks:
-    get:
-      summary: Get all tasks in task group
-      description: Get all tasks in a task group.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to get tasks from
-          schema:
-            type: integer
-            format: int64
-        - name: task_group_id
-          in: path
-          required: true
-          description: ID of the task group to get tasks from
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Tasks found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '../schema.yaml#/components/schemas/task'
-        '404':
-          description: Tasks not found
-    post:
-      summary: Create a new task in task group
-      description: Create a new task in a task group.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to create task in
-          schema:
-            type: integer
-            format: int64
-        - name: task_group_id
-          in: path
-          required: true
-          description: ID of the task group to create task in
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '../schema.yaml#/components/schemas/task'
-      responses:
-        '201':
-          description: Task created
-          content:
-            application/json:
-              schema:
-                $ref: '../schema.yaml#/components/schemas/task'
-        '400':
-          description: Invalid input
-  /projects/{project_id}/task-groups/{task_group_id}/tasks/{task_id}:
-    get:
-      summary: Get task by ID
-      description: Get a task by its ID.
-      tags:
-        - projects
-      parameters:
-        - name: project_id
-          in: path
-          required: true
-          description: ID of the project to get task from
-          schema:
-            type: integer
-            format: int64
-        - name: task_group_id
-          in: path
-          required: true
-          description: ID of the task group to get task from
-          schema:
-            type: integer
-            format: int64
         - name: task_id
           in: path
           required: true
-          description: ID of the task to get
+          description: The ID of the task to get
           schema:
             type: integer
-            format: int64
       responses:
         '200':
-          description: Task found
+          description: The task with the specified ID
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/task'
-        '404':
-          description: Task not found
+                $ref: '../schemas/task.yaml#/components/schemas/task'
     put:
-      summary: Update task by ID
-      description: Update a task by its ID.
-      tags:
-        - projects
+      summary: Update a task by ID for a project
+      operationId: updateTaskByIDForProject
       parameters:
         - name: project_id
           in: path
           required: true
-          description: ID of the project to update task in
+          description: The ID of the project to update the task for
           schema:
             type: integer
-            format: int64
-        - name: task_group_id
-          in: path
-          required: true
-          description: ID of the task group to update task in
-          schema:
-            type: integer
-            format: int64
         - name: task_id
           in: path
           required: true
-          description: ID of the task to update
+          description: The ID of the task to update
           schema:
             type: integer
-            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schema.yaml#/components/schemas/task'
+              $ref: '../schemas/task.yaml#/components/schemas/task'
       responses:
         '200':
-          description: Task updated
+          description: The updated task
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/task'
+                $ref: '../schemas/task.yaml#/components/schemas/task'
         '404':
-          description: Task not found
+          description: 'Task not found'
     delete:
-      summary: Delete task by ID
-      description: Delete a task by its ID.
-      tags:
-        - projects
+      summary: Delete a task by ID for a project
+      operationId: deleteTaskByIDForProject
       parameters:
         - name: project_id
           in: path
           required: true
-          description: ID of the project to delete task from
+          description: The ID of the project to delete the task for
           schema:
             type: integer
-            format: int64
-        - name: task_group_id
-          in: path
-          required: true
-          description: ID of the task group to delete task from
-          schema:
-            type: integer
-            format: int64
         - name: task_id
           in: path
           required: true
-          description: ID of the task to delete
+          description: The ID of the task to delete
           schema:
             type: integer
-            format: int64
       responses:
         '204':
-          description: Task deleted
+          description: 'Task deleted successfully'
+        '404':
+          description: 'Task not found'
+    patch:
+      summary: Partially update a task by ID for a project
+      operationId: patchTaskByIDForProject
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to update the task for
+          schema:
+            type: integer
+        - name: task_id
+          in: path
+          required: true
+          description: The ID of the task to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/task.yaml#/components/schemas/task'
+      responses:
+        '200':
+          description: The updated task
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task'
+        '404':
+          description: 'Task not found'

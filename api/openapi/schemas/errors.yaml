@@ -1,0 +1,11 @@
+components:
+  schemas:
+    error:
+      type: object
+      properties:
+        message:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: message
+      required:
+        - message

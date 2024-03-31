@@ -10,5 +10,9 @@ output-options:
   skip-prune: true
   disable-type-aliases-for-type: []
 import-mapping:
-  ../schema.yaml: github.com/AgamBenItzhak/TaskTracker/api
+  ../schemas/auth.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/auth
+  ../schemas/errors.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/errors
+  ../schemas/project.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/project
+  ../schemas/task.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/task
+  ../schemas/user.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/user
 output: api/services/user/openapi.user.gen.go

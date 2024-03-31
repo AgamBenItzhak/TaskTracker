@@ -16,14 +16,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schema.yaml#/components/schemas/user'
+              $ref: '../schemas/user.yaml#/components/schemas/user'
       responses:
         '201':
           description: User created
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/user'
+                $ref: '../schemas/user.yaml#/components/schemas/user'
         '400':
           description: Invalid input
         '500':
@@ -31,7 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
   /auth/login:
     post:
       summary: Log in to the system
@@ -42,32 +42,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schema.yaml#/components/schemas/login_request'
+              $ref: '../schemas/auth.yaml#/components/schemas/login_request'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/login_response'
+                $ref: '../schemas/auth.yaml#/components/schemas/login_response'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
   /auth/logout:
     post:
       summary: Log out of the system
@@ -79,25 +79,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/logout_response'
+                $ref: '../schemas/auth.yaml#/components/schemas/logout_response'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
   /auth/change-password:
     post:
       summary: Change the user's password
@@ -108,32 +108,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schema.yaml#/components/schemas/password_change_request'
+              $ref: '../schemas/auth.yaml#/components/schemas/password_change_request'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/password_change_response'
+                $ref: '../schemas/auth.yaml#/components/schemas/password_change_response'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
   /auth/refreshtoken:
     post:
       summary: Refresh the user's access token
@@ -144,29 +144,29 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schema.yaml#/components/schemas/refresh_token_request'
+              $ref: '../schemas/auth.yaml#/components/schemas/refresh_token_request'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/refresh_token_response'
+                $ref: '../schemas/auth.yaml#/components/schemas/refresh_token_response'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '../schema.yaml#/components/schemas/error'
+                $ref: '../schemas/errors.yaml#/components/schemas/error'

@@ -1,0 +1,14 @@
+# oapi-codegen -config api/code-gen-configs/schemas/user api/openapi/schemas/user.yaml
+package: user
+generate:
+  # chi-server: true
+  # strict-server: true
+  # client: true
+  models: true
+  embedded-spec: true
+output-options:
+  skip-prune: true
+  disable-type-aliases-for-type: []
+# import-mapping:
+#   ../schema.yaml: github.com/AgamBenItzhak/TaskTracker/api
+output: api/schemas/user/openapi.user.gen.go

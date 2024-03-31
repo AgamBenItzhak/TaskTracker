@@ -1,0 +1,336 @@
+components:
+  schemas:
+    project:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        project_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_name
+        description:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: description
+        status:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: status
+        start_date:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: start_date
+        end_date:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: end_date
+        created_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: created_at
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: updated_at
+      required:
+        - project_id
+        - project_name
+        - created_at
+        - updated_at
+    project_request:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+      required:
+        - project_id
+    project_response:
+      type: object
+      properties:
+        project:
+          $ref: "#/components/schemas/project"
+      required:
+        - project
+    projects_request:
+      type: object
+      properties:
+        project_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_ids
+      required:
+        - project_ids
+    projects_response:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/project"
+          x-oapi-codegen-extra-tags:
+            mapstructure: projects
+      required:
+        - projects
+    project_create_request:
+      type: object
+      properties:
+        project_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_name
+        description:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: description
+        status:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: status
+        start_date:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: start_date
+        end_date:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: end_date
+      required:
+        - project_name
+    project_create_response:
+      type: object
+      properties:
+        project:
+          $ref: "#/components/schemas/project"
+      required:
+        - project
+    project_update_request:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        project_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_name
+        description:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: description
+        status:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: status
+        start_date:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: start_date
+        end_date:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: end_date
+      required:
+        - project_id
+    project_update_response:
+      type: object
+      properties:
+        project:
+          $ref: "#/components/schemas/project"
+      required:
+        - project
+    project_delete_request:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+      required:
+        - project_id
+    project_delete_response:
+      type: object
+      properties:
+        message:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: message
+      required:
+        - message
+    project_user:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        user_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: user_id
+        role:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: role
+        created_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: created_at
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            mapstructure: updated_at
+      required:
+        - project_id
+        - user_id
+        - role
+        - created_at
+        - updated_at
+    project_user_request:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        user_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: user_id
+      required:
+        - project_id
+        - user_id
+    project_user_response:
+      type: object
+      properties:
+        project_user:
+          $ref: "#/components/schemas/project_user"
+      required:
+        - project_user
+    project_users_request:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+      required:
+        - project_id
+    project_users_response:
+      type: object
+      properties:
+        project_users:
+          type: array
+          items:
+            $ref: "#/components/schemas/project_user"
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_users
+      required:
+        - project_users
+    project_user_create_request:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        user_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: user_id
+        role:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: role
+      required:
+        - project_id
+        - user_id
+        - role
+    project_user_create_response:
+      type: object
+      properties:
+        project_user:
+          $ref: "#/components/schemas/project_user"
+      required:
+        - project_user
+    project_user_update_request:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        user_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: user_id
+        role:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: role
+      required:
+        - project_id
+        - user_id
+    project_user_update_response:
+      type: object
+      properties:
+        project_user:
+          $ref: "#/components/schemas/project_user"
+      required:
+        - project_user
+    project_user_delete_request:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_id
+        user_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: user_id
+      required:
+        - project_id
+        - user_id
+    project_user_delete_response:
+      type: object
+      properties:
+        message:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: message
+      required:
+        - message

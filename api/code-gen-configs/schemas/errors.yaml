@@ -1,0 +1,14 @@
+# oapi-codegen -config api/code-gen-configs/schemas/errors api/openapi/schemas/errors.yaml
+package: errors
+generate:
+  # chi-server: true
+  # strict-server: true
+  # client: true
+  models: true
+  embedded-spec: true
+output-options:
+  skip-prune: true
+  disable-type-aliases-for-type: []
+# import-mapping:
+#   ../schema.yaml: github.com/AgamBenItzhak/TaskTracker/api
+output: api/schemas/errors/openapi.errors.gen.go

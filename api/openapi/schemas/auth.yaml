@@ -1,0 +1,175 @@
+components:
+  schemas:
+    auth_request:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            mapstructure: email
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+    auth_response:
+      type: object
+      properties:
+        token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: token
+    token:
+      type: object
+      properties:
+        token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: token
+    login_request:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            mapstructure: email
+        password:
+          type: string
+          format: password
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - email
+        - password
+
+    login_response:
+      type: object
+      properties:
+        access_token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: access_token
+        refresh_token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: refresh_token
+        token_type:
+          type: string
+          default: "Bearer"
+          x-oapi-codegen-extra-tags:
+            mapstructure: token_type
+        expires_in:
+          type: integer
+          format: int32
+          x-oapi-codegen-extra-tags:
+            mapstructure: expires_in
+      required:
+        - access_token
+        - token_type
+        - expires_in
+
+    logout_response:
+      type: object
+      properties:
+        message:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: message
+      required:
+        - message
+    RegisterUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            mapstructure: email
+        password:
+          type: string
+          format: password
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+        first_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: first_name
+        last_name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: last_name
+      required:
+        - email
+        - password
+        - first_name
+        - last_name
+
+    password_change_request:
+      type: object
+      properties:
+        current_password:
+          type: string
+          format: password
+          x-oapi-codegen-extra-tags:
+            mapstructure: current_password
+        new_password:
+          type: string
+          format: password
+          x-oapi-codegen-extra-tags:
+            mapstructure: new_password
+      required:
+        - current_password
+        - new_password
+    password_change_response:
+      type: object
+      properties:
+        message:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: message
+      required:
+        - message
+
+    refresh_token_request:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: refresh_token
+      required:
+        - refresh_token
+
+    refresh_token_response:
+      type: object
+      properties:
+        access_token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: access_token
+        refresh_token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: refresh_token
+        token_type:
+          type: string
+          default: "Bearer"
+          x-oapi-codegen-extra-tags:
+            mapstructure: token_type
+        expires_in:
+          type: integer
+          format: int32
+          x-oapi-codegen-extra-tags:
+            mapstructure: expires_in
+      required:
+        - access_token
+        - token_type
+        - expires_in
+
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
