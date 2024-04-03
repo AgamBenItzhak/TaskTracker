@@ -7,7 +7,7 @@ server:
 db:
   host: localhost
   port: 27017
-  user: root
+  member: root
   password: root
   dbname: test
   sslmode: disable

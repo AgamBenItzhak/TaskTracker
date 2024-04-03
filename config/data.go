@@ -15,7 +15,7 @@ type ConfigServer struct {
 type ConfigDB struct {
 	Host     string `mapstructure:"host"`
 	Port     string `mapstructure:"port"`
-	User     string `mapstructure:"user"`
+	Member   string `mapstructure:"member"`
 	Password string `mapstructure:"password"`
 	DBName   string `mapstructure:"dbname"`
 	SSLMode  string `mapstructure:"sslmode"`
