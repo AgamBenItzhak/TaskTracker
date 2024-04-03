@@ -18,7 +18,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '../schemas/project.yaml#/components/schemas/project'
+                  $ref: '../schemas/project.yaml#/components/schemas/project_response'
     post:
       summary: Create a new project
       operationId: createProject
@@ -27,14 +27,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schemas/project.yaml#/components/schemas/project'
+              $ref: '../schemas/project.yaml#/components/schemas/project_create_request'
       responses:
         '201':
           description: The newly created project
           content:
             application/json:
               schema:
-                $ref: '../schemas/project.yaml#/components/schemas/project'
+                $ref: '../schemas/project.yaml#/components/schemas/project_create_response'
   /project/{project_id}:
     get:
       summary: Get a project by ID
@@ -52,7 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/project.yaml#/components/schemas/project'
+                $ref: '../schemas/project.yaml#/components/schemas/project_response'
     put:
       summary: Update a project by ID
       operationId: updateProjectByID
@@ -68,14 +68,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schemas/project.yaml#/components/schemas/project'
+              $ref: '../schemas/project.yaml#/components/schemas/project_update_request'
       responses:
         '200':
           description: The updated project
           content:
             application/json:
               schema:
-                $ref: '../schemas/project.yaml#/components/schemas/project'
+                $ref: '../schemas/project.yaml#/components/schemas/project_update_response'
         '404':
           description: 'Project not found'
     delete:
@@ -91,16 +91,40 @@ paths:
       responses:
         '204':
           description: 'Project deleted successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/project.yaml#/components/schemas/project_delete_response'
         '404':
           description: 'Project not found'
-    patch:
-      summary: Partially update a project by ID
-      operationId: patchProjectByID
+  /project/{project_id}/task_group:
+    get:
+      summary: Get all task groups for a project
+      operationId: getAllTaskGroups
       parameters:
         - name: project_id
           in: path
           required: true
-          description: The ID of the project to update
+          description: The ID of the project to get task groups for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of task groups for the specified project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../schemas/task.yaml#/components/schemas/task_group_response'
+    post:
+      summary: Create a new task group for a project
+      operationId: createTaskGroup
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to create a task group for
           schema:
             type: integer
       requestBody:
@@ -108,20 +132,247 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schemas/project.yaml#/components/schemas/project'
+              $ref: '../schemas/task.yaml#/components/schemas/task_group_create_request'
       responses:
-        '200':
-          description: The updated project
+        '201':
+          description: The newly created task group
           content:
             application/json:
               schema:
-                $ref: '../schemas/project.yaml#/components/schemas/project'
-        '404':
-          description: 'Project not found'
-  /project/{project_id}/tasks:
+                $ref: '../schemas/task.yaml#/components/schemas/task_group_response'
+  /project/{project_id}/task_group/{task_group_id}:
     get:
-      summary: Get all tasks for a project
-      operationId: getAllTasksForProject
+      summary: Get a task group by ID for a project
+      operationId: getTaskGroupByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to get a task group for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to get
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The task group with the specified ID
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_group_response'
+    put:
+      summary: Update a task group by ID for a project
+      operationId: updateTaskGroupByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to update a task group for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/task.yaml#/components/schemas/task_group_update_request'
+      responses:
+        '200':
+          description: The updated task group
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_group_response'
+        '404':
+          description: 'task group not found'
+    delete:
+      summary: Delete a task group by ID for a project
+      operationId: deleteTaskGroupByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to delete a task group for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to delete
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'task group deleted successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_group_delete_response'
+        '404':
+          description: 'task group not found'
+  /project/{project_id}/task_group/{task_group_id}/member:
+    get:
+      summary: Get all members assigned to a task group in a project
+      operationId: getAllTaskGroupMembers
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to get members for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to get members for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of members assigned to the specified task group
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../schemas/task.yaml#/components/schemas/task_group_member_response'
+    post:
+      summary: Assign a member to a task group in a project
+      operationId: createTaskGroupMember
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to assign a member to
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to assign a member to
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/task.yaml#/components/schemas/task_group_member_create_request'
+      responses:
+        '201':
+          description: The newly assigned member
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_group_member_create_response'
+  /project/{project_id}/task_group/{task_group_id}/member/{member_id}:
+    get:
+      summary: Get a member assigned to a task group in a project
+      operationId: getTaskGroupMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to get a member for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to get a member for
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to get
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The member assigned to the specified task group
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_group_member_response'
+    put:
+      summary: Update a member assigned to a task group in a project
+      operationId: updateTaskGroupMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to update a member for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to update a member for
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/task.yaml#/components/schemas/task_group_member_update_request'
+      responses:
+        '200':
+          description: The updated member
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_group_member_update_response'
+        '404':
+          description: 'member not found'
+    delete:
+      summary: Remove a member from a task group in a project
+      operationId: deleteTaskGroupMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to remove a member from
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to remove a member from
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to remove
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'member removed from task group successfully'
+        '404':
+          description: 'member not found in task group'
+  /project/{project_id}/task_group/{task_group_id}/task:
+    get:
+      summary: Get all tasks for a task group in a project
+      operationId: getAllTasks
       parameters:
         - name: project_id
           in: path
@@ -129,18 +380,24 @@ paths:
           description: The ID of the project to get tasks for
           schema:
             type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to get tasks for
+          schema:
+            type: integer
       responses:
         '200':
-          description: A list of tasks for the project
+          description: A list of tasks for the specified task group
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '../schemas/task.yaml#/components/schemas/task'
+                  $ref: '../schemas/task.yaml#/components/schemas/task_response'
     post:
-      summary: Create a new task for a project
-      operationId: createTaskForProject
+      summary: Create a new task for a task group in a project
+      operationId: createTask
       parameters:
         - name: project_id
           in: path
@@ -148,28 +405,40 @@ paths:
           description: The ID of the project to create a task for
           schema:
             type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to create a task for
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schemas/task.yaml#/components/schemas/task'
+              $ref: '../schemas/task.yaml#/components/schemas/task_create_request'
       responses:
         '201':
           description: The newly created task
           content:
             application/json:
               schema:
-                $ref: '../schemas/task.yaml#/components/schemas/task'
-  /project/{project_id}/tasks/{task_id}:
+                $ref: '../schemas/task.yaml#/components/schemas/task_create_response'
+  /project/{project_id}/task_group/{task_group_id}/task/{task_id}:
     get:
-      summary: Get a task by ID for a project
-      operationId: getTaskByIDForProject
+      summary: Get a task by ID for a task group in a project
+      operationId: getTaskByID
       parameters:
         - name: project_id
           in: path
           required: true
-          description: The ID of the project to get the task for
+          description: The ID of the project to get a task for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to get a task for
           schema:
             type: integer
         - name: task_id
@@ -184,15 +453,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/task.yaml#/components/schemas/task'
+                $ref: '../schemas/task.yaml#/components/schemas/task_response'
     put:
-      summary: Update a task by ID for a project
-      operationId: updateTaskByIDForProject
+      summary: Update a task by ID for a task group in a project
+      operationId: updateTaskByID
       parameters:
         - name: project_id
           in: path
           required: true
-          description: The ID of the project to update the task for
+          description: The ID of the project to update a task for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to update a task for
           schema:
             type: integer
         - name: task_id
@@ -206,24 +481,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schemas/task.yaml#/components/schemas/task'
+              $ref: '../schemas/task.yaml#/components/schemas/task_update_request'
       responses:
         '200':
           description: The updated task
           content:
             application/json:
               schema:
-                $ref: '../schemas/task.yaml#/components/schemas/task'
+                $ref: '../schemas/task.yaml#/components/schemas/task_update_response'
         '404':
           description: 'Task not found'
     delete:
-      summary: Delete a task by ID for a project
-      operationId: deleteTaskByIDForProject
+      summary: Delete a task by ID for a task group in a project
+      operationId: deleteTaskByID
       parameters:
         - name: project_id
           in: path
           required: true
-          description: The ID of the project to delete the task for
+          description: The ID of the project to delete a task for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to delete a task for
           schema:
             type: integer
         - name: task_id
@@ -235,22 +516,64 @@ paths:
       responses:
         '204':
           description: 'Task deleted successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_delete_response'
         '404':
           description: 'Task not found'
-    patch:
-      summary: Partially update a task by ID for a project
-      operationId: patchTaskByIDForProject
+  /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member:
+    get:
+      summary: Get all members assigned to a task in a task group in a project
+      operationId: getAllTaskMembers
       parameters:
         - name: project_id
           in: path
           required: true
-          description: The ID of the project to update the task for
+          description: The ID of the project to get members for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to get members for
           schema:
             type: integer
         - name: task_id
           in: path
           required: true
-          description: The ID of the task to update
+          description: The ID of the task to get members for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of members assigned to the specified task
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../schemas/task.yaml#/components/schemas/task_member_response'
+    post:
+      summary: Assign a member to a task in a task group in a project
+      operationId: createTaskMember
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to assign a member to
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to assign a member to
+          schema:
+            type: integer
+        - name: task_id
+          in: path
+          required: true
+          description: The ID of the task to assign a member to
           schema:
             type: integer
       requestBody:
@@ -258,13 +581,240 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schemas/task.yaml#/components/schemas/task'
+              $ref: '../schemas/task.yaml#/components/schemas/task_member_create_request'
       responses:
-        '200':
-          description: The updated task
+        '201':
+          description: The newly assigned member
           content:
             application/json:
               schema:
-                $ref: '../schemas/task.yaml#/components/schemas/task'
+                $ref: '../schemas/task.yaml#/components/schemas/task_member_create_response'
+  /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id}:
+    get:
+      summary: Get a member assigned to a task in a task group in a project
+      operationId: getTaskMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to get a member for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to get a member for
+          schema:
+            type: integer
+        - name: task_id
+          in: path
+          required: true
+          description: The ID of the task to get a member for
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to get
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The member assigned to the specified task
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_member_response'
+    put:
+      summary: Update a member assigned to a task in a task group in a project
+      operationId: updateTaskMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to update a member for
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to update a member for
+          schema:
+            type: integer
+        - name: task_id
+          in: path
+          required: true
+          description: The ID of the task to update a member for
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/task.yaml#/components/schemas/task_member_update_request'
+      responses:
+        '200':
+          description: The updated member
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/task.yaml#/components/schemas/task_member_update_response'
         '404':
-          description: 'Task not found'
+          description: 'member not found'
+    delete:
+      summary: Remove a member from a task in a task group in a project
+      operationId: deleteTaskMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to remove a member from
+          schema:
+            type: integer
+        - name: task_group_id
+          in: path
+          required: true
+          description: The ID of the task group to remove a member from
+          schema:
+            type: integer
+        - name: task_id
+          in: path
+          required: true
+          description: The ID of the task to remove a member from
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to remove
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'member removed from task successfully'
+        '404':
+          description: 'member not found in task'
+  /project/{project_id}/member:
+    get:
+      summary: Get all members assigned to a project
+      operationId: getAllProjectMembers
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to get members for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of members assigned to the specified project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../schemas/project.yaml#/components/schemas/project_member_response'
+    post:
+      summary: Assign a member to a project
+      operationId: createProjectMember
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to assign a member to
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/project.yaml#/components/schemas/project_member_create_request'
+      responses:
+        '201':
+          description: The newly assigned member
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/project.yaml#/components/schemas/project_member_create_response'
+  /project/{project_id}/member/{member_id}:
+    get:
+      summary: Get a member assigned to a project
+      operationId: getProjectMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to get a member for
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to get
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The member assigned to the specified project
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/project.yaml#/components/schemas/project_member_response'
+    put:
+      summary: Update a member assigned to a project
+      operationId: updateProjectMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to update a member for
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/project.yaml#/components/schemas/project_member_update_request'
+      responses:
+        '200':
+          description: The updated member
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/project.yaml#/components/schemas/project_member_update_response'
+    delete:
+      summary: Remove a member from a project
+      operationId: deleteProjectMemberByID
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: The ID of the project to remove a member from
+          schema:
+            type: integer
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to remove
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'member removed from project successfully'
+        '404':
+          description: 'member not found in project'

@@ -1,0 +1,145 @@
+openapi: 3.0.2
+info:
+  title: TaskTracker API
+  description: API for TaskTracker, a project management and task tracking system.
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /member:
+    get:
+      summary: Get all members
+      operationId: getAllMembers
+      responses:
+        '200':
+          description: A list of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../schemas/member.yaml#/components/schemas/member_response'
+    post:
+      summary: Create a new member
+      operationId: createMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/member.yaml#/components/schemas/member_create_request'
+      responses:
+        '201':
+          description: The newly created member
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/member.yaml#/components/schemas/member_create_response'
+  /member/{member_id}:
+    get:
+      summary: Get a member by ID
+      operationId: getMemberByID
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to get
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The member with the specified ID
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/member.yaml#/components/schemas/member_response'
+    put:
+      summary: Update a member by ID
+      operationId: updateMemberByID
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/member.yaml#/components/schemas/member_update_request'
+      responses:
+        '200':
+          description: The updated member
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/member.yaml#/components/schemas/member_update_response'
+    delete:
+      summary: Delete a member by ID
+      operationId: deleteMemberByID
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to delete
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: member deleted successfully
+  /member/{member_id}/Credentials:
+    get:
+      summary: Get a member's credentials by ID
+      operationId: getMemberCredentialsByID
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to get credentials for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The member's credentials with the specified ID
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_response'
+    put:
+      summary: Update a member's credentials by ID
+      operationId: updateMemberCredentialsByID
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to update credentials for
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_update_request'
+      responses:
+        '200':
+          description: The updated member's credentials
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_response'
+    delete:
+      summary: Delete a member's credentials by ID
+      operationId: deleteMemberCredentialsByID
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to delete credentials for
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: member credentials deleted successfully

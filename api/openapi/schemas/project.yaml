@@ -177,7 +177,7 @@ components:
             mapstructure: message
       required:
         - message
-    project_user:
+    project_member:
       type: object
       properties:
         project_id:
@@ -185,11 +185,11 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: project_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
         role:
           type: string
           x-oapi-codegen-extra-tags:
@@ -206,11 +206,11 @@ components:
             mapstructure: updated_at
       required:
         - project_id
-        - user_id
+        - member_id
         - role
         - created_at
         - updated_at
-    project_user_request:
+    project_member_request:
       type: object
       properties:
         project_id:
@@ -218,22 +218,22 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: project_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
         - project_id
-        - user_id
-    project_user_response:
+        - member_id
+    project_member_response:
       type: object
       properties:
-        project_user:
-          $ref: "#/components/schemas/project_user"
+        project_member:
+          $ref: "#/components/schemas/project_member"
       required:
-        - project_user
-    project_users_request:
+        - project_member
+    project_members_request:
       type: object
       properties:
         project_id:
@@ -243,18 +243,18 @@ components:
             mapstructure: project_id
       required:
         - project_id
-    project_users_response:
+    project_members_response:
       type: object
       properties:
-        project_users:
+        project_members:
           type: array
           items:
-            $ref: "#/components/schemas/project_user"
+            $ref: "#/components/schemas/project_member"
           x-oapi-codegen-extra-tags:
-            mapstructure: project_users
+            mapstructure: project_members
       required:
-        - project_users
-    project_user_create_request:
+        - project_members
+    project_member_create_request:
       type: object
       properties:
         project_id:
@@ -262,27 +262,27 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: project_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
         role:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: role
       required:
         - project_id
-        - user_id
+        - member_id
         - role
-    project_user_create_response:
+    project_member_create_response:
       type: object
       properties:
-        project_user:
-          $ref: "#/components/schemas/project_user"
+        project_member:
+          $ref: "#/components/schemas/project_member"
       required:
-        - project_user
-    project_user_update_request:
+        - project_member
+    project_member_update_request:
       type: object
       properties:
         project_id:
@@ -290,26 +290,26 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: project_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
         role:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: role
       required:
         - project_id
-        - user_id
-    project_user_update_response:
+        - member_id
+    project_member_update_response:
       type: object
       properties:
-        project_user:
-          $ref: "#/components/schemas/project_user"
+        project_member:
+          $ref: "#/components/schemas/project_member"
       required:
-        - project_user
-    project_user_delete_request:
+        - project_member
+    project_member_delete_request:
       type: object
       properties:
         project_id:
@@ -317,15 +317,15 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: project_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
         - project_id
-        - user_id
-    project_user_delete_response:
+        - member_id
+    project_member_delete_response:
       type: object
       properties:
         message:

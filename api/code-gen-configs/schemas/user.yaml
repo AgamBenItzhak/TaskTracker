@@ -1,5 +1,5 @@
-# oapi-codegen -config api/code-gen-configs/schemas/user api/openapi/schemas/user.yaml
-package: user
+# oapi-codegen -config api/code-gen-configs/schemas/member api/openapi/schemas/member.yaml
+package: member
 generate:
   # chi-server: true
   # strict-server: true
@@ -11,4 +11,4 @@ output-options:
   disable-type-aliases-for-type: []
 # import-mapping:
 #   ../schema.yaml: github.com/AgamBenItzhak/TaskTracker/api
-output: api/schemas/user/openapi.user.gen.go
+output: api/schemas/member/openapi.member.gen.go

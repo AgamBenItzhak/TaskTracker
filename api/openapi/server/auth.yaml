@@ -6,37 +6,10 @@ info:
 servers:
   - url: http://localhost:8080/api
 paths:
-  /auth/register:
-    post:
-      summary: Register a new user
-      tags:
-        - auth
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/user.yaml#/components/schemas/user'
-      responses:
-        '201':
-          description: User created
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/user.yaml#/components/schemas/user'
-        '400':
-          description: Invalid input
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
   /auth/login:
     post:
-      summary: Log in to the system
-      tags:
-        - auth
+      summary: Log in a member
+      operationId: loginMember
       requestBody:
         required: true
         content:
@@ -45,128 +18,61 @@ paths:
               $ref: '../schemas/auth.yaml#/components/schemas/login_request'
       responses:
         '200':
-          description: OK
+          description: The member's token
           content:
             application/json:
               schema:
                 $ref: '../schemas/auth.yaml#/components/schemas/login_response'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
   /auth/logout:
     post:
-      summary: Log out of the system
-      tags:
-        - auth
+      summary: Log out a member
+      operationId: logoutMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/components/schemas/logout_request'
       responses:
-        '200':
-          description: OK
+        '204':
+          description: The member has been logged out
           content:
             application/json:
               schema:
                 $ref: '../schemas/auth.yaml#/components/schemas/logout_response'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-  /auth/change-password:
+  /auth/refresh:
     post:
-      summary: Change the user's password
-      tags:
-        - auth
+      summary: Refresh a member's token
+      operationId: refreshMemberToken
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schemas/auth.yaml#/components/schemas/password_change_request'
+              $ref: '../schemas/auth.yaml#/components/schemas/token_refresh_request'
       responses:
         '200':
-          description: OK
+          description: The member's new token
           content:
             application/json:
               schema:
-                $ref: '../schemas/auth.yaml#/components/schemas/password_change_response'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-  /auth/refreshtoken:
+                $ref: '../schemas/auth.yaml#/components/schemas/token_refresh_response'
+  /auth/password/reset:
     post:
-      summary: Refresh the user's access token
-      tags:
-        - auth
+      summary: Reset a member's password
+      operationId: updateMemberCredentialsByID
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '../schemas/auth.yaml#/components/schemas/refresh_token_request'
+              $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_update_request'
       responses:
-        '200':
-          description: OK
+        '204':
+          description: The member's password has been reset
           content:
             application/json:
               schema:
-                $ref: '../schemas/auth.yaml#/components/schemas/refresh_token_response'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/errors.yaml#/components/schemas/error'
+                $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_update_response'
+        '404':
+          description: The member does not exist

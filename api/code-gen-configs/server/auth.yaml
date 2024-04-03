@@ -14,5 +14,5 @@ import-mapping:
   ../schemas/errors.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/errors
   ../schemas/project.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/project
   ../schemas/task.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/task
-  ../schemas/user.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/user
+  ../schemas/member.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/member
 output: api/services/auth/openapi.auth.gen.go

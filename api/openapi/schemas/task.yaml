@@ -1,13 +1,13 @@
 components:
   schemas:
-    tasks_group:
+    task_group:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
         project_id:
           type: integer
           format: int64
@@ -50,52 +50,52 @@ components:
           x-oapi-codegen-extra-tags:
             mapstructure: updated_at
       required:
-        - tasks_group_id
+        - task_group_id
         - project_id
         - group_name
         - created_at
         - updated_at
-    tasks_group_request:
+    task_group_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
       required:
-        - tasks_group_id
-    tasks_group_response:
+        - task_group_id
+    task_group_response:
       type: object
       properties:
-        tasks_group:
-          $ref: "#/components/schemas/tasks_group"
+        task_group:
+          $ref: "#/components/schemas/task_group"
       required:
-        - tasks_group
-    tasks_groups_request:
+        - task_group
+    task_groups_request:
       type: object
       properties:
-        tasks_group_ids:
+        task_group_ids:
           type: array
           items:
             type: integer
             format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_ids
+            mapstructure: task_group_ids
       required:
-        - tasks_group_ids
-    tasks_groups_response:
+        - task_group_ids
+    task_groups_response:
       type: object
       properties:
-        tasks_groups:
+        task_groups:
           type: array
           items:
-            $ref: "#/components/schemas/tasks_group"
+            $ref: "#/components/schemas/task_group"
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_groups
+            mapstructure: task_groups
       required:
-        - tasks_groups
-    tasks_group_create_request:
+        - task_groups
+    task_group_create_request:
       type: object
       properties:
         project_id:
@@ -132,21 +132,21 @@ components:
       required:
         - project_id
         - group_name
-    tasks_group_create_response:
+    task_group_create_response:
       type: object
       properties:
-        tasks_group:
-          $ref: "#/components/schemas/tasks_group"
+        task_group:
+          $ref: "#/components/schemas/task_group"
       required:
-        - tasks_group
-    tasks_group_update_request:
+        - task_group
+    task_group_update_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
         project_id:
           type: integer
           format: int64
@@ -179,25 +179,25 @@ components:
           x-oapi-codegen-extra-tags:
             mapstructure: end_date
       required:
-        - tasks_group_id
-    tasks_group_update_response:
+        - task_group_id
+    task_group_update_response:
       type: object
       properties:
-        tasks_group:
-          $ref: "#/components/schemas/tasks_group"
+        task_group:
+          $ref: "#/components/schemas/task_group"
       required:
-        - tasks_group
-    tasks_group_delete_request:
+        - task_group
+    task_group_delete_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
       required:
-        - tasks_group_id
-    tasks_group_delete_response:
+        - task_group_id
+    task_group_delete_response:
       type: object
       properties:
         message:
@@ -214,11 +214,11 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: task_id
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
         task_name:
           type: string
           x-oapi-codegen-extra-tags:
@@ -257,7 +257,7 @@ components:
             mapstructure: updated_at
       required:
         - task_id
-        - tasks_group_id
+        - task_group_id
         - task_name
         - created_at
         - updated_at
@@ -304,11 +304,11 @@ components:
     task_create_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
         task_name:
           type: string
           x-oapi-codegen-extra-tags:
@@ -336,7 +336,7 @@ components:
           x-oapi-codegen-extra-tags:
             mapstructure: end_date
       required:
-        - tasks_group_id
+        - task_group_id
         - task_name
     task_create_response:
       type: object
@@ -353,11 +353,11 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: task_id
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
         task_name:
           type: string
           x-oapi-codegen-extra-tags:
@@ -412,19 +412,19 @@ components:
             mapstructure: message
       required:
         - message
-    tasks_group_user:
+    task_group_member:
       type: object
       properties:
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
-        tasks_group_id:
+            mapstructure: member_id
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
         role:
           type: string
           x-oapi-codegen-extra-tags:
@@ -440,127 +440,127 @@ components:
           x-oapi-codegen-extra-tags:
             mapstructure: updated_at
       required:
-        - tasks_group_id
-        - user_id
+        - task_group_id
+        - member_id
         - role
         - created_at
         - updated_at
-    tasks_group_user_request:
+    task_group_member_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
-        user_id:
+            mapstructure: task_group_id
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
-        - tasks_group_id
-        - user_id
-    tasks_group_user_response:
+        - task_group_id
+        - member_id
+    task_group_member_response:
       type: object
       properties:
-        tasks_group_user:
-          $ref: "#/components/schemas/tasks_group_user"
+        task_group_member:
+          $ref: "#/components/schemas/task_group_member"
       required:
-        - tasks_group_user
-    tasks_group_users_request:
+        - task_group_member
+    task_group_members_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
+            mapstructure: task_group_id
       required:
-        - tasks_group_id
-    tasks_group_users_response:
+        - task_group_id
+    task_group_members_response:
       type: object
       properties:
-        tasks_group_users:
+        task_group_members:
           type: array
           items:
-            $ref: "#/components/schemas/tasks_group_user"
+            $ref: "#/components/schemas/task_group_member"
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_users
+            mapstructure: task_group_members
       required:
-        - tasks_group_users
-    tasks_group_user_create_request:
+        - task_group_members
+    task_group_member_create_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
-        user_id:
+            mapstructure: task_group_id
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
         role:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: role
       required:
-        - tasks_group_id
-        - user_id
+        - task_group_id
+        - member_id
         - role
-    tasks_group_user_create_response:
+    task_group_member_create_response:
       type: object
       properties:
-        tasks_group_user:
-          $ref: "#/components/schemas/tasks_group_user"
+        task_group_member:
+          $ref: "#/components/schemas/task_group_member"
       required:
-        - tasks_group_user
-    tasks_group_user_update_request:
+        - task_group_member
+    task_group_member_update_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
-        user_id:
+            mapstructure: task_group_id
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
         role:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: role
       required:
-        - tasks_group_id
-        - user_id
-    tasks_group_user_update_response:
+        - task_group_id
+        - member_id
+    task_group_member_update_response:
       type: object
       properties:
-        tasks_group_user:
-          $ref: "#/components/schemas/tasks_group_user"
+        task_group_member:
+          $ref: "#/components/schemas/task_group_member"
       required:
-        - tasks_group_user
-    tasks_group_user_delete_request:
+        - task_group_member
+    task_group_member_delete_request:
       type: object
       properties:
-        tasks_group_id:
+        task_group_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: tasks_group_id
-        user_id:
+            mapstructure: task_group_id
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
-        - tasks_group_id
-        - user_id
-    tasks_group_user_delete_response:
+        - task_group_id
+        - member_id
+    task_group_member_delete_response:
       type: object
       properties:
         message:
@@ -569,14 +569,14 @@ components:
             mapstructure: message
       required:
         - message
-    task_user:
+    task_member:
       type: object
       properties:
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
         task_id:
           type: integer
           format: int64
@@ -598,11 +598,11 @@ components:
             mapstructure: updated_at
       required:
         - task_id
-        - user_id
+        - member_id
         - role
         - created_at
         - updated_at
-    task_user_request:
+    task_member_request:
       type: object
       properties:
         task_id:
@@ -610,22 +610,22 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: task_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
         - task_id
-        - user_id
-    task_user_response:
+        - member_id
+    task_member_response:
       type: object
       properties:
-        task_user:
-          $ref: "#/components/schemas/task_user"
+        task_member:
+          $ref: "#/components/schemas/task_member"
       required:
-        - task_user
-    task_users_request:
+        - task_member
+    task_members_request:
       type: object
       properties:
         task_id:
@@ -635,18 +635,18 @@ components:
             mapstructure: task_id
       required:
         - task_id
-    task_users_response:
+    task_members_response:
       type: object
       properties:
-        task_users:
+        task_members:
           type: array
           items:
-            $ref: "#/components/schemas/task_user"
+            $ref: "#/components/schemas/task_member"
           x-oapi-codegen-extra-tags:
-            mapstructure: task_users
+            mapstructure: task_members
       required:
-        - task_users
-    task_user_create_request:
+        - task_members
+    task_member_create_request:
       type: object
       properties:
         task_id:
@@ -654,27 +654,27 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: task_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
         role:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: role
       required:
         - task_id
-        - user_id
+        - member_id
         - role
-    task_user_create_response:
+    task_member_create_response:
       type: object
       properties:
-        task_user:
-          $ref: "#/components/schemas/task_user"
+        task_member:
+          $ref: "#/components/schemas/task_member"
       required:
-        - task_user
-    task_user_update_request:
+        - task_member
+    task_member_update_request:
       type: object
       properties:
         task_id:
@@ -682,26 +682,26 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: task_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
         role:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: role
       required:
         - task_id
-        - user_id
-    task_user_update_response:
+        - member_id
+    task_member_update_response:
       type: object
       properties:
-        task_user:
-          $ref: "#/components/schemas/task_user"
+        task_member:
+          $ref: "#/components/schemas/task_member"
       required:
-        - task_user
-    task_user_delete_request:
+        - task_member
+    task_member_delete_request:
       type: object
       properties:
         task_id:
@@ -709,15 +709,15 @@ components:
           format: int64
           x-oapi-codegen-extra-tags:
             mapstructure: task_id
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
         - task_id
-        - user_id
-    task_user_delete_response:
+        - member_id
+    task_member_delete_response:
       type: object
       properties:
         message:

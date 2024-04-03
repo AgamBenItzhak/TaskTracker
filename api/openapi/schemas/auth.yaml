@@ -1,24 +1,5 @@
 components:
   schemas:
-    auth_request:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          x-oapi-codegen-extra-tags:
-            mapstructure: email
-        password:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: password
-    auth_response:
-      type: object
-      properties:
-        token:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: token
     token:
       type: object
       properties:
@@ -26,150 +7,193 @@ components:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: token
+      required:
+        - token
+    token_refresh_request:
+      type: object
+      properties:
+        token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: token
+      required:
+        - token
+    token_refresh_response:
+      type: object
+      properties:
+        token:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: token
+      required:
+        - token
+    member_credentials:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_create_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_create_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_update_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_update_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_delete_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+      required:
+        - member_id
+    member_credentials_delete_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+      required:
+        - member_id
     login_request:
       type: object
       properties:
-        email:
-          type: string
-          format: email
+        member_id:
+          type: integer
+          format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: email
+            mapstructure: member_id
         password:
           type: string
-          format: password
           x-oapi-codegen-extra-tags:
             mapstructure: password
       required:
-        - email
+        - member_id
         - password
-
     login_response:
       type: object
       properties:
-        access_token:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: access_token
+        token:
+          $ref: "#/components/schemas/token"
         refresh_token:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: refresh_token
-        token_type:
-          type: string
-          default: "Bearer"
-          x-oapi-codegen-extra-tags:
-            mapstructure: token_type
-        expires_in:
-          type: integer
-          format: int32
-          x-oapi-codegen-extra-tags:
-            mapstructure: expires_in
+          $ref: "#/components/schemas/token"
       required:
-        - access_token
-        - token_type
-        - expires_in
-
+        - token
+        - refresh_token
+    logout_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+      required:
+        - member_id
     logout_response:
       type: object
       properties:
-        message:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: message
-      required:
-        - message
-    RegisterUser:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          x-oapi-codegen-extra-tags:
-            mapstructure: email
-        password:
-          type: string
-          format: password
-          x-oapi-codegen-extra-tags:
-            mapstructure: password
-        first_name:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: first_name
-        last_name:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: last_name
-      required:
-        - email
-        - password
-        - first_name
-        - last_name
-
-    password_change_request:
-      type: object
-      properties:
-        current_password:
-          type: string
-          format: password
-          x-oapi-codegen-extra-tags:
-            mapstructure: current_password
-        new_password:
-          type: string
-          format: password
-          x-oapi-codegen-extra-tags:
-            mapstructure: new_password
-      required:
-        - current_password
-        - new_password
-    password_change_response:
-      type: object
-      properties:
-        message:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: message
-      required:
-        - message
-
-    refresh_token_request:
-      type: object
-      properties:
-        refresh_token:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: refresh_token
-      required:
-        - refresh_token
-
-    refresh_token_response:
-      type: object
-      properties:
-        access_token:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: access_token
-        refresh_token:
-          type: string
-          x-oapi-codegen-extra-tags:
-            mapstructure: refresh_token
-        token_type:
-          type: string
-          default: "Bearer"
-          x-oapi-codegen-extra-tags:
-            mapstructure: token_type
-        expires_in:
+        member_id:
           type: integer
-          format: int32
+          format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: expires_in
+            mapstructure: member_id
       required:
-        - access_token
-        - token_type
-        - expires_in
-
-
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+        - member_id

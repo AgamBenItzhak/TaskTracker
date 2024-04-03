@@ -1,5 +1,5 @@
-# oapi-codegen -config api/code-gen-configs/server/user.yaml api/openapi/server/user.yaml
-package: user
+# oapi-codegen -config api/code-gen-configs/server/member.yaml api/openapi/server/member.yaml
+package: member
 generate:
   chi-server: true
   # strict-server: true
@@ -14,5 +14,5 @@ import-mapping:
   ../schemas/errors.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/errors
   ../schemas/project.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/project
   ../schemas/task.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/task
-  ../schemas/user.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/user
-output: api/services/user/openapi.user.gen.go
+  ../schemas/member.yaml: github.com/AgamBenItzhak/TaskTracker/api/schemas/member
+output: api/services/member/openapi.member.gen.go

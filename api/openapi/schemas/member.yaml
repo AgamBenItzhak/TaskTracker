@@ -1,13 +1,18 @@
 components:
   schemas:
-    user:
+    member:
       type: object
       properties:
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            mapstructure: email
         first_name:
           type: string
           x-oapi-codegen-extra-tags:
@@ -27,105 +32,65 @@ components:
           x-oapi-codegen-extra-tags:
             mapstructure: updated_at
       required:
-        - user_id
+        - member_id
+        - email
         - first_name
         - last_name
         - created_at
         - updated_at
-    user_request:
+    member_request:
       type: object
       properties:
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
-        - user_id
-    user_response:
+        - member_id
+    member_response:
       type: object
       properties:
-        user:
-          $ref: "#/components/schemas/user"
+        member:
+          $ref: "#/components/schemas/member"
       required:
-        - user
-    users_request:
+        - member
+    members_request:
       type: object
       properties:
-        user_ids:
+        member_ids:
           type: array
           items:
             type: integer
             format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_ids
+            mapstructure: member_ids
       required:
-        - user_ids
-    users_response:
+        - member_ids
+    members_response:
       type: object
       properties:
-        users:
+        members:
           type: array
           items:
-            $ref: "#/components/schemas/user"
+            $ref: "#/components/schemas/member"
           x-oapi-codegen-extra-tags:
-            mapstructure: users
+            mapstructure: members
       required:
-        - users
-    user_credentials:
+        - members
+    full_member:
       type: object
       properties:
-        email:
-          type: string
-          format: email
-          x-oapi-codegen-extra-tags:
-            mapstructure: email
-        password:
-          type: string
-          format: password
-          writeOnly: true
-          x-oapi-codegen-extra-tags:
-            mapstructure: password
-        created_at:
-          type: string
-          format: date-time
-          x-oapi-codegen-extra-tags:
-            mapstructure: created_at
-        updated_at:
-          type: string
-          format: date-time
-          x-oapi-codegen-extra-tags:
-            mapstructure: updated_at
-      required:
-        - email
-        - password
-        - created_at
-        - updated_at
-    user_credentials_request:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          x-oapi-codegen-extra-tags:
-            mapstructure: email
-      required:
-        - email
-    user_credentials_response:
-      type: object
-      properties:
-        user_credentials:
-          $ref: "#/components/schemas/user_credentials"
-      required:
-        - user_credentials
-    full_user:
-      type: object
-      properties:
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            mapstructure: email
         first_name:
           type: string
           x-oapi-codegen-extra-tags:
@@ -134,11 +99,6 @@ components:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: last_name
-        email:
-          type: string
-          format: email
-          x-oapi-codegen-extra-tags:
-            mapstructure: email
         created_at:
           type: string
           format: date-time
@@ -150,55 +110,60 @@ components:
           x-oapi-codegen-extra-tags:
             mapstructure: updated_at
       required:
-        - user_id
+        - member_id
+        - email
         - first_name
         - last_name
-        - email
         - created_at
         - updated_at
-    full_user_request:
+    full_member_request:
       type: object
       properties:
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
-        - user_id
-    full_user_response:
+        - member_id
+    full_member_response:
       type: object
       properties:
-        full_user:
-          $ref: "#/components/schemas/full_user"
+        full_member:
+          $ref: "#/components/schemas/full_member"
       required:
-        - full_user
-    full_users_request:
+        - full_member
+    full_members_request:
       type: object
       properties:
-        user_ids:
+        member_ids:
           type: array
           items:
             type: integer
             format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_ids
+            mapstructure: member_ids
       required:
-        - user_ids
-    full_users_response:
+        - member_ids
+    full_members_response:
       type: object
       properties:
-        full_users:
+        full_members:
           type: array
           items:
-            $ref: "#/components/schemas/full_user"
+            $ref: "#/components/schemas/full_member"
           x-oapi-codegen-extra-tags:
-            mapstructure: full_users
+            mapstructure: full_members
       required:
-        - full_users
-    user_create_request:
+        - full_members
+    member_create_request:
       type: object
       properties:
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            mapstructure: email
         first_name:
           type: string
           x-oapi-codegen-extra-tags:
@@ -207,11 +172,6 @@ components:
           type: string
           x-oapi-codegen-extra-tags:
             mapstructure: last_name
-        email:
-          type: string
-          format: email
-          x-oapi-codegen-extra-tags:
-            mapstructure: email
         password:
           type: string
           format: password
@@ -219,25 +179,30 @@ components:
           x-oapi-codegen-extra-tags:
             mapstructure: password
       required:
+        - email
         - first_name
         - last_name
-        - email
         - password
-    user_create_response:
+    member_create_response:
       type: object
       properties:
-        user:
-          $ref: "#/components/schemas/user"
+        member:
+          $ref: "#/components/schemas/member"
       required:
-        - user
-    user_update_request:
+        - member
+    member_update_request:
       type: object
       properties:
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            mapstructure: email
         first_name:
           type: string
           x-oapi-codegen-extra-tags:
@@ -247,27 +212,28 @@ components:
           x-oapi-codegen-extra-tags:
             mapstructure: last_name
       required:
-        - user_id
+        - member_id
+        - email
         - first_name
         - last_name
-    user_update_response:
+    member_update_response:
       type: object
       properties:
-        user:
-          $ref: "#/components/schemas/user"
+        member:
+          $ref: "#/components/schemas/member"
       required:
-        - user
-    user_delete_request:
+        - member
+    member_delete_request:
       type: object
       properties:
-        user_id:
+        member_id:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            mapstructure: user_id
+            mapstructure: member_id
       required:
-        - user_id
-    user_delete_response:
+        - member_id
+    member_delete_response:
       type: object
       properties:
         message:
@@ -276,31 +242,3 @@ components:
             mapstructure: message
       required:
         - message
-    user_credentials_update_request:
-      type: object
-      properties:
-        user_id:
-          type: integer
-          format: int64
-          x-oapi-codegen-extra-tags:
-            mapstructure: user_id
-        email:
-          type: string
-          format: email
-          x-oapi-codegen-extra-tags:
-            mapstructure: email
-        password:
-          type: string
-          format: password
-          writeOnly: true
-          x-oapi-codegen-extra-tags:
-            mapstructure: password
-      required:
-        - user_id
-    user_credentials_update_response:
-      type: object
-      properties:
-        user_credentials:
-          $ref: "#/components/schemas/user_credentials"
-      required:
-        - user_credentials
