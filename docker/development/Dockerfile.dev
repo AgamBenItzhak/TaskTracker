@@ -14,6 +14,7 @@ RUN go mod download
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 RUN go install github.com/cosmtrek/air@latest
 RUN go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@latest
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
 # Add tools to the PATH
 # ENV PATH="$PATH:/go/bin"
@@ -23,6 +24,7 @@ RUN go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@latest
 
 # Generate the code from the OpenAPI specification
 # RUN bash scripts/openapi/gen-boilerplate.bash
+# RUN bash scripts/sqlc/gen-go-sql-code.bash
 
 # Build the Go app (replace main.go with the path to your project's main file)
 # RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /myapp main.go
