@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const CreateTask = `-- name: CreateTask :execlastid
+const CreateTask = `-- name: CreateTask :one
 INSERT INTO task (task_group_id, task_name, description, status, priority, start_date, end_date, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING task_id
@@ -27,7 +27,23 @@ type CreateTaskParams struct {
 	EndDate     pgtype.Date `db:"end_date" json:"end_date"`
 }
 
-const CreateTaskGroup = `-- name: CreateTaskGroup :execlastid
+// Insert a new Task into the database
+func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (int32, error) {
+	row := q.db.QueryRow(ctx, CreateTask,
+		arg.TaskGroupID,
+		arg.TaskName,
+		arg.Description,
+		arg.Status,
+		arg.Priority,
+		arg.StartDate,
+		arg.EndDate,
+	)
+	var task_id int32
+	err := row.Scan(&task_id)
+	return task_id, err
+}
+
+const CreateTaskGroup = `-- name: CreateTaskGroup :one
 INSERT INTO task_group (project_id, group_name, description, status, priority, start_date, end_date, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING task_group_id
@@ -41,6 +57,22 @@ type CreateTaskGroupParams struct {
 	Priority    string      `db:"priority" json:"priority"`
 	StartDate   pgtype.Date `db:"start_date" json:"start_date"`
 	EndDate     pgtype.Date `db:"end_date" json:"end_date"`
+}
+
+// Insert a new Task Group into the database
+func (q *Queries) CreateTaskGroup(ctx context.Context, arg CreateTaskGroupParams) (int32, error) {
+	row := q.db.QueryRow(ctx, CreateTaskGroup,
+		arg.ProjectID,
+		arg.GroupName,
+		arg.Description,
+		arg.Status,
+		arg.Priority,
+		arg.StartDate,
+		arg.EndDate,
+	)
+	var task_group_id int32
+	err := row.Scan(&task_group_id)
+	return task_group_id, err
 }
 
 const CreateTaskGroupMember = `-- name: CreateTaskGroupMember :exec

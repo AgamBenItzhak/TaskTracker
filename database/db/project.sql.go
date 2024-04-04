@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const CreateProject = `-- name: CreateProject :execlastid
+const CreateProject = `-- name: CreateProject :one
 INSERT INTO project (project_name, description, status, start_date, end_date, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING project_id
@@ -23,6 +23,20 @@ type CreateProjectParams struct {
 	Status      string      `db:"status" json:"status"`
 	StartDate   pgtype.Date `db:"start_date" json:"start_date"`
 	EndDate     pgtype.Date `db:"end_date" json:"end_date"`
+}
+
+// Insert a new project into the database
+func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (int32, error) {
+	row := q.db.QueryRow(ctx, CreateProject,
+		arg.ProjectName,
+		arg.Description,
+		arg.Status,
+		arg.StartDate,
+		arg.EndDate,
+	)
+	var project_id int32
+	err := row.Scan(&project_id)
+	return project_id, err
 }
 
 const CreateProjectMember = `-- name: CreateProjectMember :exec

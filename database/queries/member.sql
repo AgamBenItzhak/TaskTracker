@@ -1,5 +1,5 @@
 -- Insert a new member into the database
--- name: CreateMember :execlastid
+-- name: CreateMember :one
 INSERT INTO member (email, first_name, last_name, created_at, updated_at)
 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING member_id;

@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-const CreateMember = `-- name: CreateMember :execlastid
+const CreateMember = `-- name: CreateMember :one
 INSERT INTO member (email, first_name, last_name, created_at, updated_at)
 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING member_id
@@ -19,6 +19,14 @@ type CreateMemberParams struct {
 	Email     string `db:"email" json:"email"`
 	FirstName string `db:"first_name" json:"first_name"`
 	LastName  string `db:"last_name" json:"last_name"`
+}
+
+// Insert a new member into the database
+func (q *Queries) CreateMember(ctx context.Context, arg CreateMemberParams) (int32, error) {
+	row := q.db.QueryRow(ctx, CreateMember, arg.Email, arg.FirstName, arg.LastName)
+	var member_id int32
+	err := row.Scan(&member_id)
+	return member_id, err
 }
 
 const DeleteMemberByID = `-- name: DeleteMemberByID :exec

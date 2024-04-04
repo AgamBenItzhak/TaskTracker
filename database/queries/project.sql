@@ -1,5 +1,5 @@
 -- Insert a new project into the database
--- name: CreateProject :execlastid
+-- name: CreateProject :one
 INSERT INTO project (project_name, description, status, start_date, end_date, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING project_id;

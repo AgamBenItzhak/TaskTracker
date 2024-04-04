@@ -9,10 +9,18 @@ import (
 )
 
 type Querier interface {
+	// Insert a new member into the database
+	CreateMember(ctx context.Context, arg CreateMemberParams) (int32, error)
 	// Insert a new member's credentials into the database
 	CreateMemberCredentials(ctx context.Context, arg CreateMemberCredentialsParams) error
+	// Insert a new project into the database
+	CreateProject(ctx context.Context, arg CreateProjectParams) (int32, error)
 	// Assign a member to a project
 	CreateProjectMember(ctx context.Context, arg CreateProjectMemberParams) error
+	// Insert a new Task into the database
+	CreateTask(ctx context.Context, arg CreateTaskParams) (int32, error)
+	// Insert a new Task Group into the database
+	CreateTaskGroup(ctx context.Context, arg CreateTaskGroupParams) (int32, error)
 	// Insert a new member into a Task Group
 	CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) error
 	// Insert a new member into a Task

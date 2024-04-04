@@ -1,5 +1,5 @@
 -- Insert a new Task Group into the database
--- name: CreateTaskGroup :execlastid
+-- name: CreateTaskGroup :one
 INSERT INTO task_group (project_id, group_name, description, status, priority, start_date, end_date, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING task_group_id;
@@ -44,7 +44,7 @@ WHERE member_id = $1 AND task_group_id = $2;
 DELETE FROM task_group_member WHERE member_id = $1 AND task_group_id = $2;
 
 -- Insert a new Task into the database
--- name: CreateTask :execlastid
+-- name: CreateTask :one
 INSERT INTO task (task_group_id, task_name, description, status, priority, start_date, end_date, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING task_id;
