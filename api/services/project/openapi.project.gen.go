@@ -15,31 +15,49 @@ import (
 
 	externalRef0 "github.com/AgamBenItzhak/TaskTracker/api/schemas/auth"
 	externalRef1 "github.com/AgamBenItzhak/TaskTracker/api/schemas/errors"
-	externalRef2 "github.com/AgamBenItzhak/TaskTracker/api/schemas/project"
-	externalRef3 "github.com/AgamBenItzhak/TaskTracker/api/schemas/task"
-	externalRef4 "github.com/AgamBenItzhak/TaskTracker/api/schemas/user"
+	externalRef2 "github.com/AgamBenItzhak/TaskTracker/api/schemas/member"
+	externalRef3 "github.com/AgamBenItzhak/TaskTracker/api/schemas/project"
+	externalRef4 "github.com/AgamBenItzhak/TaskTracker/api/schemas/task"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 	"github.com/oapi-codegen/runtime"
 )
 
 // CreateProjectJSONRequestBody defines body for CreateProject for application/json ContentType.
-type CreateProjectJSONRequestBody = externalRef2.Project
-
-// PatchProjectByIDJSONRequestBody defines body for PatchProjectByID for application/json ContentType.
-type PatchProjectByIDJSONRequestBody = externalRef2.Project
+type CreateProjectJSONRequestBody = externalRef3.ProjectCreateRequest
 
 // UpdateProjectByIDJSONRequestBody defines body for UpdateProjectByID for application/json ContentType.
-type UpdateProjectByIDJSONRequestBody = externalRef2.Project
+type UpdateProjectByIDJSONRequestBody = externalRef3.ProjectUpdateRequest
 
-// CreateTaskForProjectJSONRequestBody defines body for CreateTaskForProject for application/json ContentType.
-type CreateTaskForProjectJSONRequestBody = externalRef3.Task
+// CreateProjectMemberJSONRequestBody defines body for CreateProjectMember for application/json ContentType.
+type CreateProjectMemberJSONRequestBody = externalRef3.ProjectMemberCreateRequest
 
-// PatchTaskByIDForProjectJSONRequestBody defines body for PatchTaskByIDForProject for application/json ContentType.
-type PatchTaskByIDForProjectJSONRequestBody = externalRef3.Task
+// UpdateProjectMemberByIDJSONRequestBody defines body for UpdateProjectMemberByID for application/json ContentType.
+type UpdateProjectMemberByIDJSONRequestBody = externalRef3.ProjectMemberUpdateRequest
 
-// UpdateTaskByIDForProjectJSONRequestBody defines body for UpdateTaskByIDForProject for application/json ContentType.
-type UpdateTaskByIDForProjectJSONRequestBody = externalRef3.Task
+// CreateTaskGroupJSONRequestBody defines body for CreateTaskGroup for application/json ContentType.
+type CreateTaskGroupJSONRequestBody = externalRef4.TaskGroupCreateRequest
+
+// UpdateTaskGroupByIDJSONRequestBody defines body for UpdateTaskGroupByID for application/json ContentType.
+type UpdateTaskGroupByIDJSONRequestBody = externalRef4.TaskGroupUpdateRequest
+
+// CreateTaskGroupMemberJSONRequestBody defines body for CreateTaskGroupMember for application/json ContentType.
+type CreateTaskGroupMemberJSONRequestBody = externalRef4.TaskGroupMemberCreateRequest
+
+// UpdateTaskGroupMemberByIDJSONRequestBody defines body for UpdateTaskGroupMemberByID for application/json ContentType.
+type UpdateTaskGroupMemberByIDJSONRequestBody = externalRef4.TaskGroupMemberUpdateRequest
+
+// CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
+type CreateTaskJSONRequestBody = externalRef4.TaskCreateRequest
+
+// UpdateTaskByIDJSONRequestBody defines body for UpdateTaskByID for application/json ContentType.
+type UpdateTaskByIDJSONRequestBody = externalRef4.TaskUpdateRequest
+
+// CreateTaskMemberJSONRequestBody defines body for CreateTaskMember for application/json ContentType.
+type CreateTaskMemberJSONRequestBody = externalRef4.TaskMemberCreateRequest
+
+// UpdateTaskMemberByIDJSONRequestBody defines body for UpdateTaskMemberByID for application/json ContentType.
+type UpdateTaskMemberByIDJSONRequestBody = externalRef4.TaskMemberUpdateRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -55,30 +73,84 @@ type ServerInterface interface {
 	// Get a project by ID
 	// (GET /project/{project_id})
 	GetProjectByID(w http.ResponseWriter, r *http.Request, projectId int)
-	// Partially update a project by ID
-	// (PATCH /project/{project_id})
-	PatchProjectByID(w http.ResponseWriter, r *http.Request, projectId int)
 	// Update a project by ID
 	// (PUT /project/{project_id})
 	UpdateProjectByID(w http.ResponseWriter, r *http.Request, projectId int)
-	// Get all tasks for a project
-	// (GET /project/{project_id}/tasks)
-	GetAllTasksForProject(w http.ResponseWriter, r *http.Request, projectId int)
-	// Create a new task for a project
-	// (POST /project/{project_id}/tasks)
-	CreateTaskForProject(w http.ResponseWriter, r *http.Request, projectId int)
-	// Delete a task by ID for a project
-	// (DELETE /project/{project_id}/tasks/{task_id})
-	DeleteTaskByIDForProject(w http.ResponseWriter, r *http.Request, projectId int, taskId int)
-	// Get a task by ID for a project
-	// (GET /project/{project_id}/tasks/{task_id})
-	GetTaskByIDForProject(w http.ResponseWriter, r *http.Request, projectId int, taskId int)
-	// Partially update a task by ID for a project
-	// (PATCH /project/{project_id}/tasks/{task_id})
-	PatchTaskByIDForProject(w http.ResponseWriter, r *http.Request, projectId int, taskId int)
-	// Update a task by ID for a project
-	// (PUT /project/{project_id}/tasks/{task_id})
-	UpdateTaskByIDForProject(w http.ResponseWriter, r *http.Request, projectId int, taskId int)
+	// Get all members assigned to a project
+	// (GET /project/{project_id}/member)
+	GetAllProjectMembers(w http.ResponseWriter, r *http.Request, projectId int)
+	// Assign a member to a project
+	// (POST /project/{project_id}/member)
+	CreateProjectMember(w http.ResponseWriter, r *http.Request, projectId int)
+	// Remove a member from a project
+	// (DELETE /project/{project_id}/member/{member_id})
+	DeleteProjectMemberByID(w http.ResponseWriter, r *http.Request, projectId int, memberId int)
+	// Get a member assigned to a project
+	// (GET /project/{project_id}/member/{member_id})
+	GetProjectMemberByID(w http.ResponseWriter, r *http.Request, projectId int, memberId int)
+	// Update a member assigned to a project
+	// (PUT /project/{project_id}/member/{member_id})
+	UpdateProjectMemberByID(w http.ResponseWriter, r *http.Request, projectId int, memberId int)
+	// Get all task groups for a project
+	// (GET /project/{project_id}/task_group)
+	GetAllTaskGroups(w http.ResponseWriter, r *http.Request, projectId int)
+	// Create a new task group for a project
+	// (POST /project/{project_id}/task_group)
+	CreateTaskGroup(w http.ResponseWriter, r *http.Request, projectId int)
+	// Delete a task group by ID for a project
+	// (DELETE /project/{project_id}/task_group/{task_group_id})
+	DeleteTaskGroupByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int)
+	// Get a task group by ID for a project
+	// (GET /project/{project_id}/task_group/{task_group_id})
+	GetTaskGroupByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int)
+	// Update a task group by ID for a project
+	// (PUT /project/{project_id}/task_group/{task_group_id})
+	UpdateTaskGroupByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int)
+	// Get all members assigned to a task group in a project
+	// (GET /project/{project_id}/task_group/{task_group_id}/member)
+	GetAllTaskGroupMembers(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int)
+	// Assign a member to a task group in a project
+	// (POST /project/{project_id}/task_group/{task_group_id}/member)
+	CreateTaskGroupMember(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int)
+	// Remove a member from a task group in a project
+	// (DELETE /project/{project_id}/task_group/{task_group_id}/member/{member_id})
+	DeleteTaskGroupMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, memberId int)
+	// Get a member assigned to a task group in a project
+	// (GET /project/{project_id}/task_group/{task_group_id}/member/{member_id})
+	GetTaskGroupMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, memberId int)
+	// Update a member assigned to a task group in a project
+	// (PUT /project/{project_id}/task_group/{task_group_id}/member/{member_id})
+	UpdateTaskGroupMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, memberId int)
+	// Get all tasks for a task group in a project
+	// (GET /project/{project_id}/task_group/{task_group_id}/task)
+	GetAllTasks(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int)
+	// Create a new task for a task group in a project
+	// (POST /project/{project_id}/task_group/{task_group_id}/task)
+	CreateTask(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int)
+	// Delete a task by ID for a task group in a project
+	// (DELETE /project/{project_id}/task_group/{task_group_id}/task/{task_id})
+	DeleteTaskByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int)
+	// Get a task by ID for a task group in a project
+	// (GET /project/{project_id}/task_group/{task_group_id}/task/{task_id})
+	GetTaskByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int)
+	// Update a task by ID for a task group in a project
+	// (PUT /project/{project_id}/task_group/{task_group_id}/task/{task_id})
+	UpdateTaskByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int)
+	// Get all members assigned to a task in a task group in a project
+	// (GET /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member)
+	GetAllTaskMembers(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int)
+	// Assign a member to a task in a task group in a project
+	// (POST /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member)
+	CreateTaskMember(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int)
+	// Remove a member from a task in a task group in a project
+	// (DELETE /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id})
+	DeleteTaskMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int, memberId int)
+	// Get a member assigned to a task in a task group in a project
+	// (GET /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id})
+	GetTaskMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int, memberId int)
+	// Update a member assigned to a task in a task group in a project
+	// (PUT /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id})
+	UpdateTaskMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int, memberId int)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -109,51 +181,159 @@ func (_ Unimplemented) GetProjectByID(w http.ResponseWriter, r *http.Request, pr
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Partially update a project by ID
-// (PATCH /project/{project_id})
-func (_ Unimplemented) PatchProjectByID(w http.ResponseWriter, r *http.Request, projectId int) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
 // Update a project by ID
 // (PUT /project/{project_id})
 func (_ Unimplemented) UpdateProjectByID(w http.ResponseWriter, r *http.Request, projectId int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Get all tasks for a project
-// (GET /project/{project_id}/tasks)
-func (_ Unimplemented) GetAllTasksForProject(w http.ResponseWriter, r *http.Request, projectId int) {
+// Get all members assigned to a project
+// (GET /project/{project_id}/member)
+func (_ Unimplemented) GetAllProjectMembers(w http.ResponseWriter, r *http.Request, projectId int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Create a new task for a project
-// (POST /project/{project_id}/tasks)
-func (_ Unimplemented) CreateTaskForProject(w http.ResponseWriter, r *http.Request, projectId int) {
+// Assign a member to a project
+// (POST /project/{project_id}/member)
+func (_ Unimplemented) CreateProjectMember(w http.ResponseWriter, r *http.Request, projectId int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Delete a task by ID for a project
-// (DELETE /project/{project_id}/tasks/{task_id})
-func (_ Unimplemented) DeleteTaskByIDForProject(w http.ResponseWriter, r *http.Request, projectId int, taskId int) {
+// Remove a member from a project
+// (DELETE /project/{project_id}/member/{member_id})
+func (_ Unimplemented) DeleteProjectMemberByID(w http.ResponseWriter, r *http.Request, projectId int, memberId int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Get a task by ID for a project
-// (GET /project/{project_id}/tasks/{task_id})
-func (_ Unimplemented) GetTaskByIDForProject(w http.ResponseWriter, r *http.Request, projectId int, taskId int) {
+// Get a member assigned to a project
+// (GET /project/{project_id}/member/{member_id})
+func (_ Unimplemented) GetProjectMemberByID(w http.ResponseWriter, r *http.Request, projectId int, memberId int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Partially update a task by ID for a project
-// (PATCH /project/{project_id}/tasks/{task_id})
-func (_ Unimplemented) PatchTaskByIDForProject(w http.ResponseWriter, r *http.Request, projectId int, taskId int) {
+// Update a member assigned to a project
+// (PUT /project/{project_id}/member/{member_id})
+func (_ Unimplemented) UpdateProjectMemberByID(w http.ResponseWriter, r *http.Request, projectId int, memberId int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Update a task by ID for a project
-// (PUT /project/{project_id}/tasks/{task_id})
-func (_ Unimplemented) UpdateTaskByIDForProject(w http.ResponseWriter, r *http.Request, projectId int, taskId int) {
+// Get all task groups for a project
+// (GET /project/{project_id}/task_group)
+func (_ Unimplemented) GetAllTaskGroups(w http.ResponseWriter, r *http.Request, projectId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Create a new task group for a project
+// (POST /project/{project_id}/task_group)
+func (_ Unimplemented) CreateTaskGroup(w http.ResponseWriter, r *http.Request, projectId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Delete a task group by ID for a project
+// (DELETE /project/{project_id}/task_group/{task_group_id})
+func (_ Unimplemented) DeleteTaskGroupByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get a task group by ID for a project
+// (GET /project/{project_id}/task_group/{task_group_id})
+func (_ Unimplemented) GetTaskGroupByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update a task group by ID for a project
+// (PUT /project/{project_id}/task_group/{task_group_id})
+func (_ Unimplemented) UpdateTaskGroupByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get all members assigned to a task group in a project
+// (GET /project/{project_id}/task_group/{task_group_id}/member)
+func (_ Unimplemented) GetAllTaskGroupMembers(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Assign a member to a task group in a project
+// (POST /project/{project_id}/task_group/{task_group_id}/member)
+func (_ Unimplemented) CreateTaskGroupMember(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Remove a member from a task group in a project
+// (DELETE /project/{project_id}/task_group/{task_group_id}/member/{member_id})
+func (_ Unimplemented) DeleteTaskGroupMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, memberId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get a member assigned to a task group in a project
+// (GET /project/{project_id}/task_group/{task_group_id}/member/{member_id})
+func (_ Unimplemented) GetTaskGroupMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, memberId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update a member assigned to a task group in a project
+// (PUT /project/{project_id}/task_group/{task_group_id}/member/{member_id})
+func (_ Unimplemented) UpdateTaskGroupMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, memberId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get all tasks for a task group in a project
+// (GET /project/{project_id}/task_group/{task_group_id}/task)
+func (_ Unimplemented) GetAllTasks(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Create a new task for a task group in a project
+// (POST /project/{project_id}/task_group/{task_group_id}/task)
+func (_ Unimplemented) CreateTask(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Delete a task by ID for a task group in a project
+// (DELETE /project/{project_id}/task_group/{task_group_id}/task/{task_id})
+func (_ Unimplemented) DeleteTaskByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get a task by ID for a task group in a project
+// (GET /project/{project_id}/task_group/{task_group_id}/task/{task_id})
+func (_ Unimplemented) GetTaskByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update a task by ID for a task group in a project
+// (PUT /project/{project_id}/task_group/{task_group_id}/task/{task_id})
+func (_ Unimplemented) UpdateTaskByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get all members assigned to a task in a task group in a project
+// (GET /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member)
+func (_ Unimplemented) GetAllTaskMembers(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Assign a member to a task in a task group in a project
+// (POST /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member)
+func (_ Unimplemented) CreateTaskMember(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Remove a member from a task in a task group in a project
+// (DELETE /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id})
+func (_ Unimplemented) DeleteTaskMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int, memberId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get a member assigned to a task in a task group in a project
+// (GET /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id})
+func (_ Unimplemented) GetTaskMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int, memberId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Update a member assigned to a task in a task group in a project
+// (PUT /project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id})
+func (_ Unimplemented) UpdateTaskMemberByID(w http.ResponseWriter, r *http.Request, projectId int, taskGroupId int, taskId int, memberId int) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -248,32 +428,6 @@ func (siw *ServerInterfaceWrapper) GetProjectByID(w http.ResponseWriter, r *http
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PatchProjectByID operation middleware
-func (siw *ServerInterfaceWrapper) PatchProjectByID(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	var err error
-
-	// ------------- Path parameter "project_id" -------------
-	var projectId int
-
-	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PatchProjectByID(w, r, projectId)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
 // UpdateProjectByID operation middleware
 func (siw *ServerInterfaceWrapper) UpdateProjectByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -300,8 +454,8 @@ func (siw *ServerInterfaceWrapper) UpdateProjectByID(w http.ResponseWriter, r *h
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// GetAllTasksForProject operation middleware
-func (siw *ServerInterfaceWrapper) GetAllTasksForProject(w http.ResponseWriter, r *http.Request) {
+// GetAllProjectMembers operation middleware
+func (siw *ServerInterfaceWrapper) GetAllProjectMembers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -316,7 +470,7 @@ func (siw *ServerInterfaceWrapper) GetAllTasksForProject(w http.ResponseWriter, 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetAllTasksForProject(w, r, projectId)
+		siw.Handler.GetAllProjectMembers(w, r, projectId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -326,8 +480,8 @@ func (siw *ServerInterfaceWrapper) GetAllTasksForProject(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// CreateTaskForProject operation middleware
-func (siw *ServerInterfaceWrapper) CreateTaskForProject(w http.ResponseWriter, r *http.Request) {
+// CreateProjectMember operation middleware
+func (siw *ServerInterfaceWrapper) CreateProjectMember(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -342,7 +496,7 @@ func (siw *ServerInterfaceWrapper) CreateTaskForProject(w http.ResponseWriter, r
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.CreateTaskForProject(w, r, projectId)
+		siw.Handler.CreateProjectMember(w, r, projectId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -352,8 +506,8 @@ func (siw *ServerInterfaceWrapper) CreateTaskForProject(w http.ResponseWriter, r
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// DeleteTaskByIDForProject operation middleware
-func (siw *ServerInterfaceWrapper) DeleteTaskByIDForProject(w http.ResponseWriter, r *http.Request) {
+// DeleteProjectMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteProjectMemberByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -364,6 +518,549 @@ func (siw *ServerInterfaceWrapper) DeleteTaskByIDForProject(w http.ResponseWrite
 	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
 		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteProjectMemberByID(w, r, projectId, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetProjectMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) GetProjectMemberByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetProjectMemberByID(w, r, projectId, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// UpdateProjectMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateProjectMemberByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateProjectMemberByID(w, r, projectId, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetAllTaskGroups operation middleware
+func (siw *ServerInterfaceWrapper) GetAllTaskGroups(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetAllTaskGroups(w, r, projectId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// CreateTaskGroup operation middleware
+func (siw *ServerInterfaceWrapper) CreateTaskGroup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTaskGroup(w, r, projectId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// DeleteTaskGroupByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTaskGroupByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteTaskGroupByID(w, r, projectId, taskGroupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetTaskGroupByID operation middleware
+func (siw *ServerInterfaceWrapper) GetTaskGroupByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTaskGroupByID(w, r, projectId, taskGroupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// UpdateTaskGroupByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTaskGroupByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateTaskGroupByID(w, r, projectId, taskGroupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetAllTaskGroupMembers operation middleware
+func (siw *ServerInterfaceWrapper) GetAllTaskGroupMembers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetAllTaskGroupMembers(w, r, projectId, taskGroupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// CreateTaskGroupMember operation middleware
+func (siw *ServerInterfaceWrapper) CreateTaskGroupMember(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTaskGroupMember(w, r, projectId, taskGroupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// DeleteTaskGroupMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTaskGroupMemberByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteTaskGroupMemberByID(w, r, projectId, taskGroupId, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetTaskGroupMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) GetTaskGroupMemberByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTaskGroupMemberByID(w, r, projectId, taskGroupId, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// UpdateTaskGroupMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTaskGroupMemberByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateTaskGroupMemberByID(w, r, projectId, taskGroupId, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetAllTasks operation middleware
+func (siw *ServerInterfaceWrapper) GetAllTasks(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetAllTasks(w, r, projectId, taskGroupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// CreateTask operation middleware
+func (siw *ServerInterfaceWrapper) CreateTask(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTask(w, r, projectId, taskGroupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// DeleteTaskByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTaskByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
 		return
 	}
 
@@ -377,7 +1074,7 @@ func (siw *ServerInterfaceWrapper) DeleteTaskByIDForProject(w http.ResponseWrite
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteTaskByIDForProject(w, r, projectId, taskId)
+		siw.Handler.DeleteTaskByID(w, r, projectId, taskGroupId, taskId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -387,8 +1084,8 @@ func (siw *ServerInterfaceWrapper) DeleteTaskByIDForProject(w http.ResponseWrite
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// GetTaskByIDForProject operation middleware
-func (siw *ServerInterfaceWrapper) GetTaskByIDForProject(w http.ResponseWriter, r *http.Request) {
+// GetTaskByID operation middleware
+func (siw *ServerInterfaceWrapper) GetTaskByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -402,6 +1099,15 @@ func (siw *ServerInterfaceWrapper) GetTaskByIDForProject(w http.ResponseWriter, 
 		return
 	}
 
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
 	// ------------- Path parameter "task_id" -------------
 	var taskId int
 
@@ -412,7 +1118,7 @@ func (siw *ServerInterfaceWrapper) GetTaskByIDForProject(w http.ResponseWriter, 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetTaskByIDForProject(w, r, projectId, taskId)
+		siw.Handler.GetTaskByID(w, r, projectId, taskGroupId, taskId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -422,8 +1128,8 @@ func (siw *ServerInterfaceWrapper) GetTaskByIDForProject(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PatchTaskByIDForProject operation middleware
-func (siw *ServerInterfaceWrapper) PatchTaskByIDForProject(w http.ResponseWriter, r *http.Request) {
+// UpdateTaskByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTaskByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -437,6 +1143,15 @@ func (siw *ServerInterfaceWrapper) PatchTaskByIDForProject(w http.ResponseWriter
 		return
 	}
 
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
 	// ------------- Path parameter "task_id" -------------
 	var taskId int
 
@@ -447,7 +1162,7 @@ func (siw *ServerInterfaceWrapper) PatchTaskByIDForProject(w http.ResponseWriter
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PatchTaskByIDForProject(w, r, projectId, taskId)
+		siw.Handler.UpdateTaskByID(w, r, projectId, taskGroupId, taskId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -457,8 +1172,8 @@ func (siw *ServerInterfaceWrapper) PatchTaskByIDForProject(w http.ResponseWriter
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// UpdateTaskByIDForProject operation middleware
-func (siw *ServerInterfaceWrapper) UpdateTaskByIDForProject(w http.ResponseWriter, r *http.Request) {
+// GetAllTaskMembers operation middleware
+func (siw *ServerInterfaceWrapper) GetAllTaskMembers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -472,6 +1187,15 @@ func (siw *ServerInterfaceWrapper) UpdateTaskByIDForProject(w http.ResponseWrite
 		return
 	}
 
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
 	// ------------- Path parameter "task_id" -------------
 	var taskId int
 
@@ -482,7 +1206,210 @@ func (siw *ServerInterfaceWrapper) UpdateTaskByIDForProject(w http.ResponseWrite
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.UpdateTaskByIDForProject(w, r, projectId, taskId)
+		siw.Handler.GetAllTaskMembers(w, r, projectId, taskGroupId, taskId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// CreateTaskMember operation middleware
+func (siw *ServerInterfaceWrapper) CreateTaskMember(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_id" -------------
+	var taskId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_id", chi.URLParam(r, "task_id"), &taskId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTaskMember(w, r, projectId, taskGroupId, taskId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// DeleteTaskMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTaskMemberByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_id" -------------
+	var taskId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_id", chi.URLParam(r, "task_id"), &taskId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteTaskMemberByID(w, r, projectId, taskGroupId, taskId, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetTaskMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) GetTaskMemberByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_id" -------------
+	var taskId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_id", chi.URLParam(r, "task_id"), &taskId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTaskMemberByID(w, r, projectId, taskGroupId, taskId, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// UpdateTaskMemberByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTaskMemberByID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_id", chi.URLParam(r, "project_id"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_group_id" -------------
+	var taskGroupId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_group_id", chi.URLParam(r, "task_group_id"), &taskGroupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_group_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "task_id" -------------
+	var taskId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "task_id", chi.URLParam(r, "task_id"), &taskId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "task_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateTaskMemberByID(w, r, projectId, taskGroupId, taskId, memberId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -618,28 +1545,82 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/project/{project_id}", wrapper.GetProjectByID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Patch(options.BaseURL+"/project/{project_id}", wrapper.PatchProjectByID)
-	})
-	r.Group(func(r chi.Router) {
 		r.Put(options.BaseURL+"/project/{project_id}", wrapper.UpdateProjectByID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/project/{project_id}/tasks", wrapper.GetAllTasksForProject)
+		r.Get(options.BaseURL+"/project/{project_id}/member", wrapper.GetAllProjectMembers)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/project/{project_id}/tasks", wrapper.CreateTaskForProject)
+		r.Post(options.BaseURL+"/project/{project_id}/member", wrapper.CreateProjectMember)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/project/{project_id}/tasks/{task_id}", wrapper.DeleteTaskByIDForProject)
+		r.Delete(options.BaseURL+"/project/{project_id}/member/{member_id}", wrapper.DeleteProjectMemberByID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/project/{project_id}/tasks/{task_id}", wrapper.GetTaskByIDForProject)
+		r.Get(options.BaseURL+"/project/{project_id}/member/{member_id}", wrapper.GetProjectMemberByID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Patch(options.BaseURL+"/project/{project_id}/tasks/{task_id}", wrapper.PatchTaskByIDForProject)
+		r.Put(options.BaseURL+"/project/{project_id}/member/{member_id}", wrapper.UpdateProjectMemberByID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/project/{project_id}/tasks/{task_id}", wrapper.UpdateTaskByIDForProject)
+		r.Get(options.BaseURL+"/project/{project_id}/task_group", wrapper.GetAllTaskGroups)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/project/{project_id}/task_group", wrapper.CreateTaskGroup)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}", wrapper.DeleteTaskGroupByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}", wrapper.GetTaskGroupByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}", wrapper.UpdateTaskGroupByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/member", wrapper.GetAllTaskGroupMembers)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/member", wrapper.CreateTaskGroupMember)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/member/{member_id}", wrapper.DeleteTaskGroupMemberByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/member/{member_id}", wrapper.GetTaskGroupMemberByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/member/{member_id}", wrapper.UpdateTaskGroupMemberByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task", wrapper.GetAllTasks)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task", wrapper.CreateTask)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task/{task_id}", wrapper.DeleteTaskByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task/{task_id}", wrapper.GetTaskByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task/{task_id}", wrapper.UpdateTaskByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task/{task_id}/member", wrapper.GetAllTaskMembers)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task/{task_id}/member", wrapper.CreateTaskMember)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id}", wrapper.DeleteTaskMemberByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id}", wrapper.GetTaskMemberByID)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/project/{project_id}/task_group/{task_group_id}/task/{task_id}/member/{member_id}", wrapper.UpdateTaskMemberByID)
 	})
 
 	return r
@@ -648,24 +1629,42 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xXwW7bOBD9FYK7R9lyu8Gi0C3dYBe++ZCciiBgpbHNRiK55KitYOjfF6Qom4ptJU4k",
-	"e1HkZMEiZzhv3jw+bWgqCyUFCDQ02VCTrqFg7lFp+Q1S9I8KNHJwL1INDCF7YO7dUurCPtGMIUyQF0Aj",
-	"ipUCmlCDmosVjejPiWSKT1KZwQrEBH6iZhNkKxevYMqgLlMstd0UhK/riGZgUs0Vcins4rdEDkPZ0CCy",
-	"B3vqUcrYBreZPJYPPOvk4gL/vNrl4QJhBfrEREHsMJVgBbwVsE4sG9wg0zgeZkF4nw1L89YifBQbsFTZ",
-	"mMwNwtc2nYZ/S64ho8mXsEtPehSFjO+c8X57HPnVjWIdUWTm8X0kBxlJLjXH6u0z4uP8AvNhyTWKRrWB",
-	"t0mGUKddoDaseVhpWarRSgjiX1hOWkD36g7xPUVZbAIultKeozPf9HoxJ0upyS0zj7eapY+gI8KI1zBS",
-	"MMFWUIBAwkRGbHaCdhkXK2Iqg1BM7ak45jZfEIVcL+Y0ot9BmybTbPphOrMiJxUIpjhN6B/T2fSjVUyG",
-	"a4dRHNiSFbgfK4TMHnae0YT+A3id54tmlaEWNqOkMI1QfpzNnF5KgSDcbqZUzlO3P/5mGkVrXJB94giF",
-	"2/i7hiVN6G/xzi/F3ixtj1RvUWVas6oB9QmYJOcGiVy2+DWDZ8qiYLpqjk9YngevI6qkOVDoX663vlDa",
-	"0AMMfpZZdVKJL6qsyz/UJdR7yH4YJ20XwNs1EAE/8op4bpPd4hDHBh3C7OLOkjZ4vNldyXXD+hwa3e7i",
-	"fOP+9zh/ruY3jo6aFYCgDU2+bA4ccX5je4xr2M4JSuIz2EGzFwfDNY1oo4Rdf9BFOgpQeyJhdX2/14ar",
-	"/RH2h/cHyIgp0xSMWZZ5XlmCXfVtEhLJUpYie4Jwg0ugBF8rMr+x4Y7N5RAY2tgjAzg7F4/bsn5wXLs6",
-	"jYKULzlkDsh9XdiHWjFM1/tgL+zfQ8Dd3BkjIH5hrTpbj/2lS4I74lXTtmAaOcvzykc8SIbywNzdueXv",
-	"XPiFuHB3hAHHbrfYecRnHJM1ZuZvqXeG4tUC7Uygsabx/yXVLzJz7gP7JCe3rTaE4oit261lIQ36HJ5t",
-	"zAB9SVtD5Bz6OL0ZfpCbbpzXfe5yPmc9/cqjvrOFOmx2/5DGG/9l9wJLaolhBX0AcjSJ3L/j0CPqP0rz",
-	"1djvkHefvEPbYwvkad7Y7XjWGLuqnDbvT/wxJR6wqU6JL93Ro359oHbOzjL2rpqX2/S+xvc59gGb713i",
-	"xfvfZxpfT4FLXjTnYVzrFVs7croMHfhi6OXl8Y+Hd1q+03IwWt49T0a3AfT3llulzmlC14gqieNcpixf",
-	"S4PJp9mnWcwUp/V9/V8AAAD//7OGFELIHgAA",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
@@ -719,19 +1718,19 @@ func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
 		}
 		res[rawPath] = rawFunc
 	}
-	for rawPath, rawFunc := range externalRef2.PathToRawSpec(path.Join(pathPrefix, "../schemas/project.yaml")) {
+	for rawPath, rawFunc := range externalRef2.PathToRawSpec(path.Join(pathPrefix, "../schemas/member.yaml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}
 		res[rawPath] = rawFunc
 	}
-	for rawPath, rawFunc := range externalRef3.PathToRawSpec(path.Join(pathPrefix, "../schemas/task.yaml")) {
+	for rawPath, rawFunc := range externalRef3.PathToRawSpec(path.Join(pathPrefix, "../schemas/project.yaml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}
 		res[rawPath] = rawFunc
 	}
-	for rawPath, rawFunc := range externalRef4.PathToRawSpec(path.Join(pathPrefix, "../schemas/user.yaml")) {
+	for rawPath, rawFunc := range externalRef4.PathToRawSpec(path.Join(pathPrefix, "../schemas/task.yaml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}

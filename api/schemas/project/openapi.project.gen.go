@@ -52,6 +52,71 @@ type ProjectDeleteResponse struct {
 	Message string `json:"message" mapstructure:"message"`
 }
 
+// ProjectMember defines model for project_member.
+type ProjectMember struct {
+	CreatedAt time.Time `json:"created_at" mapstructure:"created_at"`
+	MemberId  int64     `json:"member_id" mapstructure:"member_id"`
+	ProjectId int64     `json:"project_id" mapstructure:"project_id"`
+	Role      string    `json:"role" mapstructure:"role"`
+	UpdatedAt time.Time `json:"updated_at" mapstructure:"updated_at"`
+}
+
+// ProjectMemberCreateRequest defines model for project_member_create_request.
+type ProjectMemberCreateRequest struct {
+	MemberId  int64  `json:"member_id" mapstructure:"member_id"`
+	ProjectId int64  `json:"project_id" mapstructure:"project_id"`
+	Role      string `json:"role" mapstructure:"role"`
+}
+
+// ProjectMemberCreateResponse defines model for project_member_create_response.
+type ProjectMemberCreateResponse struct {
+	ProjectMember ProjectMember `json:"project_member"`
+}
+
+// ProjectMemberDeleteRequest defines model for project_member_delete_request.
+type ProjectMemberDeleteRequest struct {
+	MemberId  int64 `json:"member_id" mapstructure:"member_id"`
+	ProjectId int64 `json:"project_id" mapstructure:"project_id"`
+}
+
+// ProjectMemberDeleteResponse defines model for project_member_delete_response.
+type ProjectMemberDeleteResponse struct {
+	Message string `json:"message" mapstructure:"message"`
+}
+
+// ProjectMemberRequest defines model for project_member_request.
+type ProjectMemberRequest struct {
+	MemberId  int64 `json:"member_id" mapstructure:"member_id"`
+	ProjectId int64 `json:"project_id" mapstructure:"project_id"`
+}
+
+// ProjectMemberResponse defines model for project_member_response.
+type ProjectMemberResponse struct {
+	ProjectMember ProjectMember `json:"project_member"`
+}
+
+// ProjectMemberUpdateRequest defines model for project_member_update_request.
+type ProjectMemberUpdateRequest struct {
+	MemberId  int64   `json:"member_id" mapstructure:"member_id"`
+	ProjectId int64   `json:"project_id" mapstructure:"project_id"`
+	Role      *string `json:"role,omitempty" mapstructure:"role"`
+}
+
+// ProjectMemberUpdateResponse defines model for project_member_update_response.
+type ProjectMemberUpdateResponse struct {
+	ProjectMember ProjectMember `json:"project_member"`
+}
+
+// ProjectMembersRequest defines model for project_members_request.
+type ProjectMembersRequest struct {
+	ProjectId int64 `json:"project_id" mapstructure:"project_id"`
+}
+
+// ProjectMembersResponse defines model for project_members_response.
+type ProjectMembersResponse struct {
+	ProjectMembers []ProjectMember `json:"project_members" mapstructure:"project_members"`
+}
+
 // ProjectRequest defines model for project_request.
 type ProjectRequest struct {
 	ProjectId int64 `json:"project_id" mapstructure:"project_id"`
@@ -77,71 +142,6 @@ type ProjectUpdateResponse struct {
 	Project Project `json:"project"`
 }
 
-// ProjectUser defines model for project_user.
-type ProjectUser struct {
-	CreatedAt time.Time `json:"created_at" mapstructure:"created_at"`
-	ProjectId int64     `json:"project_id" mapstructure:"project_id"`
-	Role      string    `json:"role" mapstructure:"role"`
-	UpdatedAt time.Time `json:"updated_at" mapstructure:"updated_at"`
-	UserId    int64     `json:"user_id" mapstructure:"user_id"`
-}
-
-// ProjectUserCreateRequest defines model for project_user_create_request.
-type ProjectUserCreateRequest struct {
-	ProjectId int64  `json:"project_id" mapstructure:"project_id"`
-	Role      string `json:"role" mapstructure:"role"`
-	UserId    int64  `json:"user_id" mapstructure:"user_id"`
-}
-
-// ProjectUserCreateResponse defines model for project_user_create_response.
-type ProjectUserCreateResponse struct {
-	ProjectUser ProjectUser `json:"project_user"`
-}
-
-// ProjectUserDeleteRequest defines model for project_user_delete_request.
-type ProjectUserDeleteRequest struct {
-	ProjectId int64 `json:"project_id" mapstructure:"project_id"`
-	UserId    int64 `json:"user_id" mapstructure:"user_id"`
-}
-
-// ProjectUserDeleteResponse defines model for project_user_delete_response.
-type ProjectUserDeleteResponse struct {
-	Message string `json:"message" mapstructure:"message"`
-}
-
-// ProjectUserRequest defines model for project_user_request.
-type ProjectUserRequest struct {
-	ProjectId int64 `json:"project_id" mapstructure:"project_id"`
-	UserId    int64 `json:"user_id" mapstructure:"user_id"`
-}
-
-// ProjectUserResponse defines model for project_user_response.
-type ProjectUserResponse struct {
-	ProjectUser ProjectUser `json:"project_user"`
-}
-
-// ProjectUserUpdateRequest defines model for project_user_update_request.
-type ProjectUserUpdateRequest struct {
-	ProjectId int64   `json:"project_id" mapstructure:"project_id"`
-	Role      *string `json:"role,omitempty" mapstructure:"role"`
-	UserId    int64   `json:"user_id" mapstructure:"user_id"`
-}
-
-// ProjectUserUpdateResponse defines model for project_user_update_response.
-type ProjectUserUpdateResponse struct {
-	ProjectUser ProjectUser `json:"project_user"`
-}
-
-// ProjectUsersRequest defines model for project_users_request.
-type ProjectUsersRequest struct {
-	ProjectId int64 `json:"project_id" mapstructure:"project_id"`
-}
-
-// ProjectUsersResponse defines model for project_users_response.
-type ProjectUsersResponse struct {
-	ProjectUsers []ProjectUser `json:"project_users" mapstructure:"project_users"`
-}
-
 // ProjectsRequest defines model for projects_request.
 type ProjectsRequest struct {
 	ProjectIds []int64 `json:"project_ids" mapstructure:"project_ids"`
@@ -155,16 +155,16 @@ type ProjectsResponse struct {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xXTW/bMAz9L9yONnIZdvBfGYZAsxlXQyxpFA20KPzfB8kfVdraVuo6cbbcjEh5fOR7",
-	"pOlnyHVltELFFrJnsPkDVsI/GtK/Mefu0SCxRH+QEwrGYi/82UFT5Z6gEIwpywohAX4yCBlYJqlKSOAx",
-	"1cLINNcFlqhSfGQSKYvS41XCWKY655rcnwL4pkmgQJuTNCy1cpeXIIdQDhpVsXesV0ljAHeRulruZXES",
-	"Syr+/u0ljlSMJdKZgQLsMJQSFS4t2AmWA7csiNerWQDfRePaLk2iQ3GAtSnWdG4A37hwhH9qSVhA9iNU",
-	"6ZVGSej4E44/Bzr6l2/FQN72P3sXAu07TfpPtc3dy6+9POIun1yUbazRyuJb3wRT/yvhATL4snt5Rey6",
-	"98OuvzZCZJJDgUecsu7FhuV4i0bRHythhdaKcrFhe5g3PPuDKZK3WtyrGrMdvf/JTL2vItsb3zPNMfjz",
-	"mj1ika79SXBBC5M+Lraux7j0+pmAU2qVEvXA0ztuf6ur4ce2XA8yt+rerB02JVC8DDPTZxgRESOovTtG",
-	"0x/O8trMOrkZReNLtuUV1jO9qxqv6uY6c26fvg/udQ0Ruy9e2Bf2Zr9Oe/Yx9fQ/SMbKnlfZIbwgEk8f",
-	"zLEl0EzJZKcyjZLoNMM5sT4nMRd1Qr3ZpGaUO1u0z0lrPKf3EnJXpTpoyFR9PCagDSphJGQACRjBD7Y9",
-	"af4GAAD//1E5BPTdGQAA",
+	"H4sIAAAAAAAC/+xY226jQAz9F+8+gvKy2gd+ZbWKpoxDZ5W5rMdIrSr+vRoCYdKWWyhtWvGGOsPxsX3s",
+	"0/AEudXOGjTsIXsCn9+jFvWjI/sPc24eHRIrrA9yQsEo96I+O1jS4QmkYExZaYQE+NEhZOCZlCkggYfU",
+	"CqfS3Eos0KT4wCRSFkWNp4XzTGXOJYWXIviqSkCiz0k5VtaEy0uQY6gAjUbuA+tV0jiDh0hNLfdKXsRS",
+	"hn//6uIow1ggzQwUYcehjNC4tGAXWAHcsyBer2YRfBONS780iQYlAJZOrqncCL4K4Qj/l4pQQvYn7tKL",
+	"HiWx4i84/j3TsXf1KEbtPb2zDyHQvzGk32psNi2/1HKPuurkJsnGO2s8vtZNtPV/Eh4ggx+7ziJ2jT/s",
+	"2ms9RAY5SDzikHQ/bFn2j+gk+n0l1Oi9KBYLtoV5xbM9GCKpUd8hfbZ3n1is0sgO+oP9lexxcWtrjFsy",
+	"pK6aTYLXmVIDM+ZNmywGZTGrUXPaMbLzo6UxYfW3t/voNscT+I35wfeTy7QOzynd7XvR1t8r+nuzM3sy",
+	"hG3Fr7ri5/ThNnXiv+x/+R3/aZWt/6QYtZ9b4zMJQSQer8y0JVENt8wP5vxVe/Wpv2bHNuH2/XL7frnq",
+	"N5+R4ZjqECvOyCQXuFygYxJ7n60Zog7U1Y8lNVLS2Z7wPmn15/RWQuGqMgcLmSmPxwSsQyOcggwgASf4",
+	"3p9OqucAAAD///csw4IrGgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

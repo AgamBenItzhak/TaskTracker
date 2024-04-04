@@ -15,75 +15,66 @@ import (
 
 	externalRef0 "github.com/AgamBenItzhak/TaskTracker/api/schemas/auth"
 	externalRef1 "github.com/AgamBenItzhak/TaskTracker/api/schemas/errors"
-	externalRef2 "github.com/AgamBenItzhak/TaskTracker/api/schemas/project"
-	externalRef3 "github.com/AgamBenItzhak/TaskTracker/api/schemas/task"
-	externalRef4 "github.com/AgamBenItzhak/TaskTracker/api/schemas/user"
+	externalRef2 "github.com/AgamBenItzhak/TaskTracker/api/schemas/member"
+	externalRef3 "github.com/AgamBenItzhak/TaskTracker/api/schemas/project"
+	externalRef4 "github.com/AgamBenItzhak/TaskTracker/api/schemas/task"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 )
 
-// PostAuthChangePasswordJSONRequestBody defines body for PostAuthChangePassword for application/json ContentType.
-type PostAuthChangePasswordJSONRequestBody = externalRef0.PasswordChangeRequest
+// LoginMemberJSONRequestBody defines body for LoginMember for application/json ContentType.
+type LoginMemberJSONRequestBody = externalRef0.LoginRequest
 
-// PostAuthLoginJSONRequestBody defines body for PostAuthLogin for application/json ContentType.
-type PostAuthLoginJSONRequestBody = externalRef0.LoginRequest
+// LogoutMemberJSONRequestBody defines body for LogoutMember for application/json ContentType.
+type LogoutMemberJSONRequestBody = externalRef0.LogoutRequest
 
-// PostAuthRefreshtokenJSONRequestBody defines body for PostAuthRefreshtoken for application/json ContentType.
-type PostAuthRefreshtokenJSONRequestBody = externalRef0.RefreshTokenRequest
+// UpdateMemberCredentialsByIDJSONRequestBody defines body for UpdateMemberCredentialsByID for application/json ContentType.
+type UpdateMemberCredentialsByIDJSONRequestBody = externalRef0.MemberCredentialsUpdateRequest
 
-// PostAuthRegisterJSONRequestBody defines body for PostAuthRegister for application/json ContentType.
-type PostAuthRegisterJSONRequestBody = externalRef4.User
+// RefreshMemberTokenJSONRequestBody defines body for RefreshMemberToken for application/json ContentType.
+type RefreshMemberTokenJSONRequestBody = externalRef0.TokenRefreshRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Change the user's password
-	// (POST /auth/change-password)
-	PostAuthChangePassword(w http.ResponseWriter, r *http.Request)
-	// Log in to the system
+	// Log in a member
 	// (POST /auth/login)
-	PostAuthLogin(w http.ResponseWriter, r *http.Request)
-	// Log out of the system
+	LoginMember(w http.ResponseWriter, r *http.Request)
+	// Log out a member
 	// (POST /auth/logout)
-	PostAuthLogout(w http.ResponseWriter, r *http.Request)
-	// Refresh the user's access token
-	// (POST /auth/refreshtoken)
-	PostAuthRefreshtoken(w http.ResponseWriter, r *http.Request)
-	// Register a new user
-	// (POST /auth/register)
-	PostAuthRegister(w http.ResponseWriter, r *http.Request)
+	LogoutMember(w http.ResponseWriter, r *http.Request)
+	// Reset a member's password
+	// (POST /auth/password/reset)
+	UpdateMemberCredentialsByID(w http.ResponseWriter, r *http.Request)
+	// Refresh a member's token
+	// (POST /auth/refresh)
+	RefreshMemberToken(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// Change the user's password
-// (POST /auth/change-password)
-func (_ Unimplemented) PostAuthChangePassword(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Log in to the system
+// Log in a member
 // (POST /auth/login)
-func (_ Unimplemented) PostAuthLogin(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) LoginMember(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Log out of the system
+// Log out a member
 // (POST /auth/logout)
-func (_ Unimplemented) PostAuthLogout(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) LogoutMember(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Refresh the user's access token
-// (POST /auth/refreshtoken)
-func (_ Unimplemented) PostAuthRefreshtoken(w http.ResponseWriter, r *http.Request) {
+// Reset a member's password
+// (POST /auth/password/reset)
+func (_ Unimplemented) UpdateMemberCredentialsByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Register a new user
-// (POST /auth/register)
-func (_ Unimplemented) PostAuthRegister(w http.ResponseWriter, r *http.Request) {
+// Refresh a member's token
+// (POST /auth/refresh)
+func (_ Unimplemented) RefreshMemberToken(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -96,12 +87,12 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// PostAuthChangePassword operation middleware
-func (siw *ServerInterfaceWrapper) PostAuthChangePassword(w http.ResponseWriter, r *http.Request) {
+// LoginMember operation middleware
+func (siw *ServerInterfaceWrapper) LoginMember(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostAuthChangePassword(w, r)
+		siw.Handler.LoginMember(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -111,12 +102,12 @@ func (siw *ServerInterfaceWrapper) PostAuthChangePassword(w http.ResponseWriter,
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostAuthLogin operation middleware
-func (siw *ServerInterfaceWrapper) PostAuthLogin(w http.ResponseWriter, r *http.Request) {
+// LogoutMember operation middleware
+func (siw *ServerInterfaceWrapper) LogoutMember(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostAuthLogin(w, r)
+		siw.Handler.LogoutMember(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -126,12 +117,12 @@ func (siw *ServerInterfaceWrapper) PostAuthLogin(w http.ResponseWriter, r *http.
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostAuthLogout operation middleware
-func (siw *ServerInterfaceWrapper) PostAuthLogout(w http.ResponseWriter, r *http.Request) {
+// UpdateMemberCredentialsByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateMemberCredentialsByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostAuthLogout(w, r)
+		siw.Handler.UpdateMemberCredentialsByID(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -141,27 +132,12 @@ func (siw *ServerInterfaceWrapper) PostAuthLogout(w http.ResponseWriter, r *http
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostAuthRefreshtoken operation middleware
-func (siw *ServerInterfaceWrapper) PostAuthRefreshtoken(w http.ResponseWriter, r *http.Request) {
+// RefreshMemberToken operation middleware
+func (siw *ServerInterfaceWrapper) RefreshMemberToken(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostAuthRefreshtoken(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// PostAuthRegister operation middleware
-func (siw *ServerInterfaceWrapper) PostAuthRegister(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostAuthRegister(w, r)
+		siw.Handler.RefreshMemberToken(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -285,19 +261,16 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/auth/change-password", wrapper.PostAuthChangePassword)
+		r.Post(options.BaseURL+"/auth/login", wrapper.LoginMember)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/auth/login", wrapper.PostAuthLogin)
+		r.Post(options.BaseURL+"/auth/logout", wrapper.LogoutMember)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/auth/logout", wrapper.PostAuthLogout)
+		r.Post(options.BaseURL+"/auth/password/reset", wrapper.UpdateMemberCredentialsByID)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/auth/refreshtoken", wrapper.PostAuthRefreshtoken)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/auth/register", wrapper.PostAuthRegister)
+		r.Post(options.BaseURL+"/auth/refresh", wrapper.RefreshMemberToken)
 	})
 
 	return r
@@ -306,22 +279,18 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
@@ -375,19 +344,19 @@ func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
 		}
 		res[rawPath] = rawFunc
 	}
-	for rawPath, rawFunc := range externalRef2.PathToRawSpec(path.Join(pathPrefix, "../schemas/project.yaml")) {
+	for rawPath, rawFunc := range externalRef2.PathToRawSpec(path.Join(pathPrefix, "../schemas/member.yaml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}
 		res[rawPath] = rawFunc
 	}
-	for rawPath, rawFunc := range externalRef3.PathToRawSpec(path.Join(pathPrefix, "../schemas/task.yaml")) {
+	for rawPath, rawFunc := range externalRef3.PathToRawSpec(path.Join(pathPrefix, "../schemas/project.yaml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}
 		res[rawPath] = rawFunc
 	}
-	for rawPath, rawFunc := range externalRef4.PathToRawSpec(path.Join(pathPrefix, "../schemas/user.yaml")) {
+	for rawPath, rawFunc := range externalRef4.PathToRawSpec(path.Join(pathPrefix, "../schemas/task.yaml")) {
 		if _, ok := res[rawPath]; ok {
 			// it is not possible to compare functions in golang, so always overwrite the old value
 		}

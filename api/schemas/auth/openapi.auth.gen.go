@@ -13,88 +13,107 @@ import (
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	openapi_types "github.com/oapi-codegen/runtime/types"
 )
-
-// RegisterUser defines model for RegisterUser.
-type RegisterUser struct {
-	Email     openapi_types.Email `json:"email" mapstructure:"email"`
-	FirstName string              `json:"first_name" mapstructure:"first_name"`
-	LastName  string              `json:"last_name" mapstructure:"last_name"`
-	Password  string              `json:"password" mapstructure:"password"`
-}
-
-// AuthRequest defines model for auth_request.
-type AuthRequest struct {
-	Email    *openapi_types.Email `json:"email,omitempty" mapstructure:"email"`
-	Password *string              `json:"password,omitempty" mapstructure:"password"`
-}
-
-// AuthResponse defines model for auth_response.
-type AuthResponse struct {
-	Token *string `json:"token,omitempty" mapstructure:"token"`
-}
 
 // LoginRequest defines model for login_request.
 type LoginRequest struct {
-	Email    openapi_types.Email `json:"email" mapstructure:"email"`
-	Password string              `json:"password" mapstructure:"password"`
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
 }
 
 // LoginResponse defines model for login_response.
 type LoginResponse struct {
-	AccessToken  string  `json:"access_token" mapstructure:"access_token"`
-	ExpiresIn    int32   `json:"expires_in" mapstructure:"expires_in"`
-	RefreshToken *string `json:"refresh_token,omitempty" mapstructure:"refresh_token"`
-	TokenType    string  `json:"token_type" mapstructure:"token_type"`
+	RefreshToken Token `json:"refresh_token"`
+	Token        Token `json:"token"`
+}
+
+// LogoutRequest defines model for logout_request.
+type LogoutRequest struct {
+	MemberId int64 `json:"member_id" mapstructure:"member_id"`
 }
 
 // LogoutResponse defines model for logout_response.
 type LogoutResponse struct {
-	Message string `json:"message" mapstructure:"message"`
+	MemberId int64 `json:"member_id" mapstructure:"member_id"`
 }
 
-// PasswordChangeRequest defines model for password_change_request.
-type PasswordChangeRequest struct {
-	CurrentPassword string `json:"current_password" mapstructure:"current_password"`
-	NewPassword     string `json:"new_password" mapstructure:"new_password"`
+// MemberCredentials defines model for member_credentials.
+type MemberCredentials struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
 }
 
-// PasswordChangeResponse defines model for password_change_response.
-type PasswordChangeResponse struct {
-	Message string `json:"message" mapstructure:"message"`
+// MemberCredentialsCreateRequest defines model for member_credentials_create_request.
+type MemberCredentialsCreateRequest struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
 }
 
-// RefreshTokenRequest defines model for refresh_token_request.
-type RefreshTokenRequest struct {
-	RefreshToken string `json:"refresh_token" mapstructure:"refresh_token"`
+// MemberCredentialsCreateResponse defines model for member_credentials_create_response.
+type MemberCredentialsCreateResponse struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
 }
 
-// RefreshTokenResponse defines model for refresh_token_response.
-type RefreshTokenResponse struct {
-	AccessToken  string  `json:"access_token" mapstructure:"access_token"`
-	ExpiresIn    int32   `json:"expires_in" mapstructure:"expires_in"`
-	RefreshToken *string `json:"refresh_token,omitempty" mapstructure:"refresh_token"`
-	TokenType    string  `json:"token_type" mapstructure:"token_type"`
+// MemberCredentialsDeleteRequest defines model for member_credentials_delete_request.
+type MemberCredentialsDeleteRequest struct {
+	MemberId int64 `json:"member_id" mapstructure:"member_id"`
+}
+
+// MemberCredentialsDeleteResponse defines model for member_credentials_delete_response.
+type MemberCredentialsDeleteResponse struct {
+	MemberId int64 `json:"member_id" mapstructure:"member_id"`
+}
+
+// MemberCredentialsRequest defines model for member_credentials_request.
+type MemberCredentialsRequest struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsResponse defines model for member_credentials_response.
+type MemberCredentialsResponse struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsUpdateRequest defines model for member_credentials_update_request.
+type MemberCredentialsUpdateRequest struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsUpdateResponse defines model for member_credentials_update_response.
+type MemberCredentialsUpdateResponse struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
 }
 
 // Token defines model for token.
 type Token struct {
-	Token *string `json:"token,omitempty" mapstructure:"token"`
+	Token string `json:"token" mapstructure:"token"`
+}
+
+// TokenRefreshRequest defines model for token_refresh_request.
+type TokenRefreshRequest struct {
+	Token string `json:"token" mapstructure:"token"`
+}
+
+// TokenRefreshResponse defines model for token_refresh_response.
+type TokenRefreshResponse struct {
+	Token string `json:"token" mapstructure:"token"`
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yXz46bMBDG32XO5NLeuLWHHnrsH/VQrZDjDOAWbHdmrM0q4t0rQ0NwWFZbkWwjdW8G",
-	"o998882MhQ+gXeudRSsM+QFY19iqfvkJK8OC9JWR4rMn55HEYL+LrTJNXJSOWiWQ/3mTgTx4hBxYyNgK",
-	"MthvnPJmo90OK7Qb3Aupjaiqx7TKs1DQEghHRtdlUBpiKaxqMX62hjkhRXCjLsQ9gSLWK+Z7R7vEkvHl",
-	"OldGTBcjEf4KhnAH+ffR80mgSbrTZO9GCW77A7VAl4EKUhcRhywvX+GpY5dzZylJ9s4yzrMU9xPtWgkD",
-	"5PH4jauMvQ2X/2Ff3j3hzFJplNbIXFykQgkrqsW9N4RcGJs4Y6y8fXOyxVjBCulv3T+xB2NKQq4vk0gK",
-	"6zsuroqBeYAdlio0MZX3qKiXvrqzB/isyImniY7E3oXSuyBP1L5FZlWtPqOPmJn248Zj4o5NW+ha2QqX",
-	"Z1cHIrRSXHPGZjFiJhbvrxo04c+8m0k6E/Q8T2+x8slwLdf9qgN9Jjfdfo7o1+P0vztORyte9N+my4BR",
-	"BzLy8DleG4ag296nd0Hq09OHYz98/PYFsuGSEUnbM09rET+EMrZ0kNvQNBk4j1Z5Azn0fxRS87DT/Q4A",
-	"AP//UYxpYL0MAAA=",
+	"H4sIAAAAAAAC/+yWwW6zMAzH38XfdwT1Mu3Aq0wTSuEPzQZJ5hitU8W7T4EWuq50q3ook7glTrD/+cUO",
+	"3lFma2cNjHhKduSzDWrVDStbapMy3hp4CQbH1oFFo1uuUa/Bqc7DpLBcK6GEtJHHB4pIPhz6KUowRbSN",
+	"rXI6zmyOEibGVljFosrel3JeuMmk4fDV6LptI3LK+3fLXZy9Wy+sTXml18FPG7yGc2lGTsnTUbyjaM/D",
+	"Iez6BZlQGw1IvLPG4zsTRsHwm1TsK0ww/GcUlNC/1Uh5tUe86je1EV2z+0R5b41OAk9It43c/TonyV/U",
+	"PMV7jqL3qxkjhxGtKr/UznkuYawEyxPzW0x3LoO5c8pRYQbpdONrMR7jb796S1n/yGep54uAGpcvv4cr",
+	"MC3pNHIaeuqvKAbzLfIOrfjZXnxSTHro0SfzeR7iprLoHurCPm0KS4lpqioi62CU05RQd/+y8f1K+xkA",
+	"AP//UkdO68cOAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

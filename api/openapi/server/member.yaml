@@ -9,7 +9,7 @@ paths:
   /member:
     get:
       summary: Get all members
-      operationId: getAllMembers
+      operationId: GetAllMembers
       responses:
         '200':
           description: A list of members
@@ -21,7 +21,7 @@ paths:
                   $ref: '../schemas/member.yaml#/components/schemas/member_response'
     post:
       summary: Create a new member
-      operationId: createMember
+      operationId: CreateMember
       requestBody:
         required: true
         content:
@@ -38,7 +38,7 @@ paths:
   /member/{member_id}:
     get:
       summary: Get a member by ID
-      operationId: getMemberByID
+      operationId: GetMemberByID
       parameters:
         - name: member_id
           in: path
@@ -55,7 +55,7 @@ paths:
                 $ref: '../schemas/member.yaml#/components/schemas/member_response'
     put:
       summary: Update a member by ID
-      operationId: updateMemberByID
+      operationId: UpdateMemberByID
       parameters:
         - name: member_id
           in: path
@@ -78,7 +78,7 @@ paths:
                 $ref: '../schemas/member.yaml#/components/schemas/member_update_response'
     delete:
       summary: Delete a member by ID
-      operationId: deleteMemberByID
+      operationId: DeleteMemberByID
       parameters:
         - name: member_id
           in: path
@@ -92,7 +92,7 @@ paths:
   /member/{member_id}/Credentials:
     get:
       summary: Get a member's credentials by ID
-      operationId: getMemberCredentialsByID
+      operationId: GetMemberCredentialsByID
       parameters:
         - name: member_id
           in: path
@@ -109,7 +109,7 @@ paths:
                 $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_response'
     put:
       summary: Update a member's credentials by ID
-      operationId: updateMemberCredentialsByID
+      operationId: UpdateMemberCredentialsByID
       parameters:
         - name: member_id
           in: path
@@ -132,7 +132,7 @@ paths:
                 $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_response'
     delete:
       summary: Delete a member's credentials by ID
-      operationId: deleteMemberCredentialsByID
+      operationId: DeleteMemberCredentialsByID
       parameters:
         - name: member_id
           in: path
