@@ -1,48 +1,37 @@
 package server
 
 import (
-	"github.com/AgamBenItzhak/TaskTracker/internal/db"
-	"github.com/AgamBenItzhak/TaskTracker/internal/server/services"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
-)
+	"net/http"
 
-var ServerInstance *Server
+	"github.com/AgamBenItzhak/TaskTracker/config"
+	"github.com/AgamBenItzhak/TaskTracker/internal/server/routes"
+	"github.com/AgamBenItzhak/TaskTracker/internal/server/services"
+	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
 
 // Server provides functions for the server
 type Server struct {
-	Router   *gin.Engine
-	DB       db.PgxIface
+	Router   *chi.Mux
+	DB       *pgxpool.Pool
 	Services *services.Services
 }
 
 // NewServer creates a new Server instance
-func NewServer() (*Server, error) {
-	db, err := db.NewDB()
-	if err != nil {
-		return nil, err
+func NewServer(db *pgxpool.Pool, token string) *Server {
+	s := &Server{
+		Router:   chi.NewRouter(),
+		DB:       db,
+		Services: services.NewServices(db, token),
 	}
 
-	router := gin.Default()
-	services := services.NewServices(db.Pool)
+	routes.Routes(s.Router, s.Services)
 
-	return &Server{
-		Router:   router,
-		DB:       db.Pool,
-		Services: services,
-	}, nil
-}
-
-func init() {
-	server, err := NewServer()
-	if err != nil {
-		panic(err)
-	}
-	ServerInstance = server
+	return s
 }
 
 // Run runs the server
 func (s *Server) Run() {
-	addr := viper.GetString("server.host") + ":" + viper.GetString("server.port")
-	s.Router.Run(addr)
+	addr := config.ServerConfig.Server.Address + ":" + config.ServerConfig.Server.Port
+	http.ListenAndServe(addr, s.Router)
 }
