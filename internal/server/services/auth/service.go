@@ -1,41 +1,35 @@
 package auth
 
 import (
-	"github.com/AgamBenItzhak/TaskTracker/config"
-	"github.com/AgamBenItzhak/TaskTracker/internal/db"
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/AgamBenItzhak/TaskTracker/database/db"
+	"github.com/AgamBenItzhak/TaskTracker/internal/server/services/service"
 	"github.com/pashagolub/pgxmock/v3"
 )
 
-// AuthService provides auth-related functions
-type AuthService struct {
-	dbpool      db.PgxIface
-	tokenSecret string
+// ServiceIface is an interface for the Service
+type ServiceIface interface {
+	LoginMember(email, password string) (string, error)
+	LogoutMember(token string) error
+	RefreshMemberToken(token string) (string, error)
+	UpdateMemberCredentialsByID(email, password string) error
 }
 
-type AuthServiceIface interface {
-	GenerateTokenWithClaims(claims jwt.Claims) (string, error)
-	GenerateToken(tokenSecret string, expirationTime int64) (string, error)
-	ParseAndVerifyToken(tokenString string) (*Claims, error)
+// Service provides auth-related functions
+type Service struct {
+	service *service.Service
+	token   string
 }
 
-type AuthServiceMockIface interface {
-	AuthServiceIface
+// Ensure Service implements ServiceIface
+var _ ServiceIface = (*Service)(nil)
+
+// NewService creates a new Service instance
+func NewService(q db.DBTX, token string) *Service {
+	return &Service{service: service.NewService(q), token: token}
 }
 
-type Claims struct {
-	jwt.RegisteredClaims
-}
-
-// NewAuthService creates a new AuthService instance
-func NewAuthService(dbpool db.PgxIface) *AuthService {
-	return &AuthService{
-		dbpool:      dbpool,
-		tokenSecret: config.ServerConfig.JWT.Secret,
-	}
-}
-
-func NewMockAuthService() *AuthService {
+// NewMockService creates a new Service instance for testing
+func NewMockService(token string) *Service {
 	mock, _ := pgxmock.NewPool()
-	return NewAuthService(mock)
+	return NewService(mock, token)
 }

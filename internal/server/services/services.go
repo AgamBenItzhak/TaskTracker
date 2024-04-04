@@ -1,27 +1,27 @@
 package services
 
 import (
-	"github.com/AgamBenItzhak/TaskTracker/internal/db"
+	"github.com/AgamBenItzhak/TaskTracker/database/db"
 	"github.com/AgamBenItzhak/TaskTracker/internal/server/services/auth"
+	"github.com/AgamBenItzhak/TaskTracker/internal/server/services/member"
 	"github.com/AgamBenItzhak/TaskTracker/internal/server/services/project"
 	"github.com/AgamBenItzhak/TaskTracker/internal/server/services/task"
-	"github.com/AgamBenItzhak/TaskTracker/internal/server/services/user"
 )
 
 // Services provides functions for the server
 type Services struct {
-	User    *user.UserService
-	Project *project.ProjectService
-	Task    *task.TaskService
-	Auth    *auth.AuthService
+	Member  *member.Service
+	Project *project.Service
+	Task    *task.Service
+	Auth    *auth.Service
 }
 
 // NewServices creates a new Services instance
-func NewServices(db db.PgxIface) *Services {
+func NewServices(db db.DBTX, token string) *Services {
 	return &Services{
-		User:    user.NewUserService(db),
-		Project: project.NewProjectService(db),
-		Task:    task.NewTaskService(db),
-		Auth:    auth.NewAuthService(db),
+		Member:  member.NewService(db),
+		Project: project.NewService(db),
+		Task:    task.NewService(db),
+		Auth:    auth.NewService(db, token),
 	}
 }
