@@ -22,9 +22,9 @@ type Querier interface {
 	// Insert a new Task Group into the database
 	CreateTaskGroup(ctx context.Context, arg CreateTaskGroupParams) (int32, error)
 	// Insert a new member into a Task Group
-	CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) (int32, error)
+	CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) error
 	// Insert a new member into a Task
-	CreateTaskMember(ctx context.Context, arg CreateTaskMemberParams) (int32, error)
+	CreateTaskMember(ctx context.Context, arg CreateTaskMemberParams) error
 	// Delete a member from the database
 	DeleteMemberByID(ctx context.Context, memberID int32) error
 	// Delete a member's credentials from the database

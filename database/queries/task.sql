@@ -26,10 +26,9 @@ WHERE task_group_id = $1;
 DELETE FROM task_group WHERE task_group_id = $1;
 
 -- Insert a new member into a Task Group
--- name: CreateTaskGroupMember :one
+-- name: CreateTaskGroupMember :exec
 INSERT INTO task_group_member (member_id, task_group_id, role, created_at, updated_at)
-VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-RETURNING member_id;
+VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Get all member IDs assigned to a Task Group
 -- name: GetAllTaskGroupMemberIDs :many
@@ -80,10 +79,9 @@ WHERE task_id = $1;
 DELETE FROM task WHERE task_id = $1;
 
 -- Insert a new member into a Task
--- name: CreateTaskMember :one
+-- name: CreateTaskMember :exec
 INSERT INTO task_member (member_id, task_id, role, created_at, updated_at)
-VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-RETURNING member_id;
+VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Get all member IDs assigned to a Task
 -- name: GetAllTaskMemberIDs :many

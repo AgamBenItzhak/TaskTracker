@@ -75,10 +75,9 @@ func (q *Queries) CreateTaskGroup(ctx context.Context, arg CreateTaskGroupParams
 	return task_group_id, err
 }
 
-const CreateTaskGroupMember = `-- name: CreateTaskGroupMember :one
+const CreateTaskGroupMember = `-- name: CreateTaskGroupMember :exec
 INSERT INTO task_group_member (member_id, task_group_id, role, created_at, updated_at)
 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-RETURNING member_id
 `
 
 type CreateTaskGroupMemberParams struct {
@@ -88,17 +87,14 @@ type CreateTaskGroupMemberParams struct {
 }
 
 // Insert a new member into a Task Group
-func (q *Queries) CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) (int32, error) {
-	row := q.db.QueryRow(ctx, CreateTaskGroupMember, arg.MemberID, arg.TaskGroupID, arg.Role)
-	var member_id int32
-	err := row.Scan(&member_id)
-	return member_id, err
+func (q *Queries) CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) error {
+	_, err := q.db.Exec(ctx, CreateTaskGroupMember, arg.MemberID, arg.TaskGroupID, arg.Role)
+	return err
 }
 
-const CreateTaskMember = `-- name: CreateTaskMember :one
+const CreateTaskMember = `-- name: CreateTaskMember :exec
 INSERT INTO task_member (member_id, task_id, role, created_at, updated_at)
 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-RETURNING member_id
 `
 
 type CreateTaskMemberParams struct {
@@ -108,11 +104,9 @@ type CreateTaskMemberParams struct {
 }
 
 // Insert a new member into a Task
-func (q *Queries) CreateTaskMember(ctx context.Context, arg CreateTaskMemberParams) (int32, error) {
-	row := q.db.QueryRow(ctx, CreateTaskMember, arg.MemberID, arg.TaskID, arg.Role)
-	var member_id int32
-	err := row.Scan(&member_id)
-	return member_id, err
+func (q *Queries) CreateTaskMember(ctx context.Context, arg CreateTaskMemberParams) error {
+	_, err := q.db.Exec(ctx, CreateTaskMember, arg.MemberID, arg.TaskID, arg.Role)
+	return err
 }
 
 const DeleteTaskByID = `-- name: DeleteTaskByID :exec
