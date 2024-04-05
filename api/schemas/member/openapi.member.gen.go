@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	externalRef0 "github.com/AgamBenItzhak/TaskTracker/api/schemas/auth"
 	"github.com/getkin/kin-openapi/openapi3"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
@@ -47,6 +48,28 @@ type FullMembersResponse struct {
 	FullMembers []FullMember `json:"full_members" mapstructure:"full_members"`
 }
 
+// LoginRequest defines model for login_request.
+type LoginRequest struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// LoginResponse defines model for login_response.
+type LoginResponse struct {
+	RefreshToken externalRef0.Token `json:"refresh_token"`
+	Token        externalRef0.Token `json:"token"`
+}
+
+// LogoutRequest defines model for logout_request.
+type LogoutRequest struct {
+	MemberId int64 `json:"member_id" mapstructure:"member_id"`
+}
+
+// LogoutResponse defines model for logout_response.
+type LogoutResponse struct {
+	MemberId int64 `json:"member_id" mapstructure:"member_id"`
+}
+
 // Member defines model for member.
 type Member struct {
 	CreatedAt time.Time           `json:"created_at" mapstructure:"created_at"`
@@ -68,6 +91,58 @@ type MemberCreateRequest struct {
 // MemberCreateResponse defines model for member_create_response.
 type MemberCreateResponse struct {
 	Member Member `json:"member"`
+}
+
+// MemberCredentials defines model for member_credentials.
+type MemberCredentials struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsCreateRequest defines model for member_credentials_create_request.
+type MemberCredentialsCreateRequest struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsCreateResponse defines model for member_credentials_create_response.
+type MemberCredentialsCreateResponse struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsDeleteRequest defines model for member_credentials_delete_request.
+type MemberCredentialsDeleteRequest struct {
+	MemberId int64 `json:"member_id" mapstructure:"member_id"`
+}
+
+// MemberCredentialsDeleteResponse defines model for member_credentials_delete_response.
+type MemberCredentialsDeleteResponse struct {
+	MemberId int64 `json:"member_id" mapstructure:"member_id"`
+}
+
+// MemberCredentialsRequest defines model for member_credentials_request.
+type MemberCredentialsRequest struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsResponse defines model for member_credentials_response.
+type MemberCredentialsResponse struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsUpdateRequest defines model for member_credentials_update_request.
+type MemberCredentialsUpdateRequest struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
+}
+
+// MemberCredentialsUpdateResponse defines model for member_credentials_update_response.
+type MemberCredentialsUpdateResponse struct {
+	MemberId int64  `json:"member_id" mapstructure:"member_id"`
+	Password string `json:"password" mapstructure:"password"`
 }
 
 // MemberDeleteRequest defines model for member_delete_request.
@@ -116,15 +191,17 @@ type MembersResponse struct {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xW226cQAz9F7ePoH2p+sBP9AOqCk3AS6ZiLrWNklXEv1cDWxh2A8tm0yaNeIO5HNvH",
-	"Z2w/QeGMdxatMGRPwMU9GtV97pu6zg2aO6Tw68l5JNHYbRaESrDMlXRHHZnwBaUSTEUbhATk4BEyYCFt",
-	"K0jgMXXK67RwJVZoU3wUUqmoqsMzyrNQU0hD4VIE37YJoFG6nhjqV24z0mME/L0mltwqg+HYLZgRUgCu",
-	"1SvhjkABts9KrssJJ9rK1y8jJ9oKVkhXGhqhg6HGl38zzRF8G8wR/mo0YQnZ98iRZMh2xG7MbRLrZeL0",
-	"j8E/d/cTC4GQ7FHXeTCILOf6/kcMz8Z82XH2zjKee37ybD8T7iGDT7vxne+Oj3wXHz11Jd674AyvoLH7",
-	"04KG1xDaDiuKSB1eSjAvMMxrolrB8TSw1WzfFODEfLuQueeD3Gr6VtM/WE0/AvdX5svRprmp5rxifnA0",
-	"ldyweM7KA2nBb7Y+QCbU4HWmB9wzWVyUwnB1Te7niva6njjTDhc64dF+iTUuae89ThSnrs9Tx6yqm8X3",
-	"B+YZL/uNBR//R17fTIt9tdzq4DvrvS/vhmty/TZa+0DD/+W5/9qR/1Wm/dlBf37GDye13TvIbFPXCTiP",
-	"VnkNGXTNVO6532l/BwAA//888AIR/xEAAA==",
+	"H4sIAAAAAAAC/+xZ246bMBD9l2kfifJS9YGf6AdUFfLChLgF2x0P2o1W/Htl2OWShEtCuiQrv4Ftzpw5",
+	"M7YH+xVinRutULGF8BVsvMdcVI+7IsuiHPMnJPdqSBskllh1xoSCMYkEV0M15e4JEsG4YZkjBMAHgxCC",
+	"ZZIqhQBeNloYuYl1gimqDb4wiQ2LtMLLhbFMRcwFuY868GUZAOZCZj1DdcsyIzWGw99JshwpkaMbtgSz",
+	"g+SAM3Ej3BbIwdZRiWTS00Qq/v6t1UQqxhTpQkMttDNUmOR/hrkDXzpzhH8LSZhA+LNDJGii3VG3q23Q",
+	"zZce6V8NP/30G2MGF+w2ryNnEC2f5vcHKTzo8zRxa7SyeMr8aNp+JdxBCF+27Tzfvk3ybXfoMZVu3wQZ",
+	"O0PG6k0y5naOoGXTIojE4VqB7YjCdo5XMzTuOzZb7UUO9syXI5E772SmU6lWT/0AjLD2WVOydG1scEbX",
+	"kGbUmCRDASfcEdp9xPoPqqlA14NciC8YfcS8bg2ODA9Q1wU/1krWcB7S+x5J+1LIl0KfrBR6A64/GV5C",
+	"fM71c667cTWSNI2nqjyTZPyhsgOETAXeanebTIXRLe849uNL8dQuNlBFjhSQrf0EFUuRWV+KnNdlcn56",
+	"mfoyrVxV3LtOCWZ4B+l0RfF13o3HKyJ7fvhpPaWPn8+jAtVFns+juTL5dDrR6YG3hBnbgLUiXfwL8A5z",
+	"hmXdMcLxEXVd7Y9gajnzf6OrnIBcfyYxJ9br5NonurmYvrS49L7iJlcVg7cUYxcUzbl534GmecnceT9u",
+	"P3vefkrGjZNqpyFURZYFoA0qYSSEUO2svLd1T/kvAAD//wUbDzpJHwAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
@@ -164,6 +241,14 @@ func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
 		res[pathToFile] = rawSpec
 	}
 
+	pathPrefix := path.Dir(pathToFile)
+
+	for rawPath, rawFunc := range externalRef0.PathToRawSpec(path.Join(pathPrefix, "auth.yaml")) {
+		if _, ok := res[rawPath]; ok {
+			// it is not possible to compare functions in golang, so always overwrite the old value
+		}
+		res[rawPath] = rawFunc
+	}
 	return res
 }
 

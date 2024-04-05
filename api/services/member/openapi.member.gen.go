@@ -26,11 +26,17 @@ import (
 // CreateMemberJSONRequestBody defines body for CreateMember for application/json ContentType.
 type CreateMemberJSONRequestBody = externalRef2.MemberCreateRequest
 
+// LoginMemberJSONRequestBody defines body for LoginMember for application/json ContentType.
+type LoginMemberJSONRequestBody = externalRef2.LoginRequest
+
+// LogoutMemberJSONRequestBody defines body for LogoutMember for application/json ContentType.
+type LogoutMemberJSONRequestBody = externalRef2.LogoutRequest
+
 // UpdateMemberByIDJSONRequestBody defines body for UpdateMemberByID for application/json ContentType.
 type UpdateMemberByIDJSONRequestBody = externalRef2.MemberUpdateRequest
 
 // UpdateMemberCredentialsByIDJSONRequestBody defines body for UpdateMemberCredentialsByID for application/json ContentType.
-type UpdateMemberCredentialsByIDJSONRequestBody = externalRef0.MemberCredentialsUpdateRequest
+type UpdateMemberCredentialsByIDJSONRequestBody = externalRef2.MemberCredentialsUpdateRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -40,6 +46,12 @@ type ServerInterface interface {
 	// Create a new member
 	// (POST /member)
 	CreateMember(w http.ResponseWriter, r *http.Request)
+	// Log in a member
+	// (POST /member/login)
+	LoginMember(w http.ResponseWriter, r *http.Request)
+	// Log out a member
+	// (POST /member/logout)
+	LogoutMember(w http.ResponseWriter, r *http.Request)
 	// Delete a member by ID
 	// (DELETE /member/{member_id})
 	DeleteMemberByID(w http.ResponseWriter, r *http.Request, memberId int)
@@ -73,6 +85,18 @@ func (_ Unimplemented) GetAllMembers(w http.ResponseWriter, r *http.Request) {
 // Create a new member
 // (POST /member)
 func (_ Unimplemented) CreateMember(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Log in a member
+// (POST /member/login)
+func (_ Unimplemented) LoginMember(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Log out a member
+// (POST /member/logout)
+func (_ Unimplemented) LogoutMember(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -142,6 +166,36 @@ func (siw *ServerInterfaceWrapper) CreateMember(w http.ResponseWriter, r *http.R
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.CreateMember(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// LoginMember operation middleware
+func (siw *ServerInterfaceWrapper) LoginMember(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.LoginMember(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// LogoutMember operation middleware
+func (siw *ServerInterfaceWrapper) LogoutMember(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.LogoutMember(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -427,6 +481,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/member", wrapper.CreateMember)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/member/login", wrapper.LoginMember)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/member/logout", wrapper.LogoutMember)
+	})
+	r.Group(func(r chi.Router) {
 		r.Delete(options.BaseURL+"/member/{member_id}", wrapper.DeleteMemberByID)
 	})
 	r.Group(func(r chi.Router) {
@@ -451,22 +511,25 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"YWKlDMYfog9RaO/V9V39fwAAAP//auNaO0keAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

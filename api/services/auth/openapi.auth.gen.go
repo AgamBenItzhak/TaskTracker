@@ -22,29 +22,11 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// LoginMemberJSONRequestBody defines body for LoginMember for application/json ContentType.
-type LoginMemberJSONRequestBody = externalRef0.LoginRequest
-
-// LogoutMemberJSONRequestBody defines body for LogoutMember for application/json ContentType.
-type LogoutMemberJSONRequestBody = externalRef0.LogoutRequest
-
-// UpdateMemberCredentialsByIDJSONRequestBody defines body for UpdateMemberCredentialsByID for application/json ContentType.
-type UpdateMemberCredentialsByIDJSONRequestBody = externalRef0.MemberCredentialsUpdateRequest
-
 // RefreshMemberTokenJSONRequestBody defines body for RefreshMemberToken for application/json ContentType.
 type RefreshMemberTokenJSONRequestBody = externalRef0.TokenRefreshRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Log in a member
-	// (POST /auth/login)
-	LoginMember(w http.ResponseWriter, r *http.Request)
-	// Log out a member
-	// (POST /auth/logout)
-	LogoutMember(w http.ResponseWriter, r *http.Request)
-	// Reset a member's password
-	// (POST /auth/password/reset)
-	UpdateMemberCredentialsByID(w http.ResponseWriter, r *http.Request)
 	// Refresh a member's token
 	// (POST /auth/refresh)
 	RefreshMemberToken(w http.ResponseWriter, r *http.Request)
@@ -53,24 +35,6 @@ type ServerInterface interface {
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
-
-// Log in a member
-// (POST /auth/login)
-func (_ Unimplemented) LoginMember(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Log out a member
-// (POST /auth/logout)
-func (_ Unimplemented) LogoutMember(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Reset a member's password
-// (POST /auth/password/reset)
-func (_ Unimplemented) UpdateMemberCredentialsByID(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
 
 // Refresh a member's token
 // (POST /auth/refresh)
@@ -86,51 +50,6 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
-
-// LoginMember operation middleware
-func (siw *ServerInterfaceWrapper) LoginMember(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.LoginMember(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// LogoutMember operation middleware
-func (siw *ServerInterfaceWrapper) LogoutMember(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.LogoutMember(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// UpdateMemberCredentialsByID operation middleware
-func (siw *ServerInterfaceWrapper) UpdateMemberCredentialsByID(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.UpdateMemberCredentialsByID(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
 
 // RefreshMemberToken operation middleware
 func (siw *ServerInterfaceWrapper) RefreshMemberToken(w http.ResponseWriter, r *http.Request) {
@@ -261,15 +180,6 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/auth/login", wrapper.LoginMember)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/auth/logout", wrapper.LogoutMember)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/auth/password/reset", wrapper.UpdateMemberCredentialsByID)
-	})
-	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/auth/refresh", wrapper.RefreshMemberToken)
 	})
 
@@ -279,18 +189,14 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yWz2/bOgzH/xVB7wHv4sR5XTEUvrXbJcAGFEV2KopAtRlbjS1qEr02KPy/D5Icx03j",
-	"JsX667BbIlEk9fnSpO55ipVGBYosT+65TQuohP9ZYi7V3MDPGiy5BW1QgyEJfruC6hrMXGbuzwJNJYgn",
-	"XCr6fMwjTisN4S/kYHjE70YotBylmEEOagR3ZMSIRB58CW3J1CnVxp3auG6aiGth7S0aH6d1a8lIlT/T",
-	"a+encV7dvaSBjCeXvXi9aFfdJfD6BlLiTdQhsRqVhcdMDCwM2GJOuATlFv41sOAJ/yfeUI5bxHEwaiL+",
-	"HOutzMNqtBV4IHWs6d3lHCT/ZM5DvD9i0u1uaiADRVKUdl7rTBD8/ZQOxfTOcn8oTl1zeIiiW/6T9NY9",
-	"ZWdTGUxmvm42g/X8MZIbqqL3yM7ZSbVA5ykDmxqpSaLiCT89n7IFGjYTdjkzIl2CiZhg2qA7ySqhRA4V",
-	"KGJCZYyEXTJyZlLlzK4sQTV2tS+pdPF6Xtjp+ZRH/BcYGyJNxv+PJw4UalBCS57wT+PJ+MhXIBX+lrGo",
-	"qYj9mPPgMMjr8AmX8DTjCf/mtr/7Aubh+mDpDLOVM01RESh/SmhdytSfi28sqs37Yt+we/j02KJMpga/",
-	"EAT2eR9NJi8evK0fH/2hZrMCWPiA/7NsM5htXVXCrAIhJhUTrZXf7dBiTU+yxZpeG27/JXAQ3eOXj34I",
-	"XlYIy64BFCsxzyFjjt1j1FjTLtbrvhobsPAE8x9+7gTmXzbz6Gw1/fpKEux/I7yxKgdM433fwZr2RrOA",
-	"vYn4cch0UOUMwTKFxOBO2m2BL5yXTt5eoJ7SbdMflvgiGASNZ92j+eWV3T0h37iDDUzCfQoquN3ZzVp4",
-	"fQ1648+CcTOGJ5f3vDYlT3hBpJM4LjEVZYGWkpPJySR2E6e5an4HAAD//16hhDZxDgAA",
+	"H4sIAAAAAAAC/8xSTWvcQAz9K4Na6MW7dtNLmFt6y6EQyt5CCMpYu56s56OS3GZZ/N/LjDc4/bgWehMz",
+	"etLTe+8MLoWcIkUVsGcQN1DAWmo6Unxk2jPJ8Mj0bSLR8pE5ZWL1tLbV4pQJLIiyjwdo4GWTMPuNSz0d",
+	"KG7oRRk3ioeKCphFeXI6cQEtQ+Z5bqAs8kw92PvL80PzOjs9PZNTmJs/yElOUej/YFf6fNynMqknceyz",
+	"+hTBws3drdknNjuU447RHYkbgyZzKkgTMOKBAkU1GHujKEejpc3Hg5GTKIUtNKBex7LvzRRzc3cLDXwn",
+	"lmVTt/247YpQKVPE7MHCp223vYIGMupQr2xx0qG9aFilS4vBRUAslG97sPB1afhC4Yl4V29edCDRz6k/",
+	"FYRLUSlWMOY8elfh7bOkuKaqVO+Z9mDhXbvGrr1krv174H6TXXmi+rA4Xg+56rp/RuISrMriVzN3A5lQ",
+	"RfkgJtIP8xqTBmQKAfm0imdwbX2TJiEuloG9P8PEI1gYVLNt2zE5HIckaq+7664tBs4P888AAAD//0TN",
+	"IUqtAwAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

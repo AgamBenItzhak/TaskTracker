@@ -106,7 +106,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_response'
+                $ref: '../schemas/member.yaml#/components/schemas/member_credentials_response'
     put:
       summary: Update a member's credentials by ID
       operationId: UpdateMemberCredentialsByID
@@ -122,14 +122,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_update_request'
+              $ref: '../schemas/member.yaml#/components/schemas/member_credentials_update_request'
       responses:
         '200':
           description: The updated member's credentials
           content:
             application/json:
               schema:
-                $ref: '../schemas/auth.yaml#/components/schemas/member_credentials_response'
+                $ref: '../schemas/member.yaml#/components/schemas/member_credentials_response'
     delete:
       summary: Delete a member's credentials by ID
       operationId: DeleteMemberCredentialsByID
@@ -143,3 +143,37 @@ paths:
       responses:
         '204':
           description: member credentials deleted successfully
+  /member/login:
+    post:
+      summary: Log in a member
+      operationId: LoginMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/member.yaml#/components/schemas/login_request'
+      responses:
+        '200':
+          description: The member's token
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/member.yaml#/components/schemas/login_response'
+  /member/logout:
+    post:
+      summary: Log out a member
+      operationId: LogoutMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/member.yaml#/components/schemas/logout_request'
+      responses:
+        '204':
+          description: The member has been logged out
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/member.yaml#/components/schemas/logout_response'

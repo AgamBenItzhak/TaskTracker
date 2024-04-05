@@ -242,3 +242,173 @@ components:
             mapstructure: message
       required:
         - message
+    member_credentials:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_create_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_create_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_update_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_update_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    member_credentials_delete_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+      required:
+        - member_id
+    member_credentials_delete_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+      required:
+        - member_id
+    login_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            mapstructure: password
+      required:
+        - member_id
+        - password
+    login_response:
+      type: object
+      properties:
+        token:
+          $ref: "auth.yaml#/components/schemas/token"
+        refresh_token:
+          $ref: "auth.yaml#/components/schemas/token"
+      required:
+        - token
+        - refresh_token
+    logout_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+      required:
+        - member_id
+    logout_response:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+      required:
+        - member_id

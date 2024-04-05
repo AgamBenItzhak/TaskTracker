@@ -15,80 +15,6 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-// LoginRequest defines model for login_request.
-type LoginRequest struct {
-	MemberId int64  `json:"member_id" mapstructure:"member_id"`
-	Password string `json:"password" mapstructure:"password"`
-}
-
-// LoginResponse defines model for login_response.
-type LoginResponse struct {
-	RefreshToken Token `json:"refresh_token"`
-	Token        Token `json:"token"`
-}
-
-// LogoutRequest defines model for logout_request.
-type LogoutRequest struct {
-	MemberId int64 `json:"member_id" mapstructure:"member_id"`
-}
-
-// LogoutResponse defines model for logout_response.
-type LogoutResponse struct {
-	MemberId int64 `json:"member_id" mapstructure:"member_id"`
-}
-
-// MemberCredentials defines model for member_credentials.
-type MemberCredentials struct {
-	MemberId int64  `json:"member_id" mapstructure:"member_id"`
-	Password string `json:"password" mapstructure:"password"`
-}
-
-// MemberCredentialsCreateRequest defines model for member_credentials_create_request.
-type MemberCredentialsCreateRequest struct {
-	MemberId int64  `json:"member_id" mapstructure:"member_id"`
-	Password string `json:"password" mapstructure:"password"`
-}
-
-// MemberCredentialsCreateResponse defines model for member_credentials_create_response.
-type MemberCredentialsCreateResponse struct {
-	MemberId int64  `json:"member_id" mapstructure:"member_id"`
-	Password string `json:"password" mapstructure:"password"`
-}
-
-// MemberCredentialsDeleteRequest defines model for member_credentials_delete_request.
-type MemberCredentialsDeleteRequest struct {
-	MemberId int64 `json:"member_id" mapstructure:"member_id"`
-}
-
-// MemberCredentialsDeleteResponse defines model for member_credentials_delete_response.
-type MemberCredentialsDeleteResponse struct {
-	MemberId int64 `json:"member_id" mapstructure:"member_id"`
-}
-
-// MemberCredentialsRequest defines model for member_credentials_request.
-type MemberCredentialsRequest struct {
-	MemberId int64  `json:"member_id" mapstructure:"member_id"`
-	Password string `json:"password" mapstructure:"password"`
-}
-
-// MemberCredentialsResponse defines model for member_credentials_response.
-type MemberCredentialsResponse struct {
-	MemberId int64  `json:"member_id" mapstructure:"member_id"`
-	Password string `json:"password" mapstructure:"password"`
-}
-
-// MemberCredentialsUpdateRequest defines model for member_credentials_update_request.
-type MemberCredentialsUpdateRequest struct {
-	MemberId int64  `json:"member_id" mapstructure:"member_id"`
-	Password string `json:"password" mapstructure:"password"`
-}
-
-// MemberCredentialsUpdateResponse defines model for member_credentials_update_response.
-type MemberCredentialsUpdateResponse struct {
-	MemberId int64  `json:"member_id" mapstructure:"member_id"`
-	Password string `json:"password" mapstructure:"password"`
-}
-
 // Token defines model for token.
 type Token struct {
 	Token string `json:"token" mapstructure:"token"`
@@ -107,13 +33,10 @@ type TokenRefreshResponse struct {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yWwW6zMAzH38XfdwT1Mu3Aq0wTSuEPzQZJ5hitU8W7T4EWuq50q3ook7glTrD/+cUO",
-	"3lFma2cNjHhKduSzDWrVDStbapMy3hp4CQbH1oFFo1uuUa/Bqc7DpLBcK6GEtJHHB4pIPhz6KUowRbSN",
-	"rXI6zmyOEibGVljFosrel3JeuMmk4fDV6LptI3LK+3fLXZy9Wy+sTXml18FPG7yGc2lGTsnTUbyjaM/D",
-	"Iez6BZlQGw1IvLPG4zsTRsHwm1TsK0ww/GcUlNC/1Uh5tUe86je1EV2z+0R5b41OAk9It43c/TonyV/U",
-	"PMV7jqL3qxkjhxGtKr/UznkuYawEyxPzW0x3LoO5c8pRYQbpdONrMR7jb796S1n/yGep54uAGpcvv4cr",
-	"MC3pNHIaeuqvKAbzLfIOrfjZXnxSTHro0SfzeR7iprLoHurCPm0KS4lpqioi62CU05RQd/+y8f1K+xkA",
-	"AP//UkdO68cOAAA=",
+	"H4sIAAAAAAAC/8yO0W0DMQxDd9G3bwGvUhSB6zB3bnOSKslAisC7F861H9kgfwTJR/BOVXYVBodTvpPX",
+	"DXt5yJAv8BRqorBoeLbjR0GZPKzxSoluixRtS5UzVvCCW1hZoqwPai/qYb1GtwkdI2OMRIbv3gxnym9/",
+	"9nv635aPT9SgkY7kZLgYfDtNBh6ves5V2PEa72av8UUoc79eE4mCizbKRIm0xOZHMn4DAAD//2/zZRIK",
+	"AgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
