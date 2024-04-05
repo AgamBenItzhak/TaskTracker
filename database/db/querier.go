@@ -22,9 +22,9 @@ type Querier interface {
 	// Insert a new Task Group into the database
 	CreateTaskGroup(ctx context.Context, arg CreateTaskGroupParams) (int32, error)
 	// Insert a new member into a Task Group
-	CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) error
+	CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) (int32, error)
 	// Insert a new member into a Task
-	CreateTaskMember(ctx context.Context, arg CreateTaskMemberParams) error
+	CreateTaskMember(ctx context.Context, arg CreateTaskMemberParams) (int32, error)
 	// Delete a member from the database
 	DeleteMemberByID(ctx context.Context, memberID int32) error
 	// Delete a member's credentials from the database
@@ -41,14 +41,30 @@ type Querier interface {
 	DeleteTaskGroupMemberByID(ctx context.Context, arg DeleteTaskGroupMemberByIDParams) error
 	// Remove a member from a Task
 	DeleteTaskMemberByID(ctx context.Context, arg DeleteTaskMemberByIDParams) error
+	// Get all member IDs from the database
+	GetAllMemberIDs(ctx context.Context) ([]int32, error)
 	// Get all members from the database
 	GetAllMembers(ctx context.Context) ([]Member, error)
+	// Get all project IDs from the database
+	GetAllProjectIDs(ctx context.Context) ([]int32, error)
+	// Get all member IDs assigned to a project
+	GetAllProjectMemberIDs(ctx context.Context, projectID int32) ([]int32, error)
+	// Get all members assigned to a project
+	GetAllProjectMembers(ctx context.Context, projectID int32) ([]ProjectMember, error)
 	// Get all projects from the database
 	GetAllProjects(ctx context.Context) ([]Project, error)
+	// Get all Task Group IDs for a project
+	GetAllTaskGroupIDs(ctx context.Context, projectID int32) ([]int32, error)
+	// Get all member IDs assigned to a Task Group
+	GetAllTaskGroupMemberIDs(ctx context.Context, taskGroupID int32) ([]int32, error)
 	// Get all members assigned to a Task Group
 	GetAllTaskGroupMembers(ctx context.Context, taskGroupID int32) ([]TaskGroupMember, error)
 	// Get all Task Groups for a project
 	GetAllTaskGroups(ctx context.Context, projectID int32) ([]TaskGroup, error)
+	// Get all Task IDs for a Task Group
+	GetAllTaskIDs(ctx context.Context, taskGroupID int32) ([]int32, error)
+	// Get all member IDs assigned to a Task
+	GetAllTaskMemberIDs(ctx context.Context, taskID int32) ([]int32, error)
 	// Get all members assigned to a Task
 	GetAllTaskMembers(ctx context.Context, taskID int32) ([]TaskMember, error)
 	// Get all Tasks for a Task Group
@@ -61,8 +77,6 @@ type Querier interface {
 	GetProjectByID(ctx context.Context, projectID int32) (Project, error)
 	// Get a project's member by their ID
 	GetProjectMemberByID(ctx context.Context, arg GetProjectMemberByIDParams) (ProjectMember, error)
-	// Get all members assigned to a project
-	GetProjectMembers(ctx context.Context, projectID int32) ([]ProjectMember, error)
 	// Get a Task by its ID
 	GetTaskByID(ctx context.Context, taskID int32) (Task, error)
 	// Get a Task Group by its ID

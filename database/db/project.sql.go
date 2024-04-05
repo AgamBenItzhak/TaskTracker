@@ -81,6 +81,87 @@ func (q *Queries) DeleteProjectMemberByID(ctx context.Context, arg DeleteProject
 	return err
 }
 
+const GetAllProjectIDs = `-- name: GetAllProjectIDs :many
+SELECT project_id FROM project
+`
+
+// Get all project IDs from the database
+func (q *Queries) GetAllProjectIDs(ctx context.Context) ([]int32, error) {
+	rows, err := q.db.Query(ctx, GetAllProjectIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var project_id int32
+		if err := rows.Scan(&project_id); err != nil {
+			return nil, err
+		}
+		items = append(items, project_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const GetAllProjectMemberIDs = `-- name: GetAllProjectMemberIDs :many
+SELECT member_id FROM project_member WHERE project_id = $1
+`
+
+// Get all member IDs assigned to a project
+func (q *Queries) GetAllProjectMemberIDs(ctx context.Context, projectID int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, GetAllProjectMemberIDs, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var member_id int32
+		if err := rows.Scan(&member_id); err != nil {
+			return nil, err
+		}
+		items = append(items, member_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const GetAllProjectMembers = `-- name: GetAllProjectMembers :many
+SELECT member_id, project_id, role, created_at, updated_at FROM project_member WHERE project_id = $1
+`
+
+// Get all members assigned to a project
+func (q *Queries) GetAllProjectMembers(ctx context.Context, projectID int32) ([]ProjectMember, error) {
+	rows, err := q.db.Query(ctx, GetAllProjectMembers, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ProjectMember
+	for rows.Next() {
+		var i ProjectMember
+		if err := rows.Scan(
+			&i.MemberID,
+			&i.ProjectID,
+			&i.Role,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const GetAllProjects = `-- name: GetAllProjects :many
 SELECT project_id, project_name, description, status, start_date, end_date, created_at, updated_at FROM project
 `
@@ -157,37 +238,6 @@ func (q *Queries) GetProjectMemberByID(ctx context.Context, arg GetProjectMember
 		&i.UpdatedAt,
 	)
 	return i, err
-}
-
-const GetProjectMembers = `-- name: GetProjectMembers :many
-SELECT member_id, project_id, role, created_at, updated_at FROM project_member WHERE project_id = $1
-`
-
-// Get all members assigned to a project
-func (q *Queries) GetProjectMembers(ctx context.Context, projectID int32) ([]ProjectMember, error) {
-	rows, err := q.db.Query(ctx, GetProjectMembers, projectID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []ProjectMember
-	for rows.Next() {
-		var i ProjectMember
-		if err := rows.Scan(
-			&i.MemberID,
-			&i.ProjectID,
-			&i.Role,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const UpdateProjectByID = `-- name: UpdateProjectByID :exec

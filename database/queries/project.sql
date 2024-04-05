@@ -4,6 +4,10 @@ INSERT INTO project (project_name, description, status, start_date, end_date, cr
 VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING project_id;
 
+-- Get all project IDs from the database
+-- name: GetAllProjectIDs :many
+SELECT project_id FROM project;
+
 -- Get all projects from the database
 -- name: GetAllProjects :many
 SELECT * FROM project;
@@ -26,8 +30,12 @@ DELETE FROM project WHERE project_id = $1;
 INSERT INTO project_member (member_id, project_id, role, created_at, updated_at)
 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+-- Get all member IDs assigned to a project
+-- name: GetAllProjectMemberIDs :many
+SELECT member_id FROM project_member WHERE project_id = $1;
+
 -- Get all members assigned to a project
--- name: GetProjectMembers :many
+-- name: GetAllProjectMembers :many
 SELECT * FROM project_member WHERE project_id = $1;
 
 -- Get a project's member by their ID

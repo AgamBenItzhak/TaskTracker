@@ -4,6 +4,10 @@ INSERT INTO task_group (project_id, group_name, description, status, priority, s
 VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING task_group_id;
 
+-- Get all Task Group IDs for a project
+-- name: GetAllTaskGroupIDs :many
+SELECT task_group_id FROM task_group WHERE project_id = $1;
+
 -- Get all Task Groups for a project
 -- name: GetAllTaskGroups :many
 SELECT * FROM task_group WHERE project_id = $1;
@@ -22,9 +26,14 @@ WHERE task_group_id = $1;
 DELETE FROM task_group WHERE task_group_id = $1;
 
 -- Insert a new member into a Task Group
--- name: CreateTaskGroupMember :exec
+-- name: CreateTaskGroupMember :one
 INSERT INTO task_group_member (member_id, task_group_id, role, created_at, updated_at)
-VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+RETURNING member_id;
+
+-- Get all member IDs assigned to a Task Group
+-- name: GetAllTaskGroupMemberIDs :many
+SELECT member_id FROM task_group_member WHERE task_group_id = $1;
 
 -- Get all members assigned to a Task Group
 -- name: GetAllTaskGroupMembers :many
@@ -49,6 +58,10 @@ INSERT INTO task (task_group_id, task_name, description, status, priority, start
 VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING task_id;
 
+-- Get all Task IDs for a Task Group
+-- name: GetAllTaskIDs :many
+SELECT task_id FROM task WHERE task_group_id = $1;
+
 -- Get all Tasks for a Task Group
 -- name: GetAllTasks :many
 SELECT * FROM task WHERE task_group_id = $1;
@@ -67,9 +80,14 @@ WHERE task_id = $1;
 DELETE FROM task WHERE task_id = $1;
 
 -- Insert a new member into a Task
--- name: CreateTaskMember :exec
+-- name: CreateTaskMember :one
 INSERT INTO task_member (member_id, task_id, role, created_at, updated_at)
-VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+RETURNING member_id;
+
+-- Get all member IDs assigned to a Task
+-- name: GetAllTaskMemberIDs :many
+SELECT member_id FROM task_member WHERE task_id = $1;
 
 -- Get all members assigned to a Task
 -- name: GetAllTaskMembers :many

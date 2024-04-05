@@ -75,9 +75,10 @@ func (q *Queries) CreateTaskGroup(ctx context.Context, arg CreateTaskGroupParams
 	return task_group_id, err
 }
 
-const CreateTaskGroupMember = `-- name: CreateTaskGroupMember :exec
+const CreateTaskGroupMember = `-- name: CreateTaskGroupMember :one
 INSERT INTO task_group_member (member_id, task_group_id, role, created_at, updated_at)
 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+RETURNING member_id
 `
 
 type CreateTaskGroupMemberParams struct {
@@ -87,14 +88,17 @@ type CreateTaskGroupMemberParams struct {
 }
 
 // Insert a new member into a Task Group
-func (q *Queries) CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) error {
-	_, err := q.db.Exec(ctx, CreateTaskGroupMember, arg.MemberID, arg.TaskGroupID, arg.Role)
-	return err
+func (q *Queries) CreateTaskGroupMember(ctx context.Context, arg CreateTaskGroupMemberParams) (int32, error) {
+	row := q.db.QueryRow(ctx, CreateTaskGroupMember, arg.MemberID, arg.TaskGroupID, arg.Role)
+	var member_id int32
+	err := row.Scan(&member_id)
+	return member_id, err
 }
 
-const CreateTaskMember = `-- name: CreateTaskMember :exec
+const CreateTaskMember = `-- name: CreateTaskMember :one
 INSERT INTO task_member (member_id, task_id, role, created_at, updated_at)
 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+RETURNING member_id
 `
 
 type CreateTaskMemberParams struct {
@@ -104,9 +108,11 @@ type CreateTaskMemberParams struct {
 }
 
 // Insert a new member into a Task
-func (q *Queries) CreateTaskMember(ctx context.Context, arg CreateTaskMemberParams) error {
-	_, err := q.db.Exec(ctx, CreateTaskMember, arg.MemberID, arg.TaskID, arg.Role)
-	return err
+func (q *Queries) CreateTaskMember(ctx context.Context, arg CreateTaskMemberParams) (int32, error) {
+	row := q.db.QueryRow(ctx, CreateTaskMember, arg.MemberID, arg.TaskID, arg.Role)
+	var member_id int32
+	err := row.Scan(&member_id)
+	return member_id, err
 }
 
 const DeleteTaskByID = `-- name: DeleteTaskByID :exec
@@ -157,6 +163,56 @@ type DeleteTaskMemberByIDParams struct {
 func (q *Queries) DeleteTaskMemberByID(ctx context.Context, arg DeleteTaskMemberByIDParams) error {
 	_, err := q.db.Exec(ctx, DeleteTaskMemberByID, arg.MemberID, arg.TaskID)
 	return err
+}
+
+const GetAllTaskGroupIDs = `-- name: GetAllTaskGroupIDs :many
+SELECT task_group_id FROM task_group WHERE project_id = $1
+`
+
+// Get all Task Group IDs for a project
+func (q *Queries) GetAllTaskGroupIDs(ctx context.Context, projectID int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, GetAllTaskGroupIDs, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var task_group_id int32
+		if err := rows.Scan(&task_group_id); err != nil {
+			return nil, err
+		}
+		items = append(items, task_group_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const GetAllTaskGroupMemberIDs = `-- name: GetAllTaskGroupMemberIDs :many
+SELECT member_id FROM task_group_member WHERE task_group_id = $1
+`
+
+// Get all member IDs assigned to a Task Group
+func (q *Queries) GetAllTaskGroupMemberIDs(ctx context.Context, taskGroupID int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, GetAllTaskGroupMemberIDs, taskGroupID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var member_id int32
+		if err := rows.Scan(&member_id); err != nil {
+			return nil, err
+		}
+		items = append(items, member_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const GetAllTaskGroupMembers = `-- name: GetAllTaskGroupMembers :many
@@ -219,6 +275,56 @@ func (q *Queries) GetAllTaskGroups(ctx context.Context, projectID int32) ([]Task
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const GetAllTaskIDs = `-- name: GetAllTaskIDs :many
+SELECT task_id FROM task WHERE task_group_id = $1
+`
+
+// Get all Task IDs for a Task Group
+func (q *Queries) GetAllTaskIDs(ctx context.Context, taskGroupID int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, GetAllTaskIDs, taskGroupID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var task_id int32
+		if err := rows.Scan(&task_id); err != nil {
+			return nil, err
+		}
+		items = append(items, task_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const GetAllTaskMemberIDs = `-- name: GetAllTaskMemberIDs :many
+SELECT member_id FROM task_member WHERE task_id = $1
+`
+
+// Get all member IDs assigned to a Task
+func (q *Queries) GetAllTaskMemberIDs(ctx context.Context, taskID int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, GetAllTaskMemberIDs, taskID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var member_id int32
+		if err := rows.Scan(&member_id); err != nil {
+			return nil, err
+		}
+		items = append(items, member_id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

@@ -39,6 +39,31 @@ func (q *Queries) DeleteMemberByID(ctx context.Context, memberID int32) error {
 	return err
 }
 
+const GetAllMemberIDs = `-- name: GetAllMemberIDs :many
+SELECT member_id FROM member
+`
+
+// Get all member IDs from the database
+func (q *Queries) GetAllMemberIDs(ctx context.Context) ([]int32, error) {
+	rows, err := q.db.Query(ctx, GetAllMemberIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var member_id int32
+		if err := rows.Scan(&member_id); err != nil {
+			return nil, err
+		}
+		items = append(items, member_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const GetAllMembers = `-- name: GetAllMembers :many
 SELECT member_id, email, first_name, last_name, created_at, updated_at FROM member
 `

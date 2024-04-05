@@ -4,6 +4,10 @@ INSERT INTO member (email, first_name, last_name, created_at, updated_at)
 VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 RETURNING member_id;
 
+-- Get all member IDs from the database
+-- name: GetAllMemberIDs :many
+SELECT member_id FROM member;
+
 -- Get all members from the database
 -- name: GetAllMembers :many
 SELECT * FROM member;
