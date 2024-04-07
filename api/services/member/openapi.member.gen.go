@@ -23,8 +23,8 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
-// CreateMemberJSONRequestBody defines body for CreateMember for application/json ContentType.
-type CreateMemberJSONRequestBody = externalRef2.MemberCreateRequest
+// RegisterMemberJSONRequestBody defines body for RegisterMember for application/json ContentType.
+type RegisterMemberJSONRequestBody = externalRef2.MemberCreateRequest
 
 // LoginMemberJSONRequestBody defines body for LoginMember for application/json ContentType.
 type LoginMemberJSONRequestBody = externalRef2.LoginRequest
@@ -45,7 +45,7 @@ type ServerInterface interface {
 	GetAllMembers(w http.ResponseWriter, r *http.Request)
 	// Create a new member
 	// (POST /member)
-	CreateMember(w http.ResponseWriter, r *http.Request)
+	RegisterMember(w http.ResponseWriter, r *http.Request)
 	// Log in a member
 	// (POST /member/login)
 	LoginMember(w http.ResponseWriter, r *http.Request)
@@ -70,6 +70,12 @@ type ServerInterface interface {
 	// Update a member's credentials by ID
 	// (PUT /member/{member_id}/Credentials)
 	UpdateMemberCredentialsByID(w http.ResponseWriter, r *http.Request, memberId int)
+	// Get all project IDs for a member
+	// (GET /member/{member_id}/project-ids)
+	GetAllMemberProjectIDs(w http.ResponseWriter, r *http.Request, memberId int)
+	// Get all projects for a member
+	// (GET /member/{member_id}/projects)
+	GetAllMemberProjects(w http.ResponseWriter, r *http.Request, memberId int)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -84,7 +90,7 @@ func (_ Unimplemented) GetAllMembers(w http.ResponseWriter, r *http.Request) {
 
 // Create a new member
 // (POST /member)
-func (_ Unimplemented) CreateMember(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) RegisterMember(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -136,6 +142,18 @@ func (_ Unimplemented) UpdateMemberCredentialsByID(w http.ResponseWriter, r *htt
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Get all project IDs for a member
+// (GET /member/{member_id}/project-ids)
+func (_ Unimplemented) GetAllMemberProjectIDs(w http.ResponseWriter, r *http.Request, memberId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get all projects for a member
+// (GET /member/{member_id}/projects)
+func (_ Unimplemented) GetAllMemberProjects(w http.ResponseWriter, r *http.Request, memberId int) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // ServerInterfaceWrapper converts contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler            ServerInterface
@@ -160,12 +178,12 @@ func (siw *ServerInterfaceWrapper) GetAllMembers(w http.ResponseWriter, r *http.
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// CreateMember operation middleware
-func (siw *ServerInterfaceWrapper) CreateMember(w http.ResponseWriter, r *http.Request) {
+// RegisterMember operation middleware
+func (siw *ServerInterfaceWrapper) RegisterMember(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.CreateMember(w, r)
+		siw.Handler.RegisterMember(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -361,6 +379,58 @@ func (siw *ServerInterfaceWrapper) UpdateMemberCredentialsByID(w http.ResponseWr
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// GetAllMemberProjectIDs operation middleware
+func (siw *ServerInterfaceWrapper) GetAllMemberProjectIDs(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetAllMemberProjectIDs(w, r, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetAllMemberProjects operation middleware
+func (siw *ServerInterfaceWrapper) GetAllMemberProjects(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "member_id" -------------
+	var memberId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_id", chi.URLParam(r, "member_id"), &memberId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetAllMemberProjects(w, r, memberId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 type UnescapedCookieParamError struct {
 	ParamName string
 	Err       error
@@ -478,7 +548,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/member", wrapper.GetAllMembers)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/member", wrapper.CreateMember)
+		r.Post(options.BaseURL+"/member", wrapper.RegisterMember)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/member/login", wrapper.LoginMember)
@@ -504,6 +574,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	r.Group(func(r chi.Router) {
 		r.Put(options.BaseURL+"/member/{member_id}/Credentials", wrapper.UpdateMemberCredentialsByID)
 	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/member/{member_id}/project-ids", wrapper.GetAllMemberProjectIDs)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/member/{member_id}/projects", wrapper.GetAllMemberProjects)
+	})
 
 	return r
 }
@@ -511,25 +587,28 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yYzW7bOBCAX4XgLtCLYqndYlHoljbAwkAX20P2VAQGI41lNhSpJUdNhUDvviDp6MeS",
-	"/FPbcQ+52RQ5M/xmODPkE01UXigJEg2Nn6hJVpAz91OojMuFhv9KMGgHCq0K0MjBfc4hvwe94Kn9s1Q6",
-	"Z0hjyiX++Z4GFKsC/F/IQNOA/rhSrOBXiUohA3kFP1CzK2SZl8UKg7pMsNR2VSu6rgNaMGMelXZ61mIN",
-	"ai6zA6U2cmor1e6La0hp/LWjr6PtrtmEuv8GCdI6aJCYQkkDQyYalhrMaoHqAaQd+F3Dksb0t7ClHK4R",
-	"h35SHdBDZm9Y7keDDcUTpqsSL+7OSfJbbZ7i/Ssa7b8ObU00MIR0wbBnbMoQrpDn0Br8U9HdEW/thZxx",
-	"0VPkR45T4mVY+UuuDS4ky+HYY9mRZAULdiK5raC68coLZKuySM/p5o74rWns2dsdul22QTdeekZPh/TC",
-	"L5lOIa8x14+5buFqkDSDQyqPmiP8I0VFY9QlnKq67QyFrSVv0/fbU/GuKraeNR65O/SnIJEzYS5fD36p",
-	"nmQEkD/Or63bCKaLBfAun7wmz4sU7J8vofv4+qVjrblJ9NU1w8e45/kCMnoDGRpj53G5VFZSCibRvECu",
-	"JI3p9Zc5WSpNbpl5uNUseQAdEEYKrexKkjPJMshBImEyJcjMA0E7jcuMmMog5DMbARyF1deRQq6/zGlA",
-	"v4M2XlM0ezuLLBdVgGQFpzH9YxbN3rlcgSu3y7D1RQbuXFpyzNo6T2lM/wK8FuJvN8m4m5Z3qlv8Lopc",
-	"a68kgnSLWVEInrjl4TejZHuntr84Qm72c3sbPXXDlmnNKo92AykR3CBRS5KvDbVzTJnnTFd+E4QJ0X4N",
-	"aKHMyG4/uTLvd0u9o8HgR5VWB+1zj+1tNJMbcWX7n3oA++3ZjHhGPUR7uwIi4VFUZN0xk86xbAl7cITZ",
-	"ud0Za02hezlwJ3OU+2f7+azY+685e+GOTq58O2aP6o0h7VtHC/izygiXhE3AVSVupatKPDfe7vPKXnzf",
-	"n177PoDJihlyDyCJUFkGKbHshrBVieO0n5oiWfvkLgBhCP3GjXvoH6v5jUu6muWANgPFX59GDJzf2ByG",
-	"ramoyFq+rSauE8QVDajvN3rluk876JDbaBbq+m7cFX171hZ49SkxZZKAMctSiGqDlt9pA4vcV2R+Y3Ps",
-	"VEE5HoqVfF4i0alz7Z7B+chx5TZrCkj4kkPqYA7L2YB2UY7Q/te1YscD9y3d6Zmfrb5u3DdeOOFPNMIT",
-	"rl8/P41XVu/Bgb/HE1L4qb0G75ucOkuOz1Okcw+3Xe7F8lbXjsNz2BvTE7BnRjsRyQzwhTFGZ2gsh89V",
-	"u9qe7p4PTYNTDtuZFE/kM3+Ez++2c95Hpt7PLpM7DwmhfgLtx8L2dDoeN24J6O/PMVBqQWO6QiziMBQq",
-	"YWKlDMYfog9RaO/V9V39fwAAAP//auNaO0keAAA=",
+	"H4sIAAAAAAAC/+xYTW/bOBP+KwTfF+hFjt1usSh8a2tgYaCLLRbdUxEYjDSW2Uiklhw1NQL99wVJWaK+",
+	"/BFbcQ652RQ5H88MnxnOIw1lmkkBAjWdP1IdbiBl9mciYy5WCv7NQaNZyJTMQCEH+zmF9A7Uikfmz1qq",
+	"lCGdUy7w9/c0oLjNwP2FGBQN6K+JZBmfhDKCGMQEfqFiE2Sxk8UyjSoPMVfmVC26KAKaMa0fpLJ6SrEa",
+	"FRfxiVIrOYWRavziCiI6/+7p87TdVk7Iux8QIi2CChKdSaGhi4mCtQK9WaG8B2EW/q9gTef0f9Ma5WkJ",
+	"8dRtKgJ6yu6W5W41aCkeMF3mePVwDiK/1+YhvF+i0e5r19ZQAUOIVgwbxkYMYYI8hdrgJ2W3J97YCynj",
+	"SUORWzlPiZNh5K+50rgSLIVzr6UnyQhO2IXk1oKKKirPwFZ5Fo0ZZk/8XhrbRdtD18c28POlYfRwSq/c",
+	"kWEKec25Zs75hauCpFrsovKgOMJfItnSOaocLlXdDqbC3pLXjv1+Kj5Uxcpd/Zl7QH8EAjlL9PXrwYvq",
+	"SXoActf5tXXrgelqCXwoJq/keZWC/fQSekysnzvXMiXtzys3nxHoUPEMuRTnJoUvyva1IloZq0dxoxJe",
+	"1FiOkoGebF/VJW5RQ5YRrpEpHA8zT3ypDXN9rhOllCv3016UWjE6rX3eHR3mA+/e7iOE3bYBQ3uVV8OF",
+	"psZq+RzwdjOJ3qFE1xizj4u1NJIaFEE/fl2StVTkG9P33xQL70EFhJHSL5IywWJIQSBhIiLI9D1Bs42L",
+	"mOitRkhvTB5wTIw+Twr5+HVJA/oTlHaaZjdvb2YGF5mBYBmnc/rbzezmnW0fcGO9nNb0HIMNikGOGVuX",
+	"EZ3TPwA/JsmfdpO2wxcXV3v43WxmCVcKBGEPsyxLeGiPT39oR4kuouYXR0j1cZWgTqCiwpYpxbYO2hak",
+	"JOEaiVyTtDTUXs88TZnaOicIS5L6a0AzqXu8/RtirhGU85e6UIPGTzLanuTpEQ62XpitzDKPoqID99vR",
+	"jNiB3QX32waIgIdkS0oeIF6trjH+bD8SZvb6O0pNUztOtHezF/kv5vOosDdHvEfBPbu48v0wO6jeaFIP",
+	"QGuAv8iYcEHYALgyx73oyhzHhtefuR6F7/vLaz8GYLJhmtwBCJLIOIaIGOy6YMsc+9F+rDrnwtF7Aq7h",
+	"aIK+sOsO9E/b5cLSrmIpoOGg+ffHHgOXC8NiWJuKkpTyTT2xz0Pc0IC69qnRwzfRDjzkWv1bUdz2h6Jp",
+	"T2mBUx8RnYchaL3Ok2TbQst5WoFF7rZkuTAsO1RSzgfFSB4XkdmlufbI5HzguLHO6gxCvuYQWTC7Ba2D",
+	"dpb3oP2P7dfOB9z1fZfHfLT62hpCPDPhD7yOB0JfNtX9ldVFsBPvfkKafq5nY8eSk3fkfJ4i3nDO9LlX",
+	"4y3fjtM57I1uCDiS0S6EZAz4zDDORmgsuzPsQ22P7/OpNDgUsIOkeKGYuSs8ftjGfI8MDdWvw52npFCT",
+	"QJu5sJ9O+/NmgFzLR/qER/qoF/NXt3+50OdQwW40sFy8PCqonvRtyae82lsOtq79rigG9H0f3TukiZBI",
+	"1jIX0cDbv63jUGe/i/VJgb5EmF9wjI+Y1z1xbuP7Pmb4O7E3m0H93EUrVwmd0w1iNp9OExmyZCM1zj/M",
+	"PsymLOO0uC3+CwAA//+lkY6hRiYAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

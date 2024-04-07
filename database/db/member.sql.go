@@ -91,6 +91,62 @@ func (q *Queries) GetAllMemberIDs(ctx context.Context) ([]int32, error) {
 	return items, nil
 }
 
+const GetAllMemberProjectIDs = `-- name: GetAllMemberProjectIDs :many
+SELECT project_id FROM project_member WHERE member_id = $1
+`
+
+// Get all project IDs assigned to a member
+func (q *Queries) GetAllMemberProjectIDs(ctx context.Context, memberID int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, GetAllMemberProjectIDs, memberID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var project_id int32
+		if err := rows.Scan(&project_id); err != nil {
+			return nil, err
+		}
+		items = append(items, project_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const GetAllMemberProjects = `-- name: GetAllMemberProjects :many
+SELECT member_id, project_id, role, created_at, updated_at FROM project_member WHERE member_id = $1
+`
+
+// Get all projects assigned to a member
+func (q *Queries) GetAllMemberProjects(ctx context.Context, memberID int32) ([]ProjectMember, error) {
+	rows, err := q.db.Query(ctx, GetAllMemberProjects, memberID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ProjectMember
+	for rows.Next() {
+		var i ProjectMember
+		if err := rows.Scan(
+			&i.MemberID,
+			&i.ProjectID,
+			&i.Role,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const GetAllMembers = `-- name: GetAllMembers :many
 SELECT member_id, email, first_name, last_name, created_at, updated_at FROM member
 `

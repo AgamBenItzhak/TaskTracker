@@ -42,3 +42,11 @@ WHERE member_id = $1;
 -- Delete a member's credentials from the database
 -- name: DeleteMemberCredentialsByID :exec
 DELETE FROM member_credentials WHERE member_id = $1;
+
+-- Get all project IDs assigned to a member
+-- name: GetAllMemberProjectIDs :many
+SELECT project_id FROM project_member WHERE member_id = $1;
+
+-- Get all projects assigned to a member
+-- name: GetAllMemberProjects :many
+SELECT * FROM project_member WHERE member_id = $1;

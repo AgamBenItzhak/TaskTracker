@@ -412,3 +412,38 @@ components:
             mapstructure: member_id
       required:
         - member_id
+    member_projects_ids:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+        project_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: project_ids
+      required:
+        - member_id
+        - project_ids
+    member_projects_ids_request:
+      type: object
+      properties:
+        member_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            mapstructure: member_id
+      required:
+        - member_id
+    member_projects_ids_response:
+      type: object
+      properties:
+        member_projects_ids:
+          $ref: "#/components/schemas/member_projects_ids"
+      required:
+        - member_projects_ids

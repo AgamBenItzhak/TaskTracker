@@ -43,6 +43,10 @@ type Querier interface {
 	DeleteTaskMemberByID(ctx context.Context, arg DeleteTaskMemberByIDParams) error
 	// Get all member IDs from the database
 	GetAllMemberIDs(ctx context.Context) ([]int32, error)
+	// Get all project IDs assigned to a member
+	GetAllMemberProjectIDs(ctx context.Context, memberID int32) ([]int32, error)
+	// Get all projects assigned to a member
+	GetAllMemberProjects(ctx context.Context, memberID int32) ([]ProjectMember, error)
 	// Get all members from the database
 	GetAllMembers(ctx context.Context) ([]Member, error)
 	// Get all project IDs from the database

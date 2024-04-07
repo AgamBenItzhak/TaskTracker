@@ -21,7 +21,7 @@ paths:
                   $ref: '../schemas/member.yaml#/components/schemas/member_response'
     post:
       summary: Create a new member
-      operationId: CreateMember
+      operationId: RegisterMember
       requestBody:
         required: true
         content:
@@ -177,3 +177,47 @@ paths:
             application/json:
               schema:
                 $ref: '../schemas/member.yaml#/components/schemas/logout_response'
+  /member/{member_id}/projects:
+    get:
+      summary: Get all projects for a member
+      operationId: GetAllMemberProjects
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to get projects for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of projects for the specified member
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../schemas/project.yaml#/components/schemas/project_response'
+        '404':
+          description: Member not found
+  /member/{member_id}/project-ids:
+    get:
+      summary: Get all project IDs for a member
+      operationId: GetAllMemberProjectIDs
+      parameters:
+        - name: member_id
+          in: path
+          required: true
+          description: The ID of the member to get project IDs for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of project IDs for the specified member
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+        '404':
+          description: Member not found
